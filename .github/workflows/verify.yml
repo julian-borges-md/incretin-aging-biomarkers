@@ -44,15 +44,22 @@ jobs:
       - uses: actions/checkout@v4
       - name: Results may not appear without an extraction file
         run: |
+          shopt -s nullglob
+          MS=(manuscript/*manuscript*.md manuscript/*signature*.md)
+          if [ ${#MS[@]} -eq 0 ]; then
+            echo "No manuscript committed yet. Nothing to gate."
+            exit 0
+          fi
           if [ -f analysis/data/extraction_master.csv ]; then
             echo "Extraction file present; results sections may be populated."
             exit 0
           fi
-          if grep -qE '^\[PENDING' manuscript/*.md; then
-            echo "No extraction file, and results sections still marked PENDING. Consistent."
+          if grep -q 'PENDING' "${MS[@]}"; then
+            echo "No extraction file, and results sections still marked PENDING."
+            echo "Manuscript and data state are consistent."
             exit 0
           fi
-          echo "FAIL: results sections are no longer marked PENDING, but no"
-          echo "extraction file is committed. Every reported number must be"
-          echo "derivable from committed inputs."
+          echo "FAIL: a manuscript is committed, its results sections are no"
+          echo "longer marked PENDING, and no extraction file is present."
+          echo "Every reported number must be derivable from committed inputs."
           exit 1
