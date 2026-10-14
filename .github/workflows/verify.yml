@@ -34,6 +34,21 @@ jobs:
       - name: Prove the gates can fail
         run: Rscript src/selftest.R
 
+  validate:
+    # Does the pipeline recover parameters it is given? verify and selftest
+    # check that the code matches the protocol; neither checks that the
+    # statistics are correct. This does, against known truth on simulated data.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4.1"
+      - name: Dependencies
+        run: Rscript -e 'install.packages(c("metafor","dplyr","tibble","purrr","boot"), repos="https://cloud.r-project.org")'
+      - name: Recover known truth
+        run: Rscript src/validate_pipeline.R
+
   no-fabricated-results:
     # The manuscript is published before extraction. This job fails if a
     # results placeholder is ever replaced by a number without the extraction

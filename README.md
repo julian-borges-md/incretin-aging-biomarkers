@@ -1,6 +1,7 @@
 [![verify](https://github.com/julian-borges-md/incretin-aging-biomarkers/actions/workflows/verify.yml/badge.svg)](https://github.com/julian-borges-md/incretin-aging-biomarkers/actions/workflows/verify.yml)
 [![Code](https://img.shields.io/badge/Code-R-blue)](#)
 [![Design](https://img.shields.io/badge/Design-Systematic_review_%2B_network_meta--analysis-blue)](#)
+[![Statistics](https://img.shields.io/badge/Statistics-validated_against_known_truth-brightgreen)](docs/MANIFEST.md#statistical-validation)
 [![Stage](https://img.shields.io/badge/Stage-protocol_and_pipeline_complete-yellow)](docs/MANIFEST.md)
 [![Results](https://img.shields.io/badge/Results-not_yet_extracted-lightgrey)](docs/MANIFEST.md)
 [![Prespecified](https://img.shields.io/badge/Analysis_plan-fixed_before_extraction-orange)](prespecification/)
@@ -127,6 +128,7 @@ src/
 make install     # renv::restore(), exact package versions
 make verify      # integrity gates on the extraction contract
 make selftest    # proves verify fails on perturbed input
+make validate    # proves the statistics recover known truth
 make analysis    # runs the pipeline (requires analysis/data/extraction_master.csv)
 ```
 

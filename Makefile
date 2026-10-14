@@ -3,6 +3,7 @@
 #   make install    install the reference package set
 #   make verify     run the integrity gates on the extraction contract
 #   make selftest   prove that verify fails on perturbed input
+#   make validate   prove the statistics recover known truth on simulated data
 #   make analysis   run the full pipeline (needs analysis/data/extraction_master.csv)
 #   make clean      remove generated artefacts
 #
@@ -11,7 +12,7 @@
 
 RS := Rscript
 
-.PHONY: install verify selftest analysis clean
+.PHONY: install verify selftest validate analysis clean
 
 install:
 	$(RS) requirements.R
@@ -21,6 +22,9 @@ verify:
 
 selftest:
 	$(RS) src/selftest.R
+
+validate:
+	$(RS) src/validate_pipeline.R
 
 analysis:
 	$(RS) analysis/M5_AGE_analysis_pipeline.R
