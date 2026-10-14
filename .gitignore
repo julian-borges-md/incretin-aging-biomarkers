@@ -1,0 +1,10 @@
+.Rhistory
+.RData
+.Rproj.user/
+renv/library/
+renv/staging/
+.DS_Store
+work/
+analysis/output/*
+!analysis/output/.gitkeep
+*.pdf.aux

@@ -1,0 +1,156 @@
+###############################################################################
+# verify.R
+#
+# Gate checks that run without data and without network access.
+#
+# At this stage of the project there are no pooled estimates to re-derive, so
+# this script does not verify numbers. It verifies the contract: that the
+# extraction schema is well formed, that the analysis pipeline declares the
+# estimators and seed the protocol commits to, and that the integrity function
+# the pipeline depends on rejects malformed input.
+#
+# A green badge here means the repository is internally consistent with its own
+# protocol. It does not mean results exist. See docs/MANIFEST.md.
+###############################################################################
+
+fail <- function(...) { message("FAIL: ", ...); quit(status = 1) }
+pass <- function(...) message("  ok   ", ...)
+
+message("Gate 1: extraction schema")
+
+schema_path <- "analysis/data/extraction_schema.csv"
+if (!file.exists(schema_path)) fail("extraction schema missing")
+schema <- utils::read.csv(schema_path, stringsAsFactors = FALSE)
+
+expected_cols <- c("column", "type", "required", "description")
+if (!identical(names(schema), expected_cols)) {
+  fail("schema header is ", paste(names(schema), collapse = ","))
+}
+pass("schema header")
+
+if (anyDuplicated(schema$column)) {
+  fail("duplicate column names: ",
+       paste(schema$column[duplicated(schema$column)], collapse = ", "))
+}
+pass("no duplicate columns (", nrow(schema), " declared)")
+
+# Columns the pipeline reads by name. If the schema and the pipeline drift
+# apart, the pipeline fails at runtime on real data; this catches it earlier.
+required_by_pipeline <- c(
+  "trial_id", "receptor_class", "biomarker", "hallmark_domain",
+  "aging_direction", "clinical_weight", "outcome_type",
+  "mean_tx", "sd_tx", "n_tx", "mean_ctrl", "sd_ctrl", "n_ctrl",
+  "events_tx", "events_ctrl", "pct_weight_change",
+  "population", "duration_weeks", "rob_overall", "industry_funded", "drug"
+)
+missing <- setdiff(required_by_pipeline, schema$column)
+if (length(missing)) fail("schema is missing: ", paste(missing, collapse = ", "))
+pass("every column the pipeline reads is declared")
+
+message("Gate 2: analysis pipeline declarations")
+
+pipe_path <- "analysis/M5_AGE_analysis_pipeline.R"
+if (!file.exists(pipe_path)) fail("pipeline missing")
+pipe <- paste(readLines(pipe_path, warn = FALSE), collapse = "\n")
+
+# The protocol commits to a fixed seed. A changed or absent seed breaks the
+# reproducibility claim in the README, so it is asserted literally.
+if (!grepl("set.seed(20261013)", pipe, fixed = TRUE)) {
+  fail("pipeline does not set the pre-specified seed 20261013")
+}
+pass("pre-specified seed present")
+
+# The protocol commits to four between-study variance estimators.
+for (est in c("REML", "DL", "PM", "SJ")) {
+  if (!grepl(sprintf('"%s"', est), pipe, fixed = TRUE)) {
+    fail("estimator not referenced in pipeline: ", est)
+  }
+}
+pass("all four pre-specified estimators referenced")
+
+# The protocol commits to prediction intervals on every pooled estimate.
+if (!grepl("pi_lb", pipe, fixed = TRUE) || !grepl("pi_ub", pipe, fixed = TRUE)) {
+  fail("pipeline does not emit prediction interval bounds")
+}
+pass("prediction intervals emitted")
+
+# The protocol commits to permutation inference at 10,000 iterations.
+if (!grepl("permutest", pipe, fixed = TRUE)) {
+  fail("pipeline does not use permutation inference")
+}
+if (!grepl("n_perm = 10000", pipe, fixed = TRUE)) {
+  fail("permutation iterations are not the pre-specified 10,000")
+}
+pass("permutation inference at 10,000 iterations")
+
+# The composite must be a weighted MEAN. A weighted sum would inflate with
+# biomarker coverage, which is the specific error the protocol rules out.
+if (!grepl("sum(w)", pipe, fixed = TRUE)) {
+  fail("composite is not normalised by the sum of weights (weighted sum, not mean)")
+}
+pass("composite normalised by total weight")
+
+if (!grepl('type = "bca"', pipe, fixed = TRUE)) {
+  fail("bootstrap does not request BCa intervals")
+}
+pass("BCa bootstrap requested")
+
+message("Gate 3: integrity function rejects malformed input")
+
+# Extract and evaluate check_integrity from the pipeline in isolation, then
+# confirm it rejects each failure mode the protocol names. This is the gate
+# that matters: it proves the pipeline cannot silently pool bad data.
+suppressWarnings(suppressMessages({
+  ok <- require(dplyr, quietly = TRUE)
+}))
+if (!ok) {
+  message("  skip  dplyr unavailable; integrity function not exercised")
+} else {
+  src <- readLines(pipe_path, warn = FALSE)
+
+  # The function closes over RECEPTOR_CLASSES, which the pipeline defines at
+  # top level. Extract that definition from the pipeline too, rather than
+  # restating it here, so the two cannot drift apart.
+  rc_line <- grep("^RECEPTOR_CLASSES <- ", src)
+  if (length(rc_line) != 1) fail("RECEPTOR_CLASSES not found in pipeline")
+  eval(parse(text = src[rc_line]))
+
+  start <- grep("^check_integrity <- function", src)
+  if (length(start) != 1) fail("check_integrity not found in pipeline")
+  # Function body runs to the first line that closes it at column zero.
+  ends <- grep("^}$", src)
+  stop_at <- min(ends[ends > start])
+  eval(parse(text = paste(src[start:stop_at], collapse = "\n")))
+
+  good <- data.frame(
+    receptor_class = "GLP1_mono", outcome_type = "continuous",
+    mean_tx = 1, sd_tx = 1, n_tx = 10,
+    mean_ctrl = 0, sd_ctrl = 1, n_ctrl = 10,
+    aging_direction = 1, pct_weight_change = -10,
+    stringsAsFactors = FALSE
+  )
+
+  if (!isTRUE(tryCatch({ check_integrity(good); TRUE },
+                       error = function(e) FALSE))) {
+    fail("integrity function rejects well formed input")
+  }
+  pass("accepts well formed input")
+
+  cases <- list(
+    "unknown receptor class"   = transform(good, receptor_class = "GLP1_BOGUS"),
+    "missing standard deviation" = transform(good, sd_tx = NA_real_),
+    "non-positive variance"    = transform(good, sd_ctrl = 0),
+    "undeclared aging direction" = transform(good, aging_direction = 0),
+    "missing weight covariate" = transform(good, pct_weight_change = NA_real_)
+  )
+  for (nm in names(cases)) {
+    rejected <- tryCatch({ check_integrity(cases[[nm]]); FALSE },
+                         error = function(e) TRUE)
+    if (!rejected) fail("integrity function accepted: ", nm)
+    pass("rejects ", nm)
+  }
+}
+
+message("")
+message("All gates passed.")
+message("Note: no pooled estimates exist at this stage. See docs/MANIFEST.md.")

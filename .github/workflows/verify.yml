@@ -1,0 +1,58 @@
+name: verify
+
+# Checks that the repository remains internally consistent with its own
+# protocol: that the analysis pipeline still declares the seed, estimators,
+# interval types and inference method the prespecification commits to, that the
+# extraction schema still covers every column the pipeline reads, and that the
+# pipeline's integrity function still rejects malformed input. Then proves the
+# check can fail.
+#
+# A green badge means the protocol and the code agree. It does not mean results
+# exist; none have been extracted yet. See docs/MANIFEST.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4.1"
+      - name: Minimal dependencies
+        # verify.R needs only dplyr, to exercise the integrity function in
+        # isolation. The full analysis package set is not needed to gate the
+        # protocol and is installed only when the pipeline itself is run.
+        run: Rscript -e 'install.packages("dplyr", repos="https://cloud.r-project.org")'
+      - name: Gate the protocol against the code
+        run: Rscript src/verify.R
+      - name: Prove the gates can fail
+        run: Rscript src/selftest.R
+
+  no-fabricated-results:
+    # The manuscript is published before extraction. This job fails if a
+    # results placeholder is ever replaced by a number without the extraction
+    # file being committed alongside it, which is the specific failure mode
+    # that would turn a protocol into a fabrication.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Results may not appear without an extraction file
+        run: |
+          if [ -f analysis/data/extraction_master.csv ]; then
+            echo "Extraction file present; results sections may be populated."
+            exit 0
+          fi
+          if grep -qE '^\[PENDING' manuscript/*.md; then
+            echo "No extraction file, and results sections still marked PENDING. Consistent."
+            exit 0
+          fi
+          echo "FAIL: results sections are no longer marked PENDING, but no"
+          echo "extraction file is committed. Every reported number must be"
+          echo "derivable from committed inputs."
+          exit 1

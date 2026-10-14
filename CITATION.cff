@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this protocol, pipeline or its results, please cite it as below."
+title: "Beyond Disease-Specific Endpoints: A Geroscience Framework for Evaluating Incretin and Glucagon Receptor Agonism Through Aging Biomarker Signatures"
+abstract: >-
+  A pre-specified systematic review and receptor class network meta-analysis
+  protocol with its complete analysis pipeline, published before data
+  extraction. Incretin based therapies modify a large share of the biomarkers
+  that index biological aging, and 14 of 16 measurable markers move in the
+  direction associated with slower aging, while lean mass and resting heart
+  rate move the other way. This project tests whether the signature differs by
+  receptor class rather than by molecule, and whether the hepatic component
+  survives adjustment for accompanying weight loss. A composite Net Biological
+  Age Impact Score is proposed as a weighted mean of direction adjusted
+  standardized effects, together with candidate metabolic age normalization
+  thresholds. No pooled estimate is reported at this stage.
+type: software
+authors:
+  - family-names: Borges
+    given-names: Julian
+    orcid: "https://orcid.org/0009-0001-9929-3135"
+    email: jyborges@bu.edu
+    affiliation: "Department of Computer Science, Boston University Metropolitan College"
+repository-code: "https://github.com/julian-borges-md/incretin-aging-biomarkers"
+license: MIT
+version: 0.1
+date-released: "2026-10-14"
+keywords:
+  - geroscience
+  - biological age
+  - aging biomarkers
+  - GLP-1 receptor agonists
+  - tirzepatide
+  - retatrutide
+  - survodutide
+  - GDF-15
+  - inflammaging
+  - network meta-analysis
+  - reproducibility

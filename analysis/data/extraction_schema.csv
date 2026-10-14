@@ -1,0 +1,51 @@
+column,type,required,description
+trial_id,string,yes,Unique trial identifier (NCT number preferred)
+first_author,string,yes,First author surname
+year,integer,yes,Publication year
+journal,string,yes,Journal name
+phase,string,yes,Trial phase (1 1b 2 2a 2b 3)
+country_region,string,yes,Country or region of conduct
+sponsor,string,yes,Funding sponsor
+industry_funded,logical,yes,TRUE if industry sponsored
+drug,string,yes,Molecule name
+receptor_class,factor,yes,GLP1_mono GLP1_GIP GLP1_GCGR GLP1_GIP_GCGR
+dose_mg,numeric,yes,Dose in mg
+dose_frequency,string,yes,Dosing frequency
+comparator,string,yes,placebo lifestyle or active drug name
+duration_weeks,numeric,yes,Trial duration in weeks
+population,factor,yes,T2D obesity MASH MASLD mixed
+n_randomized,integer,yes,Total randomized
+n_tx,integer,yes,n in treatment arm with outcome data
+n_ctrl,integer,yes,n in control arm with outcome data
+age_mean,numeric,yes,Mean baseline age
+age_sd,numeric,no,SD of baseline age
+pct_female,numeric,yes,Percentage female
+race_white_pct,numeric,no,Percentage white
+bmi_mean,numeric,yes,Mean baseline BMI
+bmi_sd,numeric,no,SD of baseline BMI
+weight_mean,numeric,yes,Mean baseline body weight kg
+weight_sd,numeric,no,SD of baseline body weight
+hba1c_mean,numeric,no,Mean baseline HbA1c percent
+hba1c_sd,numeric,no,SD of baseline HbA1c
+pct_weight_change,numeric,yes,Mean percentage body weight change (meta-regression covariate)
+biomarker,string,yes,Biomarker name matching the 26-marker inventory
+hallmark_domain,string,yes,Aging hallmark domain
+aging_direction,integer,yes,+1 if decrease is favorable; -1 if decrease is unfavorable
+clinical_weight,numeric,yes,Pre-specified clinical importance weight for NBAIS scheme c
+outcome_type,factor,yes,continuous or binary
+mean_tx,numeric,conditional,Mean change in treatment arm (continuous only)
+sd_tx,numeric,conditional,SD of change in treatment arm (continuous only; must be > 0)
+mean_ctrl,numeric,conditional,Mean change in control arm (continuous only)
+sd_ctrl,numeric,conditional,SD of change in control arm (continuous only; must be > 0)
+events_tx,integer,conditional,Events in treatment arm (binary only)
+events_ctrl,integer,conditional,Events in control arm (binary only)
+assessment_method,string,no,DXA MRI BIA assay platform
+assessment_timepoint_weeks,numeric,yes,Week at which outcome was measured
+rob_randomization,factor,yes,low some_concerns high
+rob_deviations,factor,yes,low some_concerns high
+rob_missing_data,factor,yes,low some_concerns high
+rob_measurement,factor,yes,low some_concerns high
+rob_selective_reporting,factor,yes,low some_concerns high
+rob_overall,factor,yes,low some_concerns high
+prespecified_endpoint,logical,yes,TRUE if outcome was pre-specified rather than post hoc
+coi_declared,string,no,Conflict of interest statement summary
