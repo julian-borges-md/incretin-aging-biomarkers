@@ -8,3 +8,8 @@ work/
 analysis/output/*
 !analysis/output/.gitkeep
 *.pdf.aux
+
+# Exported bibliographic records: large, and licensed database content.
+# The search log records the counts, strings and SHA-256 so the export is
+# verifiable without redistributing Elsevier-licensed records in a public repo.
+search/**/*.ris
