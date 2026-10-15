@@ -41,11 +41,60 @@ if (length(files) == 0) fail("no per trial extraction files found in ", IN_DIR)
 message("Merging ", length(files), " extraction file(s).\n")
 
 raw <- purrr::map_dfr(files, function(f) {
-  d <- readr::read_csv(f, show_col_types = FALSE, progress = FALSE)
+  # Reject ragged rows before anything else. A stray comma inside a free text
+  # field produces a row with more columns than the header, which readr will
+  # silently absorb into a spill column or drop. It is also what crashed an
+  # extraction rewrite and cost rows that had to be restored from git, so it
+  # fails loudly here rather than propagating.
+  hdr_n  <- length(readr::read_lines(f, n_max = 1) |>
+                     strsplit(",") |> unlist())
+  all_ln <- readr::read_lines(f)
+  body   <- all_ln[-1]
+  body   <- body[nzchar(trimws(body))]
+  widths <- vapply(strsplit(body, ","), length, integer(1))
+  bad    <- which(widths != hdr_n)
+  if (length(bad)) {
+    stop(sprintf(
+      paste0("RAGGED ROWS in %s: header has %d columns but line(s) %s have %s.\n",
+             "  Almost always an unquoted comma inside a free text field such ",
+             "as `notes`.\n  Fix the source file; do not let this reach the ",
+             "master."),
+      basename(f), hdr_n,
+      paste(bad + 1, collapse = ", "),
+      paste(widths[bad], collapse = ", ")))
+  }
+
+  # Read every column as character, then coerce the numeric ones by name.
+  # Per-file type inference is the problem: `phase` is 2 in one trial and
+  # "2a"/"2b" in another, `dose_mg` can be 1.8 or "1.8 BIW", and bind_rows
+  # refuses to combine a double column with a character one. Inferring types
+  # independently per file guarantees these collisions as the corpus grows.
+  d <- readr::read_csv(f, show_col_types = FALSE, progress = FALSE,
+                       col_types = readr::cols(.default = readr::col_character()))
   d$source_file <- basename(f)
   message(sprintf("  %-52s %3d rows", basename(f), nrow(d)))
   d
 })
+
+# Coerce the columns that must be numeric. Anything that fails to parse
+# becomes NA and is caught by the validation below rather than silently
+# flowing into an effect size.
+numeric_cols <- c("yi_reported", "ci_lb_reported", "ci_ub_reported",
+                  "se_reported", "p_reported",
+                  "mean_tx", "sd_tx", "sem_tx", "n_tx",
+                  "mean_ctrl", "sd_ctrl", "sem_ctrl", "n_ctrl",
+                  "events_tx", "events_ctrl",
+                  "aging_direction", "clinical_weight",
+                  "pct_weight_change", "duration_weeks", "year")
+for (cl in intersect(numeric_cols, names(raw))) {
+  before <- sum(!is.na(raw[[cl]]) & trimws(raw[[cl]]) != "NA")
+  raw[[cl]] <- suppressWarnings(as.numeric(raw[[cl]]))
+  after  <- sum(!is.na(raw[[cl]]))
+  if (after < before) {
+    message(sprintf("  NOTE  %s: %d value(s) did not parse as numeric",
+                    cl, before - after))
+  }
+}
 
 # Columns a per trial file may omit. Adding them as NA keeps resolve_effect
 # able to test for them without every file having to carry every route's
@@ -114,8 +163,31 @@ if (length(bad_class) > 0) {
 }
 
 if (any(is.na(dat$pct_weight_change))) {
-  errs <- c(errs, sprintf("%d row(s) missing pct_weight_change, the meta-regression covariate",
-                          sum(is.na(dat$pct_weight_change))))
+  # NOT a fatal error. pct_weight_change is the meta-regression covariate, and
+  # rows lacking it are simply excluded from that model. They remain perfectly
+  # usable for the primary pooled estimates, which do not involve weight.
+  #
+  # Requiring it on every row, as an earlier version of this script did, would
+  # have discarded the SELECT hsCRP analysis (n=17,604) and the entire Wilson
+  # tirzepatide biomarker panel, because biomarker substudies routinely report
+  # the biomarker without restating the parent trial's weight change, and the
+  # parent paper does not always give it per arm in percentage terms.
+  #
+  # The honest handling is to carry the rows, exclude them from the one model
+  # that needs the covariate, and report how much of the evidence that model
+  # is therefore blind to.
+  n_miss <- sum(is.na(dat$pct_weight_change))
+  message(sprintf("  NOTE  %d of %d row(s) lack pct_weight_change.",
+                  n_miss, nrow(dat)))
+  message("        These pool normally but are excluded from the weight")
+  message("        adjusted meta-regression. Affected trials:")
+  miss_by_trial <- dat |>
+    dplyr::filter(is.na(pct_weight_change)) |>
+    dplyr::count(trial_id, name = "rows")
+  for (i in seq_len(nrow(miss_by_trial))) {
+    message(sprintf("          %-24s %3d rows",
+                    miss_by_trial$trial_id[i], miss_by_trial$rows[i]))
+  }
 }
 
 # A biomarker whose direction is coded inconsistently across trials would
@@ -147,7 +219,7 @@ if (length(errs) > 0) {
 message("  ok   every row resolved to an effect size")
 message("  ok   aging_direction consistent within each biomarker")
 message("  ok   no duplicated trial, dose, biomarker and timepoint rows")
-message("  ok   receptor classes recognised, weight covariate complete")
+message("  ok   receptor classes recognised")
 
 ## ---------------------------------------------------------------------------
 ## Write
