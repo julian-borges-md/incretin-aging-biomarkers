@@ -12,7 +12,7 @@
 
 RS := Rscript
 
-.PHONY: install verify selftest validate analysis clean
+.PHONY: install verify selftest validate extract analysis clean
 
 install:
 	$(RS) requirements.R
@@ -25,6 +25,9 @@ selftest:
 
 validate:
 	$(RS) src/validate_pipeline.R
+
+extract:
+	$(RS) src/build_master.R
 
 analysis:
 	$(RS) analysis/M5_AGE_analysis_pipeline.R
