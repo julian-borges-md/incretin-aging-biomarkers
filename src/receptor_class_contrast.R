@@ -1,0 +1,116 @@
+#!/usr/bin/env Rscript
+###############################################################################
+# receptor_class_contrast.R
+#
+# Q2: does the aging biomarker signature differ by receptor class?
+#
+# This is the review's central claim to novelty. Neither existing meta-analysis
+# of this drug class (Ren 2025, 52 RCTs; Alrasheed 2026, 40 RCTs) stratifies by
+# receptor pharmacology.
+#
+# The script reports what the current corpus can and cannot support, by
+# biomarker, rather than producing a class contrast wherever arithmetic is
+# possible. A contrast computed from one trial per class is a difference
+# between two studies, not a class effect, and will be labelled as such.
+###############################################################################
+
+suppressPackageStartupMessages({ library(dplyr); library(readr); library(tidyr) })
+set.seed(20261013)
+
+dat <- readr::read_csv("analysis/data/extraction_master_harmonised.csv",
+                       show_col_types = FALSE, progress = FALSE) |>
+  filter(!is.na(yi_pct), !is.na(vi_pct), vi_pct > 0) |>
+  group_by(trial_id, biomarker) |>
+  slice_max(order_by = dose_mg, n = 1, with_ties = FALSE) |>
+  ungroup()
+
+CLASSES <- c("GLP1_mono","GLP1_GIP","GLP1_GCGR","GLP1_GIP_GCGR")
+
+## ---------------------------------------------------------------------------
+## 1. What is actually comparable
+## ---------------------------------------------------------------------------
+cov <- dat |>
+  group_by(biomarker, receptor_class) |>
+  summarise(n_trials = n_distinct(trial_id), .groups = "drop")
+
+grid <- cov |>
+  pivot_wider(names_from = receptor_class, values_from = n_trials, values_fill = 0)
+
+for (cl in setdiff(CLASSES, names(grid))) grid[[cl]] <- 0L
+grid <- grid |>
+  mutate(classes_present = rowSums(across(all_of(CLASSES)) > 0))
+
+message("COVERAGE: trials per biomarker per receptor class\n")
+message(sprintf("%-18s %10s %9s %10s %14s %8s",
+                "biomarker","GLP1_mono","GLP1_GIP","GLP1_GCGR","GLP1_GIP_GCGR","classes"))
+message(strrep("-", 76))
+for (i in seq_len(nrow(grid))) {
+  r <- grid[i,]
+  message(sprintf("%-18s %10d %9d %10d %14d %8d",
+                  r$biomarker, r$GLP1_mono, r$GLP1_GIP, r$GLP1_GCGR,
+                  r$GLP1_GIP_GCGR, r$classes_present))
+}
+
+## ---------------------------------------------------------------------------
+## 2. Which contrasts are supportable, and at what strength
+## ---------------------------------------------------------------------------
+# A class effect needs replication WITHIN each class being compared. With one
+# trial per class, any difference is confounded with every other way those two
+# trials differ: population, duration, assay, era, sponsor.
+message("\nCONTRAST SUPPORT")
+message(strrep("-", 76))
+n_repl <- 0
+for (i in seq_len(nrow(grid))) {
+  r <- grid[i,]
+  present <- CLASSES[c(r$GLP1_mono, r$GLP1_GIP, r$GLP1_GCGR, r$GLP1_GIP_GCGR) > 0]
+  reps    <- c(r$GLP1_mono, r$GLP1_GIP, r$GLP1_GCGR, r$GLP1_GIP_GCGR)
+  reps    <- reps[reps > 0]
+  if (length(present) < 2) {
+    v <- sprintf("only %s", paste(present, collapse=", "))
+  } else if (all(reps >= 2)) {
+    v <- sprintf("REPLICATED across %s", paste(present, collapse=" vs "))
+    n_repl <- n_repl + 1
+  } else {
+    v <- sprintf("CONFOUNDED: %s, one trial per class",
+                 paste(present, collapse=" vs "))
+  }
+  message(sprintf("  %-18s %s", r$biomarker, v))
+}
+
+message(sprintf("\nBiomarkers supporting a replicated class contrast: %d of %d",
+                n_repl, nrow(grid)))
+
+## ---------------------------------------------------------------------------
+## 3. Descriptive class signature, explicitly not a contrast
+## ---------------------------------------------------------------------------
+DIR <- c(hsCRP=-1, IL6=-1, YKL40=-1, GDF15=-1, ICAM1=-1, GGT=-1,
+         liver_fat_pdff=-1, leptin=-1, HOMA_IR=-1, NTproBNP=-1,
+         lean_mass=1, adiponectin=1, HOMA_beta=1, fasting_glucose=-1,
+         fasting_insulin=-1, C_peptide=-1, glucagon=-1, ALT=-1, AST=-1,
+         fatty_liver_index=-1)
+INCLUDED <- c("hsCRP","IL6","YKL40","GDF15","ICAM1","GGT",
+              "liver_fat_pdff","leptin","HOMA_IR","NTproBNP","lean_mass")
+
+sig <- dat |>
+  filter(biomarker %in% INCLUDED) |>
+  group_by(receptor_class, biomarker) |>
+  summarise(yi = weighted.mean(yi_pct, 1/vi_pct), .groups="drop") |>
+  mutate(signed = DIR[biomarker] * yi) |>
+  group_by(receptor_class) |>
+  summarise(n_markers = n(),
+            n_domains = n_distinct(biomarker),
+            mean_signed = mean(signed), .groups="drop")
+
+message("\nDESCRIPTIVE SIGNATURE BY CLASS")
+message("NOT a contrast. Each class is summarised over a DIFFERENT marker set,")
+message("so the means are not comparable to one another.\n")
+message(sprintf("%-16s %9s %28s", "class", "markers", "mean signed change"))
+message(strrep("-", 56))
+for (i in seq_len(nrow(sig))) {
+  r <- sig[i,]
+  message(sprintf("%-16s %9d %26.1f%%", r$receptor_class, r$n_markers, r$mean_signed))
+}
+
+readr::write_csv(grid, "analysis/output/table3_class_coverage.csv")
+readr::write_csv(sig,  "analysis/output/table3b_class_signature_descriptive.csv")
+message("\nWrote table3_class_coverage.csv and table3b_class_signature_descriptive.csv")
