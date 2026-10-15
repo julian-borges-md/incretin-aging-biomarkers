@@ -41,36 +41,30 @@ if (length(files) == 0) fail("no per trial extraction files found in ", IN_DIR)
 message("Merging ", length(files), " extraction file(s).\n")
 
 raw <- purrr::map_dfr(files, function(f) {
-  # Reject ragged rows before anything else. A stray comma inside a free text
-  # field produces a row with more columns than the header, which readr will
-  # silently absorb into a spill column or drop. It is also what crashed an
-  # extraction rewrite and cost rows that had to be restored from git, so it
-  # fails loudly here rather than propagating.
-  hdr_n  <- length(readr::read_lines(f, n_max = 1) |>
-                     strsplit(",") |> unlist())
-  all_ln <- readr::read_lines(f)
-  body   <- all_ln[-1]
-  body   <- body[nzchar(trimws(body))]
-  widths <- vapply(strsplit(body, ","), length, integer(1))
-  bad    <- which(widths != hdr_n)
-  if (length(bad)) {
-    stop(sprintf(
-      paste0("RAGGED ROWS in %s: header has %d columns but line(s) %s have %s.\n",
-             "  Almost always an unquoted comma inside a free text field such ",
-             "as `notes`.\n  Fix the source file; do not let this reach the ",
-             "master."),
-      basename(f), hdr_n,
-      paste(bad + 1, collapse = ", "),
-      paste(widths[bad], collapse = ", ")))
-  }
-
-  # Read every column as character, then coerce the numeric ones by name.
-  # Per-file type inference is the problem: `phase` is 2 in one trial and
-  # "2a"/"2b" in another, `dose_mg` can be 1.8 or "1.8 BIW", and bind_rows
-  # refuses to combine a double column with a character one. Inferring types
-  # independently per file guarantees these collisions as the corpus grows.
+  # Reject ragged rows. A stray UNQUOTED comma inside a free text field makes a
+  # row wider than the header; readr absorbs it silently, and it once crashed a
+  # rewrite script and cost rows that had to be restored from git.
+  #
+  # The check must be quote aware. An earlier version split each line on commas
+  # and compared counts, which flagged every correctly quoted field containing a
+  # comma as ragged. readr's own parser handles quoting properly, so the check
+  # is delegated to it and its problem report is read rather than reimplemented.
   d <- readr::read_csv(f, show_col_types = FALSE, progress = FALSE,
                        col_types = readr::cols(.default = readr::col_character()))
+  probs <- readr::problems(d)
+  if (nrow(probs) > 0) {
+    detail <- paste(
+      sprintf("    row %s, col %s: expected %s but got %s",
+              probs$row, probs$col, probs$expected, probs$actual),
+      collapse = "\n")
+    stop(sprintf(
+      paste0("MALFORMED ROWS in %s:\n%s\n",
+             "  Usually an unquoted comma inside a free text field such as ",
+             "`notes`.\n  Quote the field or remove the comma. Do not let this ",
+             "reach the master."),
+      basename(f), detail))
+  }
+
   d$source_file <- basename(f)
   message(sprintf("  %-52s %3d rows", basename(f), nrow(d)))
   d
