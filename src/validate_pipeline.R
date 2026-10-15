@@ -256,25 +256,27 @@ ok(sprintf("the rejected weighted sum would have inflated %.2f fold",
 message("\nTEST 4  Direction handling for the unfavorable axis")
 
 mixed <- tibble(
-  biomarker      = c(sprintf("fav%02d", 1:15), "lean_mass"),
-  estimate       = c(rep(0.30, 15), 0.60),   # large change on every marker
-  se             = rep(0.08, 16),
+  biomarker      = c("hsCRP", "adiponectin", "lean_mass"),
+  estimate       = c(-0.40,    0.30,          -0.50),
+  se             = c( 0.08,    0.08,           0.08),
   receptor_class = "X"
 )
 
 dat <- tibble(
-  biomarker       = mixed$biomarker,
-  aging_direction = c(rep(1, 15), -1),       # lean mass change is unfavorable
+  biomarker       = c("hsCRP", "adiponectin", "lean_mass"),
+  aging_direction = c(-1,       1,             1),
   clinical_weight = 1
 )
 
 score_mixed <- compute_nbais(mixed, "inverse_variance")
 
-# Expected by hand: fifteen markers contribute +0.30 and one contributes
-# -0.60, all equally weighted because all share the same SE.
-expected <- (15 * 0.30 + 1 * (-0.60)) / 16
+# By hand: hsCRP -1*-0.40 = +0.40 favorable; adiponectin +1*+0.30 = +0.30
+# favorable; lean mass +1*-0.50 = -0.50 unfavorable. Equal SEs, equal weights.
+expected <- (0.40 + 0.30 - 0.50) / 3
 
-message(sprintf("  15 favorable markers at +0.30, 1 unfavorable at 0.60"))
+message("  hsCRP       fell, lower is better   -> +0.40")
+message("  adiponectin rose, higher is better  -> +0.30")
+message("  lean_mass   fell, higher is better  -> -0.50")
 message(sprintf("  composite            %.6f", score_mixed))
 message(sprintf("  expected by hand     %.6f", expected))
 
@@ -283,10 +285,41 @@ if (abs(score_mixed - expected) > 1e-9) {
 }
 ok("composite matches the hand calculation exactly")
 
+# The decisive assertions. A favorable change must contribute positively
+# whichever way it moves on the biomarker's own scale. Under the inverted
+# convention this review shipped with until 2026-10-15, the first of these
+# two was negative, and no test caught it because every biomarker extracted
+# up to that point was lower-is-better, making the inversion uniform.
+fell_good <- compute_nbais(
+  tibble(biomarker = "hsCRP", estimate = -0.40, se = 0.08, receptor_class = "X"),
+  "inverse_variance")
+rose_good <- compute_nbais(
+  tibble(biomarker = "adiponectin", estimate = 0.30, se = 0.08, receptor_class = "X"),
+  "inverse_variance")
+
+message(sprintf("\n  lower-is-better marker falling   %+.3f", fell_good))
+message(sprintf("  higher-is-better marker rising   %+.3f", rose_good))
+
+if (fell_good <= 0) {
+  fail("a lower-is-better biomarker that FELL scored as unfavorable; ",
+       "the direction convention is inverted")
+}
+ok("a lower-is-better biomarker that fell scores favorably")
+
+if (rose_good <= 0) {
+  fail("a higher-is-better biomarker that ROSE scored as unfavorable; ",
+       "the direction convention is inverted")
+}
+ok("a higher-is-better biomarker that rose scores favorably")
+
 # A large enough unfavorable axis must be able to drag the composite negative.
 # If it cannot, the metric cannot express the clinical concern that motivates it.
-dominant <- mixed
-dominant$estimate <- c(rep(0.10, 15), 2.00)
+dominant <- tibble(
+  biomarker      = c("hsCRP", "adiponectin", "lean_mass"),
+  estimate       = c(-0.10,    0.10,          -2.00),
+  se             = c( 0.08,    0.08,           0.08),
+  receptor_class = "X"
+)
 score_dom <- compute_nbais(dominant, "inverse_variance")
 message(sprintf("  with a dominant unfavorable axis   %.6f", score_dom))
 if (score_dom >= 0) {

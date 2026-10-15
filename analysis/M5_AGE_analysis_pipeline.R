@@ -345,12 +345,33 @@ readr::write_csv(dplyr::filter(metareg_results, biomarker %in% hepatic_biomarker
 ## ---------------------------------------------------------------------------
 # The score collapses the biomarker signature for a receptor class into a
 # single signed number. For each biomarker the pooled standardized effect is
-# multiplied by a direction indicator, which is +1 when the observed change
-# corresponds to a younger biological age and -1 when it corresponds to an
-# older one. The products are combined as a WEIGHTED MEAN:
+# multiplied by a direction indicator, and the products are combined as a
+# WEIGHTED MEAN:
 #
 #   NBAIS = sum_k ( d_k * g_k * w_k ) / sum_k ( w_k )
 #
+# DEFINITION OF d_k, stated carefully because an earlier version of this
+# comment was wrong in a way that inverted most of the score.
+#
+# d_k is THE SIGN THAT THE EFFECT g_k TAKES WHEN THE CHANGE IS FAVOURABLE.
+# It is a property of the biomarker, fixed before any data are seen, and does
+# not depend on what a trial actually found.
+#
+#   hsCRP, HOMA-IR, liver fat, resting heart rate   lower is better    d = -1
+#   adiponectin, HOMA-beta, lean mass               HIGHER is better   d = +1
+#
+# The product d_k * g_k is then positive whenever the biomarker moved toward
+# younger biological age, whichever way that is on its own scale. hsCRP
+# falling by 0.38 contributes -1 * -0.38 = +0.38. Adiponectin rising by 0.31
+# contributes +1 * +0.31 = +0.31. Lean mass falling by 0.50 contributes
+# +1 * -0.50 = -0.50, correctly unfavourable.
+#
+# The error this replaces defined d_k as +1 when "a decrease corresponds to
+# younger biological age", which produced a NEGATIVE product for every
+# lower-is-better biomarker and so inverted the sign of most of the composite.
+# It survived because every biomarker extracted up to that point was
+# lower-is-better, making the inversion uniform and therefore invisible, until
+# adiponectin became the first higher-is-better marker extracted.
 # The division is deliberate. A weighted sum would grow mechanically with the
 # number of biomarkers measured, so a receptor class studied with a broader
 # panel would score higher purely as an artifact of measurement coverage rather
