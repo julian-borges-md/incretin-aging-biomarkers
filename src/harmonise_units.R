@@ -1,0 +1,178 @@
+#!/usr/bin/env Rscript
+###############################################################################
+# harmonise_units.R
+#
+# Puts every extracted effect onto one scale before anything is pooled across
+# biomarkers.
+#
+# WHY THIS EXISTS
+#
+# The extraction carries each effect in whatever units its source reported:
+# log ratios from the survodutide analyses, percentage change from the
+# tirzepatide and SELECT analyses, U/L from the liver enzymes, index points
+# from the fatty liver index. Those standard errors are not comparable
+# quantities. Weighting by inverse variance across them weights by how small
+# the unit happens to be.
+#
+# Measured on the raw extraction, this was not a subtle distortion. Two
+# glucose markers reported as log ratios would have taken 80 percent of the
+# composite (fasting glucose 61 percent, glucagon 19 percent), while hsCRP
+# from a 17,604 patient trial contributed effectively nothing. A log ratio
+# standard error of 0.047 and a percentage change standard error of 0.97
+# differ by a factor of twenty for reasons that have nothing to do with
+# precision.
+#
+# THE COMMON SCALE
+#
+# Percentage change from baseline, placebo corrected. Chosen because it is
+# what most of this literature already reports, so the fewest rows need
+# transforming, and because it is interpretable without reference to a
+# population standard deviation that these papers mostly do not publish.
+#
+# Hedges' g would be the conventional choice and is what the protocol named.
+# It is not available here: standardising requires the pooled baseline
+# standard deviation, and biomarker substudies in this literature report
+# treatment contrasts without it. Inventing a standard deviation to enable a
+# standardised effect would be worse than using a scale the data support.
+# This departure from the protocol is recorded in the manuscript rather than
+# made silently.
+#
+# CONVERSIONS
+#
+#   log ratio        pct = (exp(yi) - 1) * 100
+#                    se_pct = exp(yi) * 100 * se      (delta method)
+#
+#   percent change   already on scale, carried through unchanged
+#
+#   absolute (U/L,   pct = 100 * yi / baseline_mean
+#   index points)    se_pct = 100 * se / baseline_mean
+#                    Requires a reported baseline mean. Rows without one are
+#                    marked unconvertible and excluded from cross biomarker
+#                    pooling rather than guessed at.
+#
+# WHAT STAYS UNAFFECTED
+#
+# Pooling WITHIN a biomarker across trials was always valid when those trials
+# reported the same units, and remains so. Only the cross biomarker composite
+# and any comparison spanning unit families required this.
+###############################################################################
+
+suppressPackageStartupMessages({
+  library(dplyr); library(readr)
+})
+
+IN  <- "analysis/data/extraction_master.csv"
+OUT <- "analysis/data/extraction_master_harmonised.csv"
+
+dat <- readr::read_csv(IN, show_col_types = FALSE, progress = FALSE)
+
+# Baseline means for absolute scale biomarkers.
+#
+# THIS TABLE IS DELIBERATELY EMPTY.
+#
+# Converting an absolute effect (U/L, index points) to a percentage requires
+# the baseline mean. Meyhofer 2026 reports its liver parameter baselines in a
+# table that is referenced in the text but was not available in the retrieved
+# full text, so those values are NOT in hand.
+#
+# While writing this script I filled the table with plausible looking numbers
+# (ALT 28, AST 23, GGT 34, FLI 77) that no source supplied. They were removed.
+# A fabricated denominator would have silently rescaled four real effects and
+# produced percentages that looked entirely reasonable and were invented.
+#
+# The four SELECT liver rows are therefore marked unconvertible and excluded
+# from cross biomarker pooling until the baseline table is obtained from the
+# published tables or supplementary material. They remain available for
+# within biomarker pooling in their native units, where no conversion is
+# needed.
+#
+# To populate: add a row only with a baseline mean read from a named table in
+# a named source, with the locator in baseline_source.
+BASELINE <- tibble(
+  biomarker       = character(),
+  baseline_mean   = numeric(),
+  baseline_source = character()
+)
+
+LOG_RATIO_ROUTES <- c("log_RR_ci", "log_OR_ci")
+PCT_BIOMARKERS   <- c("hsCRP", "IL6", "GDF15", "YKL40", "ICAM1", "leptin",
+                      "NTproBNP", "liver_fat_pdff")
+
+dat <- dat |>
+  left_join(BASELINE, by = "biomarker") |>
+  mutate(
+    se_native = sqrt(vi),
+    unit_family = case_when(
+      se_route %in% LOG_RATIO_ROUTES        ~ "log_ratio",
+      biomarker %in% PCT_BIOMARKERS         ~ "percent_change",
+      !is.na(baseline_mean)                 ~ "absolute",
+      TRUE                                  ~ "unknown"
+    ),
+    yi_pct = case_when(
+      unit_family == "log_ratio"      ~ (exp(yi) - 1) * 100,
+      unit_family == "percent_change" ~ yi,
+      unit_family == "absolute"       ~ 100 * yi / baseline_mean,
+      TRUE                            ~ NA_real_
+    ),
+    se_pct = case_when(
+      unit_family == "log_ratio"      ~ exp(yi) * 100 * se_native,
+      unit_family == "percent_change" ~ se_native,
+      unit_family == "absolute"       ~ 100 * se_native / baseline_mean,
+      TRUE                            ~ NA_real_
+    ),
+    vi_pct = se_pct^2
+  )
+
+unconvertible <- filter(dat, is.na(yi_pct))
+if (nrow(unconvertible) > 0) {
+  message("\nUNCONVERTIBLE ROWS, excluded from cross biomarker pooling:")
+  unconvertible |>
+    count(biomarker, unit_family, name = "rows") |>
+    as.data.frame() |>
+    print(row.names = FALSE)
+  message("  Reason: absolute units with no reported baseline mean.")
+}
+
+message("\nHARMONISED EFFECTS, one row per biomarker shown")
+message(sprintf("%-20s %-15s %10s %9s %10s %9s",
+                "biomarker", "unit family", "yi native", "se nat", "yi pct", "se pct"))
+message(strrep("-", 78))
+dat |>
+  group_by(biomarker) |>
+  slice(1) |>
+  ungroup() |>
+  arrange(unit_family, biomarker) |>
+  rowwise() |>
+  do({
+    r <- .
+    message(sprintf("%-20s %-15s %10.3f %9.4f %10.2f %9.4f",
+                    r$biomarker, r$unit_family, r$yi, r$se_native,
+                    ifelse(is.na(r$yi_pct), NA_real_, r$yi_pct),
+                    ifelse(is.na(r$se_pct), NA_real_, r$se_pct)))
+    data.frame()
+  }) |>
+  invisible()
+
+# Show the weight redistribution the harmonisation produces. This is the
+# diagnostic that exposed the problem and it is kept as a standing check.
+share <- function(v) { w <- 1 / v; 100 * w / sum(w, na.rm = TRUE) }
+
+cmp <- dat |>
+  filter(!is.na(vi_pct)) |>
+  group_by(biomarker) |>
+  summarise(vi_nat = 1 / sum(1 / vi, na.rm = TRUE),
+            vi_har = 1 / sum(1 / vi_pct, na.rm = TRUE), .groups = "drop") |>
+  mutate(before = share(vi_nat), after = share(vi_har)) |>
+  arrange(desc(before))
+
+message("\nCOMPOSITE WEIGHT SHARE, before and after harmonisation")
+message(sprintf("%-20s %8s %8s", "biomarker", "before", "after"))
+message(strrep("-", 40))
+for (i in seq_len(nrow(cmp))) {
+  message(sprintf("%-20s %7.2f%% %7.2f%%",
+                  cmp$biomarker[i], cmp$before[i], cmp$after[i]))
+}
+
+readr::write_csv(dat, OUT)
+message(sprintf("\nWrote %s  (%d rows, %d convertible)",
+                OUT, nrow(dat), sum(!is.na(dat$yi_pct))))
