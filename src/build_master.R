@@ -33,8 +33,19 @@ dir.create("analysis/output", showWarnings = FALSE, recursive = TRUE)
 fail <- function(...) { message("\nFAIL: ", ...); quit(status = 1) }
 
 files <- list.files(IN_DIR, pattern = "^extraction_.*\\.csv$", full.names = TRUE)
-files <- files[!grepl("extraction_master\\.csv$", files)]
-files <- files[!grepl("extraction_schema\\.csv$", files)]
+# Exclude this script's own outputs and anything downstream of them. The
+# pattern above matches extraction_master.csv, extraction_master_harmonised.csv
+# and extraction_schema.csv, none of which are per-trial extraction files.
+#
+# This bit: harmonise_units.R writes extraction_master_harmonised.csv into this
+# same directory, and an earlier version of this filter named only
+# extraction_master.csv and extraction_schema.csv. build_master therefore
+# ingested its own harmonised output as if it were a seventh trial, which
+# duplicated every row and collided on the yi/se/se_route columns that the
+# harmonised file already carries. It failed loudly rather than silently, which
+# is the only reason it was caught.
+files <- files[!grepl("extraction_master", basename(files))]
+files <- files[!grepl("extraction_schema", basename(files))]
 
 if (length(files) == 0) fail("no per trial extraction files found in ", IN_DIR)
 
