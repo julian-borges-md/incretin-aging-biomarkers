@@ -39,11 +39,16 @@ This is the axis this component adds. Graded against a fixed hierarchy.
 
 | Grade | Criterion | What it takes |
 |---|---|---|
+| **B0** | Human genetic evidence that the pathway is CAUSAL for a hard outcome | Mendelian randomisation with a validated instrument, ideally corroborated by a trial of an agent acting on the same target |
 | **B1** | Treatment-induced CHANGE in the marker predicts change in a hard outcome, within the same trial population | Mediation or time-varying covariate analysis showing attenuation of the treatment effect |
 | **B2** | BASELINE level predicts a hard outcome in the same or a closely comparable trial population | Prospective association with events, adjusted for standard confounders |
 | **B3** | Baseline level predicts a hard outcome in general population cohorts only | Epidemiological association outside the treated population |
 | **B4** | Associated with aging phenotypes but no hard outcome prediction | Cross-sectional or phenotype-level association |
 | **B5** | No outcome prediction evidence located | |
+
+B0 was added on 2026-10-15, after grading had begun, because IL-6 turned out to carry Mendelian randomisation evidence and the scheme as written had no cell for it. Adding a grade mid-assessment is a protocol change and is recorded as one rather than made silently. It is strictly additive: no marker already graded moves, and B0 can only be reached by evidence of a kind (genetic instruments) that none of the earlier markers possess. The alternative, forcing IL-6 into B3, would have understated the strongest evidence in the inventory.
+
+Note that B0 and B1 answer different questions and neither subsumes the other. B0 says the pathway matters causally. B1 says this drug's effect on the marker tracks its effect on outcomes. A marker can be B0 without being B1 if no trial has tested mediation, which is exactly IL-6's position here.
 
 Hard outcome means death, a major adverse cardiovascular event, incident disease, or a validated functional decline measure. It does not mean another biomarker.
 
