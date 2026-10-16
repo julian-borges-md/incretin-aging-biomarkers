@@ -95,7 +95,8 @@ The diagram will therefore be drawn for Stream A only, with Stream B shown as a 
 | Embase search | Run 15 October 2026: 710 hits, 659 article records exported and screened, 51 registry records exported (22:00) |
 | CENTRAL search | Run 15 October 2026: 460 trial records exported; 260 overlap the Embase articles, 200 do not (143 registry derived, 57 journal articles) |
 | Web of Science search | Not run; no string exists |
-| Second independent screener, blinded | Implemented 15 October 2026 as two local reviewer agents with a third adjudicating (`src/screen_titles.py`); running on the 659 Embase articles |
-| Kappa per screening stage | Computed by `src/screen_titles.py summarise` once both reviewers finish (`search/screening/SCREENING_SUMMARY.md`) |
+| Second independent screener, blinded | Implemented 15 October 2026 as two local reviewer agents with a third adjudicating (`src/screen_titles.py`); first run on the 659 Embase articles complete: 338 include, 321 exclude (`search/screening/SCREENING_SUMMARY.md`) |
+| Kappa per screening stage | Title and abstract, Embase pool, criteria v1: 0.649 (SE 0.030), agreement 82.4 per cent, 116 of 116 disagreements adjudicated |
+| Screening sensitivity audit | 5 of 37 known relevant records wrongly excluded by both reviewers, in two recurring criterion misreadings; criteria clarified (v2) and the 321 exclusions rescreened under v2, pool 2 screened under v2 (`search/screening/SCREENING_AUDIT_2026-10-15.md`) |
 | Full-text retrieval of the five paywalled placebo-controlled trials | Done 15 October 2026 through BU EZproxy; all five extracted under amendment R1 to R4 |
 | Record counts at each PRISMA step for Stream A | Partially available, needs reconstruction from search logs |

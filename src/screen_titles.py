@@ -33,10 +33,22 @@ central writes); its decision, adjudication and summary files carry the
 suffix _batch2 so the first pool is never touched. Both pools pass the same
 count and SHA-256 gates on their exports before a record is read.
 
+Criteria versions. v1 is the prompt used for the first full run on the
+Embase pool. An audit of that run found the criteria misapplied in two
+recurring ways (a DPP-4 inhibitor comparator read as an exclusion; 12 weeks
+and 6 months read as shorter than 12 weeks). v2 appends clarifications that
+restate the criteria without changing them. v1 decisions are never rewritten:
+v2 files carry the suffix _v2. The stage rescreen-excluded runs both reviewers
+under v2 on the records a pool's v1 run finally excluded, so that the set
+going to full text is the v1 includes plus every record either reviewer
+includes under v2. Includes are not revisited: an inclusion error is caught at
+full text, an exclusion error is not.
+
 Usage, from the repository root:
-  python3 -I src/screen_titles.py screen [--limit N] [--reviewer A|B] [--pool embase|batch2]
-  python3 -I src/screen_titles.py adjudicate [--pool embase|batch2]
-  python3 -I src/screen_titles.py summarise [--pool embase|batch2]
+  python3 -I src/screen_titles.py screen [--limit N] [--reviewer A|B] [--pool embase|batch2] [--criteria v1|v2]
+  python3 -I src/screen_titles.py rescreen-excluded --criteria v2 [--pool embase|batch2]
+  python3 -I src/screen_titles.py adjudicate [--pool embase|batch2] [--criteria v1|v2]
+  python3 -I src/screen_titles.py summarise [--pool embase|batch2] [--criteria v1|v2]
 """
 import hashlib
 import csv
@@ -71,14 +83,20 @@ POOLS = {
                    members=[("embase_registry", "all"), ("central", "not_in_embase")]),
 }
 POOL = "embase"  # set by main() from --pool
+CRITERIA_VERSION = "v1"  # set by main() from --criteria
+ABSTRACT_CAP = 10000  # characters; above the longest Embase abstract (9,551), below the context window
 
 
 def pool():
     return POOLS[POOL]
 
 
+def file_suffix():
+    return pool()["suffix"] + ("" if CRITERIA_VERSION == "v1" else f"_{CRITERIA_VERSION}")
+
+
 def summary_path():
-    return os.path.join(OUTDIR, f"SCREENING_SUMMARY{pool()['suffix']}.md")
+    return os.path.join(OUTDIR, f"SCREENING_SUMMARY{file_suffix()}.md")
 
 CRITERIA = """You are screening titles and abstracts for a systematic review of randomised
 trials of incretin and glucagon receptor agonists and aging related biomarkers.
@@ -116,6 +134,30 @@ Answer with JSON only, exactly this shape:
  "failed_criteria": [list of letters among D P I O T that clearly fail, empty if none],
  "reason": one sentence of at most 40 words}
 """
+
+
+CRITERIA_V2_ADDENDUM = """
+Clarifications (criteria version 2, added 2026-10-15 after an audit of the
+first run; they restate the criteria above and do not change them):
+- I: the comparator never excludes a trial. A trial is eligible when at least
+  one arm receives an eligible agent, whatever the other arms receive
+  (placebo, insulin, metformin, a sulfonylurea, lifestyle, or a DPP-4
+  inhibitor such as sitagliptin or vildagliptin). The DPP-4 inhibitor
+  exclusion applies only when no arm receives an eligible agent.
+- T: 12 weeks exactly is eligible. Convert before comparing: 12 weeks,
+  3 months, 84 days, 6 months (26 weeks), 1 year all meet the criterion.
+  Exclude on T only when the stated treatment period is clearly shorter
+  than 12 weeks.
+- P: adults with type 2 diabetes are eligible whether or not overweight or
+  obesity is mentioned.
+- D: a secondary or post hoc analysis of a randomised trial is eligible.
+  Exclude on D only when the text states a non randomised design, a single
+  arm, animals, cells, or a review.
+"""
+
+
+def criteria_text():
+    return CRITERIA + (CRITERIA_V2_ADDENDUM if CRITERIA_VERSION == "v2" else "")
 
 
 def load_cfg():
@@ -161,7 +203,7 @@ def parse_ris_file(name):
                     return r[t][0]
             return ""
         out.append(dict(n=i, source=name, accession=first("U2", "AN"), title=first("T1", "TI"),
-                        abstract=first("N2", "AB"), year=re.sub(r"[^0-9]", "", first("Y1", "PY"))[:4],
+                        abstract=first("AB", "N2")[:ABSTRACT_CAP], year=re.sub(r"[^0-9]", "", first("Y1", "PY"))[:4],
                         rtype=first("M3", "TY"), doi=first("DO").lower()))
     return out
 
@@ -230,7 +272,12 @@ def parse_decision(raw):
         d = json.loads(raw)
     except Exception:
         m = re.search(r"\{.*\}", raw, flags=re.S)
-        d = json.loads(m.group(0)) if m else {}
+        try:
+            d = json.loads(m.group(0)) if m else {}
+        except Exception:
+            d = {}  # truncated or malformed JSON: handled below as unparseable, never as a crash
+    if not isinstance(d, dict):
+        d = {}
     dec = str(d.get("decision", "")).strip().lower()
     if dec not in ("include", "exclude"):
         dec = "include"  # an unparseable answer is never a silent exclusion
@@ -247,12 +294,27 @@ def record_text(rec):
             f"Title: {rec['title']}\nAbstract: {rec['abstract'] or '(no abstract in the record)'}")
 
 
-def decisions_path(rev):
-    return os.path.join(OUTDIR, f"decisions_{rev}{pool()['suffix']}.csv")
+def decisions_path(rev, version=None):
+    sfx = file_suffix() if version is None else pool()["suffix"] + ("" if version == "v1" else f"_{version}")
+    return os.path.join(OUTDIR, f"decisions_{rev}{sfx}.csv")
 
 
-def adjudication_path():
-    return os.path.join(OUTDIR, f"adjudication_002{pool()['suffix']}.csv")
+def adjudication_path(version=None):
+    sfx = file_suffix() if version is None else pool()["suffix"] + ("" if version == "v1" else f"_{version}")
+    return os.path.join(OUTDIR, f"adjudication_002{sfx}.csv")
+
+
+def final_decisions(version):
+    """Final decision per record for a pool under one criteria version: agreement, else adjudication."""
+    A, B = read_decisions(decisions_path("A", version)), read_decisions(decisions_path("B", version))
+    ADJ = read_decisions(adjudication_path(version))
+    final = {}
+    for n in set(A) & set(B):
+        if A[n]["decision"] == B[n]["decision"]:
+            final[n] = A[n]["decision"]
+        elif n in ADJ:
+            final[n] = ADJ[n]["decision"]
+    return final
 
 
 def read_decisions(path):
@@ -262,11 +324,11 @@ def read_decisions(path):
         return {int(r["n"]): r for r in csv.DictReader(fh)}
 
 
-def screen(cfg, recs, reviewer, limit=None):
+def screen(cfg, recs, reviewer, limit=None, subset=None):
     model = cfg["screeners"][reviewer]
     path = decisions_path(reviewer)
     done = read_decisions(path)
-    todo = [r for r in recs if r["n"] not in done]
+    todo = [r for r in recs if r["n"] not in done and (subset is None or r["n"] in subset)]
     if limit:
         todo = todo[:limit]
     print(f"reviewer {reviewer}: {len(done)} done, {len(todo)} to screen")
@@ -278,7 +340,7 @@ def screen(cfg, recs, reviewer, limit=None):
         t_all = time.time()
         for i, rec in enumerate(todo, 1):
             t0 = time.time()
-            raw = ollama_chat(cfg, model, CRITERIA, record_text(rec))
+            raw = ollama_chat(cfg, model, criteria_text(), record_text(rec))
             dec, failed, reason = parse_decision(raw)
             w.writerow(dict(n=rec["n"], accession=rec["accession"], decision=dec, failed=failed,
                             reason=reason, seconds=f"{time.time() - t0:.1f}"))
@@ -295,7 +357,7 @@ def adjudicate(cfg, recs):
                      and A[r["n"]]["decision"] != B[r["n"]]["decision"] and r["n"] not in done]
     print(f"adjudicator: {len(done)} done, {len(disagreements)} disagreements to adjudicate")
     new_file = not os.path.exists(path)
-    system = CRITERIA + ("\nTwo independent reviewers disagreed on this record. Their decisions and "
+    system = criteria_text() + ("\nTwo independent reviewers disagreed on this record. Their decisions and "
                          "reasons follow the record. Decide independently against the criteria; do not "
                          "defer to either reviewer by default. Use the same JSON shape.")
     with open(path, "a", newline="") as fh:
@@ -353,7 +415,39 @@ def summarise(cfg, recs):
     lines.append(f"# Title and abstract screening of {pool()['title']}\n")
     lines.append("Two independent reviewer agents (different local models, temperature 0, fixed seed, blinded to each other), "
                  "a third agent adjudicating disagreements. Models are named only in the untracked configuration file. "
-                 "Produced by `src/screen_titles.py summarise`.\n")
+                 f"Criteria version {CRITERIA_VERSION}. Produced by `src/screen_titles.py summarise`.\n")
+    v1_final = final_decisions("v1") if CRITERIA_VERSION != "v1" else {}
+    if v1_final and all(n in v1_final for n in both):
+        # Rescreen of the v1 excluded set: report the rescue, not a second kappa over a biased subset.
+        v1_exc = sorted(n for n, d in v1_final.items() if d == "exclude")
+        rescued = [n for n in both if "include" in (A[n]["decision"], B[n]["decision"])]
+        still = [n for n in both if n not in rescued]
+        v1_inc = sum(1 for d in v1_final.values() if d == "include")
+        lines.append(f"## Rescreen of the records excluded under criteria v1\n")
+        lines.append("| Quantity | Value |\n|---|---|")
+        lines.append(f"| Records finally excluded under v1 | {len(v1_exc)} |")
+        lines.append(f"| Rescreened by both reviewers under {CRITERIA_VERSION} | {len(both)} |")
+        lines.append(f"| Included by either reviewer under {CRITERIA_VERSION} (rescued, to full text) | {len(rescued)} |")
+        lines.append(f"| Excluded by both reviewers under {CRITERIA_VERSION} | {len(still)} |")
+        lines.append(f"| Agreement on the rescreened set | {agree} of {len(pairs)} ({(agree / len(pairs) if pairs else 0):.1%}) |")
+        lines.append(f"| Set going to full text: v1 includes plus rescued | {v1_inc} + {len(rescued)} = {v1_inc + len(rescued)} |")
+        known_resc = [n for n in rescued if known.get(n)]
+        known_still = [n for n in still if known.get(n)]
+        lines.append(f"| Known relevant records among the rescreened | {len(known_resc) + len(known_still)}: rescued {len(known_resc)}, still excluded {len(known_still)} |\n")
+        lines.append("| Criterion failed in the rescreen | Reviewer 1 | Reviewer 2 |\n|---|---|---|")
+        for c in "DPIOT":
+            lines.append(f"| {c} | {failA.get(c, 0)} | {failB.get(c, 0)} |")
+        if known_still:
+            lines.append("\n| n | Title | Reviewer 1 | Reviewer 2 |\n|---|---|---|---|")
+            for n in known_still:
+                rec = next(r for r in recs if r["n"] == n)
+                lines.append(f"| {n} | {rec['title'][:90]} | {A[n]['decision']} {A[n]['failed']} | {B[n]['decision']} {B[n]['failed']} |")
+        sfx = file_suffix()
+        lines.append(f"\nPer record decisions stay untracked beside the export (decisions_A{sfx}.csv, decisions_B{sfx}.csv).")
+        with open(summary_path(), "w") as fh:
+            fh.write("\n".join(lines) + "\n")
+        print("\n".join(lines))
+        return
     lines.append("| Quantity | Value |\n|---|---|")
     lines.append(f"| Records in pool | {len(recs)} |")
     if len(pool()["members"]) > 1:
@@ -371,7 +465,7 @@ def summarise(cfg, recs):
     lines.append("| Criterion failed | Reviewer 1 | Reviewer 2 |\n|---|---|---|")
     for c in "DPIOT":
         lines.append(f"| {c} | {failA.get(c, 0)} | {failB.get(c, 0)} |")
-    sfx = pool()["suffix"]
+    sfx = file_suffix()
     lines.append(f"\nPer record decisions and reasons stay untracked beside the export (decisions_A{sfx}.csv, decisions_B{sfx}.csv, "
                  f"adjudication_002{sfx}.csv). A known relevant record excluded by screening is listed below for audit.\n")
     missed = [n for n in known_ns if final[n] == "exclude"]
@@ -389,15 +483,20 @@ def summarise(cfg, recs):
 
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ("screen", "adjudicate", "summarise"):
+    if len(sys.argv) < 2 or sys.argv[1] not in ("screen", "rescreen-excluded", "adjudicate", "summarise"):
         print(__doc__)
         sys.exit(2)
-    global POOL
+    global POOL, CRITERIA_VERSION
     args = sys.argv[2:]
     if "--pool" in args:
         POOL = args[args.index("--pool") + 1]
         if POOL not in POOLS:
             print("unknown pool", POOL, "; known:", ", ".join(POOLS))
+            sys.exit(2)
+    if "--criteria" in args:
+        CRITERIA_VERSION = args[args.index("--criteria") + 1]
+        if CRITERIA_VERSION not in ("v1", "v2"):
+            print("unknown criteria version", CRITERIA_VERSION)
             sys.exit(2)
     cfg = load_cfg()
     recs = parse_ris()
@@ -412,6 +511,18 @@ def main():
             reviewers = [args[args.index("--reviewer") + 1]]
         for rev in reviewers:
             screen(cfg, recs, rev, limit)
+    elif stage == "rescreen-excluded":
+        if CRITERIA_VERSION == "v1":
+            print("rescreen-excluded needs --criteria v2: it rescreens the v1 exclusions under the clarified criteria")
+            sys.exit(2)
+        v1_final = final_decisions("v1")
+        if not v1_final:
+            print("no v1 decisions for this pool; nothing to rescreen")
+            sys.exit(1)
+        subset = {n for n, d in v1_final.items() if d == "exclude"}
+        print(f"rescreen: {len(subset)} records finally excluded under v1")
+        for rev in ["A", "B"]:
+            screen(cfg, recs, rev, None, subset)
     elif stage == "adjudicate":
         adjudicate(cfg, recs)
     else:

@@ -58,11 +58,18 @@ screen-summary:
 # Second pool: the 51 Embase registry records plus the 200 CENTRAL records not
 # in the Embase export; separate decision files (suffix _batch2), same gates.
 screen-batch2:
-	python3 -I src/screen_titles.py screen --pool batch2
+	python3 -I src/screen_titles.py screen --pool batch2 --criteria v2
 adjudicate-batch2:
-	python3 -I src/screen_titles.py adjudicate --pool batch2
+	python3 -I src/screen_titles.py adjudicate --pool batch2 --criteria v2
 screen-summary-batch2:
-	python3 -I src/screen_titles.py summarise --pool batch2
+	python3 -I src/screen_titles.py summarise --pool batch2 --criteria v2
+
+# Criteria v2 (clarifications after the audit in search/screening/SCREENING_AUDIT_2026-10-15.md):
+# rescreen the pool 1 exclusions under v2; pool 2 runs under v2 from the start.
+rescreen-excluded:
+	python3 -I src/screen_titles.py rescreen-excluded --criteria v2
+screen-summary-v2:
+	python3 -I src/screen_titles.py summarise --criteria v2
 
 clean:
 	rm -rf analysis/output/*
