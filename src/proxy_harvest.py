@@ -6,11 +6,23 @@ loop = json.load(open("work/proxy_loop.json")) + [dict(key="pool1_n22", doi="10.
     # records outside the first loop: two with a DOI not in closed_access_todo at loop time, one PubMed abstract page (no DOI, PMID 38940809)
     dict(key="pool1_n294", doi="10.1016/j.jacc.2023.09.811"), dict(key="pool1_n625", doi="10.1111/j.1472-8206.2010.00888.x"), dict(key="pool1_n255", doi=""),
     # repository PDF rendered with pdftotext (Dokkyo Medical University repository), no DOI
-    dict(key="pool1_n595", doi="")]
+    dict(key="pool1_n595", doi=""),
+    # Chinese language journals reached on a second attempt: yiigle abstract page (DOI 10.3760) and CNKI oversea abstract page (DOI 10.13429; CNKI is not configured in the BU EZproxy)
+    dict(key="pool1_n183", doi="10.3760/cma.j.cn115791-20240318-00120"), dict(key="pool1_n48", doi="10.13429/j.cnki.cjcr.2026.06.008")]
 dl = os.path.expanduser("~/Downloads"); keep = os.path.join(dl, "fulltext_captures"); os.makedirs(keep, exist_ok=True)
 M = "work/fulltext/proxy/MANIFEST_proxy_2026-10-16.csv"
 rows = {r["key"]: r for r in csv.DictReader(open(M))} if os.path.exists(M) else {}
-def classify(t):
+# Captures that the rule marks fulltext but reading shows to be abstract pages (the rule counts the
+# structured abstract's Methods and Results plus the reference list). Named exceptions with the reason;
+# the rule itself stays as it is.
+READ_AS_PARTIAL = {
+    "pool1_n142": "Springer abstract page (Access this article, Buy article); BU has no subscription to Hormones",
+    "pool1_n532": "AHA abstract page (GET ACCESS); the /doi/full/ route redirects to /doi/abs/",
+    "pool1_n183": "yiigle abstract page with the reference list; the article body is behind the CMA paywall",
+}
+def classify(t, key=None):
+    if key in READ_AS_PARTIAL:
+        return "partial", 0
     # section marks in English or Russian (one capture, pool1_n447, is a Russian language article)
     marks = sum(bool(re.search(r"\b(" + m + r")\b", t, re.I)) for m in ("Methods|Методы", "Results|Результаты", "Discussion|Обсуждение", "References|Список литературы|Литература"))
     wall = bool(re.search(r"Purchase PDF|Get access|Buy article|Access this article|Institutional subscription|Rent this article|Sign in to access|Purchase access", t))
@@ -19,7 +31,7 @@ def classify(t):
     return "partial", marks
 for key, r in rows.items():
     if os.path.exists(r["file"]):
-        st, mk = classify(open(r["file"], "rb").read().decode("utf-8", errors="replace")); r["status"], r["marks"] = st, mk
+        st, mk = classify(open(r["file"], "rb").read().decode("utf-8", errors="replace"), key); r["status"], r["marks"] = st, mk
 new = 0
 for it in loop:
     key = it["key"]
@@ -32,7 +44,7 @@ for it in loop:
     if not src: continue
     data = open(src, "rb").read(); t = data.decode("utf-8", errors="replace")
     out = f"work/fulltext/proxy/{key}.txt"; open(out, "wb").write(data)
-    status, marks = classify(t)
+    status, marks = classify(t, key)
     m = re.search(r"^SOURCE: (\S+)", t, re.M)
     rows[key] = dict(key=key, doi=it["doi"], status=status, chars=len(t), marks=marks, host=(m.group(1).split("/")[2] if m else ""), file=out)
     if not os.path.basename(src).startswith("."):

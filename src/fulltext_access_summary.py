@@ -69,14 +69,13 @@ if os.path.exists(PROXY):
     md.append("| Host of the full text captures | Records |\n|---|---|")
     for k, v in hosts.most_common():
         md.append(f"| {k} | {v} |")
+    md.append("\nThree captures that the rule marked `fulltext` were reclassified as `partial` after reading (1-142 Springer abstract page, 1-532 AHA abstract page, 1-183 yiigle abstract page with its reference list); they are named in `src/proxy_harvest.py` with the reason, and the rule itself is unchanged. Two Chinese language records are abstract pages reached on a second attempt (1-183 Chinese Journal of Diabetes on yiigle; 1-48 Chinese Journal of Clinical Research on CNKI oversea, which the BU EZproxy does not cover).\n")
     md.append("\nOne record without a DOI (1-595, Dokkyo J Med Sci 2014;41(3):211) was found as a PDF in the Dokkyo Medical University repository (dmu.repo.nii.ac.jp), rendered with pdftotext and added to the same manifest.\n")
     md.append("\n### Records still without a text (recorded by hand from the capture attempts)\n")
     md.append("| Record | Identifier | What was found |\n|---|---|---|")
     for row in (
-        ("1-48", "10.13429/j.cnki.cjcr.2026.06.008", "chndoi.org resolver page only (423 characters); Chinese journal, full text not on a reachable site"),
         ("1-90", "10.25258/ijddt.16.44s.15", "DOI does not resolve (impactfactor.org placeholder, 105 characters)"),
         ("1-160", "10.31838/ijprt/15.02.374", "DOI not found at doi.org"),
-        ("1-183", "10.3760/cma.j.cn115791-20240318-00120", "yiigle.com page did not render (131 characters)"),
         ("1-443", "no DOI; Int J Clin Exp Med 2020;13(2):1219", "publisher site answered 509 Bandwidth Limit Exceeded; not in PubMed"),
         ("2-223", "no DOI; Drug Invention Today 2019;12(11):2549", "ResearchGate lists it with the abstract and a request full text button only; not in PubMed; publisher PDF not located"),
     ):
