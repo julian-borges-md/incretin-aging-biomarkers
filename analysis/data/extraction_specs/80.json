@@ -1,0 +1,183 @@
+{
+ "group": "80",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT02905864",
+  "pmid": "39877802",
+  "doi": "10.1016/j.ocarto.2024.100562",
+  "first_author": "Poulsen",
+  "year": "2025",
+  "journal": "Osteoarthr Cartil Open",
+  "phase": "4",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "3",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "52",
+  "population": "obesity",
+  "n_tx": "63",
+  "n_ctrl": "60",
+  "assessment_timepoint_weeks": "52",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "FALSE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: LOSE-IT (NCT02905864, Parker Institute, Copenhagen), exploratory secondary analysis of a single centre double blind placebo controlled trial in adults with overweight (BMI 27 or more) and symptomatic knee osteoarthritis: after an 8 week low calorie diet run in with at least 5 percent weight loss, randomised to liraglutide 3 mg daily (dose_mg 3) or placebo for 52 weeks; 156 randomised in the original trial, 63 liraglutide and 60 placebo with samples in Table 3 (n per arm); Table 3 gives changes from week 0 to week 52 per arm as mean (SE) and the group difference with 95 percent CI (route ci_95, MD in the printed units); the exploratory outcomes (CRP, lipids, glucose, HbA1c, eGFR, ALAT, blood pressure) were predefined in a statistical analysis plan for this secondary analysis but are not trial endpoints (prespecified FALSE); baseline values in Table 1 are at enrolment, 8 weeks before randomisation and before a 12.7 kg diet induced weight loss, so no base means are entered (the week 0 values are in the LOSE-IT main report, Gudbergsen 2021, companion pass); weight difference minus 3.8 kg (95 percent CI minus 6.7 to minus 0.9) at 52 weeks, arms minus 4.8 and minus 1.1 kg, week 0 weight not printed so pct_weight_change is left empty (amendment A2); core grant from the Oak Foundation to the Parker Institute, trial drug supplied by Novo Nordisk in the original trial per the main report (industry_funded FALSE for this analysis, see doubts); population knee osteoarthritis with overweight, held under amendment A6; rob_overall some_concerns"
+ },
+ "rows": [
+  {
+   "biomarker": "hsCRP",
+   "measure": "MD",
+   "unit": "mg/L",
+   "yi_reported": "-0.4",
+   "ci_lb_reported": "-1.5",
+   "ci_ub_reported": "0.68",
+   "p_reported": "0.459",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: CRP mg/L change week 0 to 52, liraglutide minus 0.7 (SE 0.4) vs placebo minus 0.3 (SE 0.5), group difference minus 0.4 (minus 1.5 to 0.68), p 0.459; enrolment CRP 4.8 (3.8) and 4.5 (5.0) mg/L before the diet run in"
+  },
+  {
+   "biomarker": "TC",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "yi_reported": "-0.0",
+   "ci_lb_reported": "-0.3",
+   "ci_ub_reported": "0.2",
+   "p_reported": "0.816",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: total cholesterol mmol/L change week 0 to 52, 0.7 (0.1) vs 0.7 (0.1), group difference minus 0.0 (minus 0.3 to 0.2); enrolment 5.5 (1.0) and 5.5 (0.9)"
+  },
+  {
+   "biomarker": "LDL",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "yi_reported": "0.0",
+   "ci_lb_reported": "-0.2",
+   "ci_ub_reported": "0.2",
+   "p_reported": "0.805",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: LDL mmol/L change week 0 to 52, 0.4 (0.1) vs 0.4 (0.1), group difference 0.0 (minus 0.2 to 0.2); enrolment 3.3 (0.9) and 3.2 (0.9)"
+  },
+  {
+   "biomarker": "TG",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "yi_reported": "-0.2",
+   "ci_lb_reported": "-0.4",
+   "ci_ub_reported": "0.0",
+   "p_reported": "0.061",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: triglycerides mmol/L change week 0 to 52, 0.1 (0.1) vs 0.3 (0.1), group difference minus 0.2 (minus 0.4 to 0.0); enrolment 1.6 (0.6) and 1.8 (0.9)"
+  },
+  {
+   "biomarker": "fasting_glucose",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "yi_reported": "-0.1",
+   "ci_lb_reported": "-0.3",
+   "ci_ub_reported": "0.1",
+   "p_reported": "0.274",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: fasting plasma glucose mmol/L change week 0 to 52, 0.3 (0.1) vs 0.4 (0.1), group difference minus 0.1 (minus 0.3 to 0.1); enrolment 6.2 (1.4) and 6.0 (1.0)"
+  },
+  {
+   "biomarker": "HbA1c",
+   "measure": "MD",
+   "unit": "mmol/mol",
+   "yi_reported": "-2.1",
+   "ci_lb_reported": "-3.0",
+   "ci_ub_reported": "-1.35",
+   "p_reported": "0.001",
+   "p_is_bound": "TRUE",
+   "se_source": "ci_95",
+   "notes": "Table 3: HbA1c mmol/mol change week 0 to 52, minus 4.7 (0.3) vs minus 2.5 (0.4), group difference minus 2.1 (minus 3.0 to minus 1.35), p below 0.001 (bound); enrolment 40.8 (7.3) and 39.2 (4.9) mmol/mol; unit mmol/mol, not percent"
+  },
+  {
+   "biomarker": "eGFR",
+   "measure": "MD",
+   "unit": "mL/min",
+   "yi_reported": "1.0",
+   "ci_lb_reported": "-2.2",
+   "ci_ub_reported": "4.2",
+   "p_reported": "0.537",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: eGFR mL/min change week 0 to 52, minus 0.8 (1.3) vs minus 1.9 (1.4), group difference 1.0 (minus 2.2 to 4.2)"
+  },
+  {
+   "biomarker": "ALT",
+   "measure": "MD",
+   "unit": "U/L",
+   "yi_reported": "0.98",
+   "ci_lb_reported": "-1.5",
+   "ci_ub_reported": "3.5",
+   "p_reported": "0.443",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: ALAT U/L change week 0 to 52, minus 15.7 (1.0) vs minus 16.4 (1.1), group difference 0.98 (minus 1.5 to 3.5)"
+  },
+  {
+   "biomarker": "SBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "yi_reported": "-0.4",
+   "ci_lb_reported": "-5.4",
+   "ci_ub_reported": "4.5",
+   "p_reported": "0.862",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: systolic arterial pressure mmHg change week 0 to 52, 4.4 (1.9) vs 4.8 (2.1), group difference minus 0.4 (minus 5.4 to 4.5); enrolment 138 (17) and 136 (16)"
+  },
+  {
+   "biomarker": "DBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "yi_reported": "-0.7",
+   "ci_lb_reported": "-3.6",
+   "ci_ub_reported": "2.3",
+   "p_reported": "0.654",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "notes": "Table 3: diastolic arterial pressure mmHg change week 0 to 52, 1.7 (1.2) vs 2.4 (1.2), group difference minus 0.7 (minus 3.6 to 2.3); enrolment 84 (10) and 83 (10)"
+  }
+ ],
+ "json": {
+  "status": "held_pending_decision",
+  "molecule": "liraglutide",
+  "trial_id": "NCT02905864",
+  "design": "LOSE-IT, single centre double blind placebo controlled trial after a diet run in, liraglutide 3 mg vs placebo, overweight with knee osteoarthritis, 63 and 60 analysed in this secondary analysis, 52 weeks",
+  "reason": "population knee osteoarthritis with overweight, held under amendment A6 (Director decision on held populations); ten inventory markers extracted in full from Table 3 as group differences with 95 percent CI and kept in staging",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "serum NGAL (main outcome of the analysis)",
+   "HDL cholesterol",
+   "creatinine",
+   "body weight and BMI"
+  ],
+  "tables_used": [
+   "Table 1 (enrolment values only)",
+   "Table 3"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "computer generated stratified randomisation with identical placebo (D1 low); participants, investigators and assessors blinded (D2 low); analysis limited to participants with NGAL samples, 123 of 156 randomised, with imputation described for the main analysis (D3 some concerns); laboratory outcomes (D4 low); exploratory outcomes of a secondary analysis with a statistical analysis plan but outside the trial registration (D5 some concerns)"
+  },
+  "doubts": [
+   "held population: knee osteoarthritis with overweight (BMI 27 or more); extracted in full, not entered in the master until the Director decides",
+   "baseline denominators are not available in this paper (Table 1 is at enrolment before the 8 week diet); the week 0 values are in the LOSE-IT main report (Gudbergsen 2021) for the companion pass",
+   "HbA1c is in mmol/mol; conversion to percent is left to the pipeline",
+   "industry_funded recorded FALSE for this foundation funded analysis although Novo Nordisk supplied the drug and placebo for the original trial"
+  ]
+ }
+}

@@ -1,0 +1,78 @@
+{
+ "group": "16",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Wang 2026 Xi'an DKD",
+  "pmid": "",
+  "doi": "10.36721/pjps.2026.39.7.204.1",
+  "first_author": "Wang",
+  "year": "2026",
+  "journal": "Pak J Pharm Sci",
+  "phase": "4",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1",
+  "comparator": "placebo (canagliflozin and combination arms not entered)",
+  "comparator_type": "placebo",
+  "duration_weeks": "24",
+  "population": "T2D",
+  "n_tx": "30",
+  "n_ctrl": "30",
+  "assessment_timepoint_weeks": "24",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "FALSE",
+  "rob_overall": "high",
+  "notes": "STUDY: single centre randomised controlled trial (Xi'an Gem Flower Changqing Hospital, January 2022 to June 2023) in inpatients with type 2 diabetes and early diabetic kidney disease (UACR 30 to 300 mg/g, eGFR 60 or more): 120 randomised 1:1:1:1 (computer sequence, opaque envelopes) to canagliflozin 100 mg, semaglutide 0.25 mg weekly escalated to 1.0 mg after four weeks (dose_mg 1), the combination, or placebo, 30 per arm, 24 weeks; the semaglutide vs placebo contrast is entered, the canagliflozin and combination arms are not; Table 3 gives eGFR at baseline and 24 weeks as mean plus or minus SD for all four arms (route arm_change_imputed_r, correlation 0.5); Table 4 (glycaemic parameters) prints the three active arms only, so no placebo contrast exists for HbA1c or fasting glucose; HOMA-IR, lipids, TNF-alpha, IL-6 and CRP are described as numerically changed without values; primary endpoint UACR (not in the inventory), eGFR a secondary renal endpoint (prespecified FALSE); body weight not reported, pct_weight_change empty; no funding, no conflicts declared (industry_funded FALSE); rob_overall high"
+ },
+ "rows": [
+  {
+   "biomarker": "eGFR",
+   "measure": "MD",
+   "unit": "mL/min/1.73m2",
+   "base_mean_tx": "84.65",
+   "base_sd_tx": "11.85",
+   "final_mean_tx": "80.78",
+   "final_sd_tx": "10.98",
+   "base_mean_ctrl": "84.98",
+   "base_sd_ctrl": "11.92",
+   "final_mean_ctrl": "79.45",
+   "final_sd_ctrl": "11.60",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 3: eGFR mL/min/1.73 m2 at baseline and 24 weeks, semaglutide and placebo arms (four arm ANOVA at 24 weeks F 3.171, P 0.046, not used)"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "Wang 2026 Xi'an DKD",
+  "design": "single centre four arm randomised controlled trial, canagliflozin, semaglutide, combination or placebo, type 2 diabetes with early diabetic kidney disease, 120 randomised (30 per arm), 24 weeks",
+  "reason": "full text group (institutional route); one inventory marker (eGFR) with semaglutide and placebo values in Table 3; the glycaemic table omits the placebo arm and the inflammatory and lipid markers are reported without values",
+  "biomarkers_reported_no_variance": [
+   "HbA1c (Table 4 prints the active arms only: semaglutide 7.93 to 7.05 percent; no placebo values)",
+   "fasting_glucose (Table 4 prints the active arms only: semaglutide 8.83 to 7.35 mmol/L; no placebo values)",
+   "HOMA_IR, TC, LDL, TG, TNF_alpha, IL6, hsCRP (described as numerically changed, no values, no between group tests)"
+  ],
+  "other_markers": [
+   "urinary albumin to creatinine ratio (primary endpoint)"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 3"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "some_concerns",
+   "d5_selection": "high",
+   "overall": "high",
+   "justification": "computer generated sequence with opaque envelopes (D1 low); blinding not described beyond a placebo arm, concomitant therapy adjusted (D2 some concerns); participant flow stated only as a figure, 30 per arm in every table (D3 some concerns); eGFR from laboratory creatinine (D4 low to some concerns); no registration, tables omit the placebo arm for glycaemic outcomes and exploratory markers are reported without values (D5 high)"
+  },
+  "doubts": [
+   "the proxy capture garbles Tables 2 to 4; the eGFR values were read from the one intact row block",
+   "a four arm trial with an open access journal of limited editorial record; the single row carries little weight"
+  ]
+ }
+}

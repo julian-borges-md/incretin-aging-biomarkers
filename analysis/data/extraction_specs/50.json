@@ -1,0 +1,73 @@
+{
+ "group": "50",
+ "extractor": "S",
+ "study": {
+  "trial_id": "STEP UP",
+  "pmid": "",
+  "doi": "",
+  "first_author": "Wharton",
+  "year": "2025",
+  "journal": "Lancet Diabetes Endocrinol",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "7.2",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "72",
+  "population": "obesity",
+  "n_tx": "1005",
+  "n_ctrl": "201",
+  "assessment_timepoint_weeks": "72",
+  "pct_weight_change": "-14.8",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: STEP UP (NCT05646706), phase 3b randomised double blind placebo and active controlled trial at 95 sites in 11 countries of once weekly semaglutide 7.2 mg (dose_mg 7.2) vs semaglutide 2.4 mg vs placebo, 5:1:1, in adults with BMI 30 or more without diabetes, 72 weeks; 1407 randomised (1005, 201, 201), full analysis set, treatment policy estimand; Table 2 prints treatment comparisons for the 7.2 mg arm only (vs 2.4 mg and vs placebo), so the rows are semaglutide 7.2 mg vs placebo (route ci_95 for ETDs in native units, measure RR with log_RR_ci for the estimated treatment ratios to baseline of lipids, hsCRP and fasting insulin); the 2.4 mg vs placebo contrast is not printed and is not derived; supportive secondary endpoints (prespecified TRUE); pct_weight_change is the ETD vs placebo in percent weight change at week 72, minus 14.8 (95 percent CI minus 16.2 to minus 13.4; arms minus 18.7 vs minus 3.9); Table 1 baselines HbA1c 5.7 and 5.7 percent, eGFR 95.1 and 95.5 (geometric means), blood pressure and lipid baselines in the appendix; funded by Novo Nordisk (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-5.4", "ci_lb_reported": "-7.3", "ci_ub_reported": "-3.6", "se_source": "ci_95", "notes": "Table 2: systolic blood pressure change to week 72, 7.2 mg minus 9.9 (SE 0.4, n 949) vs placebo minus 4.4 (0.8, n 171), ETD vs placebo minus 5.4 (minus 7.3 to minus 3.6), p below 0.0001; baseline in the appendix"},
+  {"biomarker": "DBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-2.4", "ci_lb_reported": "-3.8", "ci_ub_reported": "-1.1", "p_reported": "0.0006", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: diastolic blood pressure change to week 72, 7.2 mg minus 4.5 (0.3) vs placebo minus 2.1 (0.7), ETD vs placebo minus 2.4 (minus 3.8 to minus 1.1), p 0.0006"},
+  {"biomarker": "HbA1c", "measure": "MD", "unit": "%", "yi_reported": "-0.30", "ci_lb_reported": "-0.36", "ci_ub_reported": "-0.24", "base_mean_tx": "5.7", "base_mean_ctrl": "5.7", "se_source": "ci_95", "notes": "Table 2: HbA1c change to week 72 in percentage points, 7.2 mg minus 0.32 (0.01, n 938) vs placebo minus 0.02 (0.03, n 167), ETD vs placebo minus 0.30 (minus 0.36 to minus 0.24); Table 1 baseline 5.7 and 5.7 percent"},
+  {"biomarker": "fasting_glucose", "measure": "MD", "unit": "mmol/L", "yi_reported": "-0.51", "ci_lb_reported": "-0.63", "ci_ub_reported": "-0.40", "se_source": "ci_95", "notes": "Table 2: fasting plasma glucose change to week 72 in mmol/L, 7.2 mg minus 0.63 (0.02) vs placebo minus 0.12 (0.06), ETD vs placebo minus 0.51 (minus 0.63 to minus 0.40); baseline in the appendix"},
+  {"biomarker": "TC", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.95", "ci_lb_reported": "0.90", "ci_ub_reported": "1.00", "p_reported": "0.06", "p_is_bound": "FALSE", "se_source": "log_RR_ci", "notes": "Table 2: total cholesterol ratio to baseline at week 72, 7.2 mg 0.95 vs placebo 1.00, ETR vs placebo 0.95 (0.90 to 1.00), p 0.06"},
+  {"biomarker": "LDL", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.95", "ci_lb_reported": "0.89", "ci_ub_reported": "1.00", "p_reported": "0.05", "p_is_bound": "FALSE", "se_source": "log_RR_ci", "notes": "Table 2: LDL cholesterol ratio to baseline at week 72, 7.2 mg 0.93 vs placebo 0.99, ETR vs placebo 0.95 (0.89 to 1.00), p 0.05"},
+  {"biomarker": "TG", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.78", "ci_lb_reported": "0.72", "ci_ub_reported": "0.84", "se_source": "log_RR_ci", "notes": "Table 2: triglycerides ratio to baseline at week 72, 7.2 mg 0.77 vs placebo 0.99, ETR vs placebo 0.78 (0.72 to 0.84), p below 0.0001"},
+  {"biomarker": "hsCRP", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.44", "ci_lb_reported": "0.37", "ci_ub_reported": "0.53", "se_source": "log_RR_ci", "notes": "Table 2: hsCRP ratio to baseline at week 72 (mg/L), 7.2 mg 0.40 (n 942) vs placebo 0.90 (n 168), ETR vs placebo 0.44 (0.37 to 0.53), p below 0.0001"},
+  {"biomarker": "fasting_insulin", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.69", "ci_lb_reported": "0.62", "ci_ub_reported": "0.77", "se_source": "log_RR_ci", "notes": "Table 2: fasting serum insulin ratio to baseline at week 72 (pmol/L), 7.2 mg 0.61 (n 921) vs placebo 0.88 (n 163), ETR vs placebo 0.69 (0.62 to 0.77), p below 0.0001"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "STEP UP",
+  "design": "STEP UP, phase 3b randomised double blind placebo and active controlled trial, semaglutide 7.2 mg vs 2.4 mg vs placebo 5:1:1, adults with obesity without diabetes, 1407 randomised, 72 weeks",
+  "reason": "full text group (institutional route); nine inventory markers for semaglutide 7.2 mg vs placebo from Table 2 (ETDs with 95 percent CI and estimated treatment ratios to baseline with 95 percent CI); the 2.4 mg vs placebo contrast is not printed",
+  "biomarkers_reported_no_variance": [
+   "eGFR (Table 1 baseline geometric means only)"
+  ],
+  "other_markers": [
+   "HDL and VLDL cholesterol ratios",
+   "waist circumference, BMI, body weight in kg",
+   "glycaemic category transitions",
+   "sit to stand test",
+   "semaglutide 7.2 mg vs 2.4 mg comparisons"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 2"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "double blind placebo controlled randomisation 5:1:1 (D1, D2 low); full analysis set with the treatment policy estimand (D3 low); laboratory outcomes (D4 low); registered trial with prespecified supportive secondary endpoints (D5 low)"
+  },
+  "doubts": [
+   "only the 7.2 mg arm has printed contrasts vs placebo; the 2.4 mg arm is in the trial but not entered",
+   "ratios to baseline entered under measure RR by the existing convention; blood pressure, glucose, lipid and CRP baselines are in the appendix, not captured"
+  ]
+ }
+}

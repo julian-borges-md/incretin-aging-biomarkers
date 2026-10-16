@@ -1,0 +1,105 @@
+{
+ "group": "10",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT06164873",
+  "pmid": "",
+  "doi": "10.1001/jama.2026.8142",
+  "first_author": "Gao",
+  "year": "2026",
+  "journal": "JAMA",
+  "phase": "3",
+  "drug": "mazdutide",
+  "receptor_class": "GLP1_GCGR",
+  "dose_mg": "9",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "60",
+  "population": "obesity",
+  "n_tx": "307",
+  "n_ctrl": "154",
+  "assessment_timepoint_weeks": "60",
+  "pct_weight_change": "-15.15",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: GLORY-2, double blind placebo controlled phase 3 trial (NCT06164873, 27 Chinese hospitals, December 2023 to November 2025) of once weekly mazdutide 9 mg (dose_mg 9 per weekly injection) vs placebo, 2:1, in Chinese adults with obesity (BMI 28 or more by Chinese criteria, 16.1 percent with type 2 diabetes), 60 week treatment period then 12 weeks off treatment; 462 randomised, 461 treated and analysed (307 mazdutide, 154 placebo, primary analysis set); Table 2 gives least squares mean changes per arm and the between group difference with 95 percent CI under the treatment policy estimand at week 60 (route ci_95); SBP in mmHg (MD), triglycerides and LDL cholesterol as percent change (PCT); the other cardiometabolic markers (diastolic pressure, hsCRP, HbA1c, fasting glucose, fasting insulin, HOMA-IR, ALT, AST, total cholesterol, HDL, UACR) are in eTables 3 and 4 of Supplement 3, not in the packet (supplement pass pending); key secondary outcomes with type I error control (prespecified TRUE); pct_weight_change is the Table 2 between group difference in percent weight change, minus 15.15 (95 percent CI minus 17.22 to minus 13.09; arms minus 16.65 vs minus 1.50); sponsored by Innovent (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {
+   "biomarker": "SBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "yi_reported": "-9.57",
+   "ci_lb_reported": "-11.64",
+   "ci_ub_reported": "-7.49",
+   "base_mean_tx": "122.7",
+   "base_mean_ctrl": "121.2",
+   "se_source": "ci_95",
+   "notes": "Table 2: change in systolic blood pressure from baseline to week 60, mm Hg, between group difference (treatment policy estimand); arms minus 9.80 (minus 11.37 to minus 8.23) vs minus 0.23 (minus 2.13 to 1.67); Table 1 baseline 122.7 (11.7) and 121.2 (11.2)"
+  },
+  {
+   "biomarker": "TG",
+   "measure": "PCT",
+   "unit": "%",
+   "yi_reported": "-36.82",
+   "ci_lb_reported": "-52.92",
+   "ci_ub_reported": "-20.73",
+   "base_mean_tx": "170.7",
+   "base_mean_ctrl": "150.5",
+   "se_source": "ci_95",
+   "notes": "Table 2: change in triglycerides level, percent, between group difference at week 60; arms minus 21.06 (minus 36.73 to minus 5.40) vs 15.76 (3.03 to 28.49); Table 1 baseline 170.7 (98.3) and 150.5 (87.6) mg/dL"
+  },
+  {
+   "biomarker": "LDL",
+   "measure": "PCT",
+   "unit": "%",
+   "yi_reported": "-10.09",
+   "ci_lb_reported": "-15.44",
+   "ci_ub_reported": "-4.75",
+   "base_mean_tx": "117.6",
+   "base_mean_ctrl": "119.7",
+   "se_source": "ci_95",
+   "notes": "Table 2: change in LDL cholesterol level, percent, between group difference at week 60; arms minus 6.94 (minus 12.90 to minus 0.98) vs 3.15 (minus 2.09 to 8.40); Table 1 baseline 117.6 (28.8) and 119.7 (26.8) mg/dL"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "mazdutide",
+  "trial_id": "NCT06164873",
+  "design": "GLORY-2, double blind placebo controlled phase 3 trial, mazdutide 9 mg weekly vs placebo 2:1, Chinese adults with obesity, 461 analysed, 60 weeks",
+  "reason": "full text group (institutional route); three inventory markers with between group differences and 95 percent CI in Table 2; nine further inventory markers are in the JAMA supplement eTables 3 and 4 (supplement pass pending)",
+  "biomarkers_reported_no_variance": [
+   "DBP, hsCRP, HbA1c, fasting_glucose, fasting_insulin, HOMA_IR, ALT, AST, TC (stated as improved vs placebo at week 60 for both estimands; values in eTables 3 and 4 of Supplement 3, not in the packet)",
+   "liver_fat_pdff (79 participants with steatosis: liver fat reduced by more than 60 percent at weeks 24 and 60, eFigure 7; no contrast printed)",
+   "lean_mass (DXA subset of 90: total lean mass reduction 6.3 kg SD 3.9 vs 0.4 kg SD 2.6, eFigure 6; subset n per arm not printed)",
+   "eGFR (Table 1 baseline only)"
+  ],
+  "other_markers": [
+   "waist, hip, neck and arm circumference",
+   "non-HDL cholesterol",
+   "serum uric acid",
+   "lipoprotein(a)",
+   "urine albumin to creatinine ratio",
+   "total fat mass by DXA",
+   "quality of life scores"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 2"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "interactive web response randomisation with stratification and block size 6 (D1 low); double blind with a treatment policy estimand (D2 low); primary analysis set of all treated participants with multiple imputation under the estimand framework (D3 low); laboratory and blinded measurements (D4 low); registered trial with key secondary outcomes under type I error control (D5 low)"
+  },
+  "doubts": [
+   "supplement needed: eTables 3 and 4 carry nine inventory markers (Supplement 3 of the JAMA article), to be captured in the supplement pass",
+   "population is mixed, 16 percent with type 2 diabetes; recorded as obesity"
+  ]
+ }
+}

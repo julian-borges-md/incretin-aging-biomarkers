@@ -1,0 +1,67 @@
+{
+ "group": "85",
+ "extractor": "S",
+ "study": {
+  "trial_id": "SUMMIT",
+  "pmid": "",
+  "doi": "10.1056/NEJMoa2410027",
+  "first_author": "Packer",
+  "year": "2025",
+  "journal": "N Engl J Med",
+  "phase": "3",
+  "drug": "tirzepatide",
+  "receptor_class": "GLP1_GIP",
+  "dose_mg": "15",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "52",
+  "population": "obesity",
+  "n_tx": "364",
+  "n_ctrl": "367",
+  "assessment_timepoint_weeks": "52",
+  "pct_weight_change": "-11.6",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: SUMMIT, international double blind placebo controlled phase 3 trial (129 centres, nine countries) of tirzepatide titrated from 2.5 mg to a maximum tolerated dose of 15 mg weekly (dose_mg 15, the target) vs placebo in adults with heart failure with preserved ejection fraction (ejection fraction 50 percent or more) and BMI 30 or more, about 48 percent with type 2 diabetes; 731 randomised (364 and 367), median follow up 104 weeks, continuous endpoints at 52 weeks; Table 2 (HTML table read from the NEJM page through the proxy, companion capture packer2025_summit_nejm_tables1_2.txt) gives estimated mean plus or minus SE changes per arm and the difference with 95 percent CI (route ci_95): hsCRP percent change (PCT, a key secondary endpoint), systolic pressure and heart rate (MD), and NT-proBNP as a ratio of geometric means (measure RR, log_RR_ci); Table 1 baselines; pct_weight_change is the Table 2 difference in percent weight change at 52 weeks, minus 11.6 (95 percent CI minus 12.9 to minus 10.4; arms minus 13.9 vs minus 2.2); population obesity with HFpEF recorded as obesity; funded by Eli Lilly (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "hsCRP", "measure": "PCT", "unit": "%", "yi_reported": "-34.9", "ci_lb_reported": "-45.6", "ci_ub_reported": "-22.2", "base_mean_tx": "5.8", "base_mean_ctrl": "5.8", "se_source": "ci_95", "notes": "Table 2: percent change at 52 weeks in high sensitivity C-reactive protein, arms minus 38.8 plus or minus 4.5 vs minus 5.9 plus or minus 5.3, difference minus 34.9 (minus 45.6 to minus 22.2), P below 0.001 (key secondary endpoint); Table 1 baseline 5.8 and 5.8 mg/L"},
+  {"biomarker": "NTproBNP", "measure": "RR", "unit": "ratio of geometric means", "yi_reported": "0.90", "ci_lb_reported": "0.79", "ci_ub_reported": "1.01", "prespecified_endpoint": "FALSE", "se_source": "log_RR_ci", "notes": "Table 2: NT-proBNP adjusted change at 52 weeks as ratio of geometric means, arms 0.93 plus or minus 0.04 vs 1.04 plus or minus 0.04, treatment ratio 0.90 (0.79 to 1.01); baseline medians 196 and 169 pg/mL"},
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-4.7", "ci_lb_reported": "-6.8", "ci_ub_reported": "-2.5", "base_mean_tx": "127.9", "base_mean_ctrl": "128.2", "prespecified_endpoint": "FALSE", "se_source": "ci_95", "notes": "Table 2: adjusted change at 52 weeks in systolic blood pressure, arms minus 4.6 plus or minus 0.8 vs 0.1 plus or minus 0.8 mm Hg, difference minus 4.7 (minus 6.8 to minus 2.5); Table 1 baseline 127.9 and 128.2"},
+  {"biomarker": "resting_heart_rate", "measure": "MD", "unit": "bpm", "yi_reported": "2.8", "ci_lb_reported": "1.3", "ci_ub_reported": "4.3", "base_mean_tx": "71.0", "base_mean_ctrl": "71.2", "prespecified_endpoint": "FALSE", "se_source": "ci_95", "notes": "Table 2: adjusted change at 52 weeks in heart rate, arms 3.0 plus or minus 0.5 vs 0.3 plus or minus 0.5 beats per minute, difference 2.8 (1.3 to 4.3); Table 1 baseline 71.0 and 71.2"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "tirzepatide",
+  "trial_id": "SUMMIT",
+  "design": "SUMMIT, international double blind placebo controlled phase 3 trial, tirzepatide to 15 mg weekly vs placebo, heart failure with preserved ejection fraction and obesity, 731 randomised, continuous endpoints at 52 weeks",
+  "reason": "full text group (institutional route) with Tables 1 and 2 read as HTML from the NEJM page through the proxy; four inventory markers (hsCRP as a key secondary endpoint, NT-proBNP, systolic pressure, heart rate) as differences or ratios with 95 percent CI",
+  "biomarkers_reported_no_variance": [
+   "eGFR (Table 1 baseline only; renal outcomes in a separate report)"
+  ],
+  "other_markers": [
+   "KCCQ clinical summary score",
+   "6 minute walk distance",
+   "cardiovascular death and worsening heart failure events",
+   "body weight percent change (covariate)"
+  ],
+  "tables_used": [
+   "Table 1 (companion capture)",
+   "Table 2 (companion capture)"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "stratified double blind randomisation with matching placebo (D1, D2 low); intention to treat with about 91 percent attending the final visit (D3 low); central laboratory and standardised measurements under blinding (D4 low); registered trial with hsCRP a key secondary endpoint and the other measurements prespecified (D5 low)"
+  },
+  "doubts": [
+   "dose_mg 15 records the target maximum tolerated dose; the achieved dose distribution is in the supplement",
+   "about half the participants have type 2 diabetes; population recorded as obesity (HFpEF with BMI 30 or more)"
+  ]
+ }
+}

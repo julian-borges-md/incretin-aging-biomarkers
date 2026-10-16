@@ -164,11 +164,11 @@
   }
  ],
  "json": {
-  "status": "extracted",
+  "status": "held_pending_decision",
   "molecule": "exenatide",
   "trial_id": "ChiCTR-IIR-16008084",
   "design": "open label randomised trial, exenatide vs metformin for 12 weeks then metformin in both arms, 176 randomised, 158 completers at 12 weeks, overweight or obese women with PCOS",
-  "reason": "full text group (institutional route); eight inventory markers from Table 2 by the imputed change route",
+  "reason": "population polycystic ovary syndrome with overweight or obesity, held under amendment A6 (Director decision on held populations); eight Table 2 rows extracted in full and kept in staging; first closed as extracted on 16 October and corrected to held the same day",
   "biomarkers_reported_no_variance": [],
   "other_markers": [
    "menstrual frequency rate",

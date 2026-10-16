@@ -1,0 +1,71 @@
+{
+ "group": "168",
+ "extractor": "S",
+ "study": {
+  "trial_id": "STEP 1",
+  "pmid": "",
+  "doi": "10.1056/NEJMoa2032183",
+  "first_author": "Wilding",
+  "year": "2021",
+  "journal": "N Engl J Med",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "2.4",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "68",
+  "population": "obesity",
+  "n_tx": "1306",
+  "n_ctrl": "655",
+  "assessment_timepoint_weeks": "68",
+  "pct_weight_change": "-12.44",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: STEP 1 (NCT03548935), 68 week double blind randomised placebo controlled phase 3 trial at 129 sites in 16 countries of once weekly semaglutide 2.4 mg (dose_mg 2.4) vs placebo, 2:1, plus lifestyle intervention, in adults without diabetes with BMI 30 or more, or 27 or more with a weight related condition; 1961 randomised (1306 and 655), treatment policy estimand at week 68; Table 2 (HTML table read from the NEJM page through the proxy, companion capture wilding2021_step1_nejm_tables1_2.txt) gives estimated mean changes per arm and the difference with 95 percent CI for systolic pressure (confirmatory secondary), diastolic pressure, HbA1c and fasting glucose (supportive secondary; route ci_95, MD) and ratios of the week 68 value to baseline with 95 percent CI for lipids and C-reactive protein (measure RR, log_RR_ci, ratio of geometric means convention); Table 1 baselines, lipid baselines are geometric means in mg/dL; pct_weight_change is the Table 2 coprimary difference in percent weight change, minus 12.44 (95 percent CI minus 13.37 to minus 11.51; arms minus 14.85 vs minus 2.41); funded by Novo Nordisk (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-5.10", "ci_lb_reported": "-6.34", "ci_ub_reported": "-3.87", "base_mean_tx": "126", "base_mean_ctrl": "127", "se_source": "ci_95", "notes": "Table 2: change in systolic blood pressure from baseline to week 68 (confirmatory secondary), arms minus 6.16 vs minus 1.06 mm Hg, difference minus 5.10 (minus 6.34 to minus 3.87), P below 0.001; Table 1 baseline 126 and 127"},
+  {"biomarker": "DBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-2.41", "ci_lb_reported": "-3.25", "ci_ub_reported": "-1.57", "base_mean_tx": "80", "base_mean_ctrl": "80", "se_source": "ci_95", "notes": "Table 2: change in diastolic blood pressure from baseline to week 68, arms minus 2.83 vs minus 0.42 mm Hg, difference minus 2.41 (minus 3.25 to minus 1.57); Table 1 baseline 80 and 80"},
+  {"biomarker": "HbA1c", "measure": "MD", "unit": "%", "yi_reported": "-0.29", "ci_lb_reported": "-0.32", "ci_ub_reported": "-0.26", "base_mean_tx": "5.7", "base_mean_ctrl": "5.7", "se_source": "ci_95", "notes": "Table 2: change in glycated hemoglobin from baseline to week 68, percentage points, arms minus 0.45 vs minus 0.15, difference minus 0.29 (minus 0.32 to minus 0.26); Table 1 baseline 5.7 and 5.7"},
+  {"biomarker": "fasting_glucose", "measure": "MD", "unit": "mg/dL", "yi_reported": "-7.87", "ci_lb_reported": "-9.04", "ci_ub_reported": "-6.70", "se_source": "ci_95", "notes": "Table 2: change in fasting plasma glucose from baseline to week 68, mg/dl, arms minus 8.35 vs minus 0.48, difference minus 7.87 (minus 9.04 to minus 6.70); baseline glucose in the supplementary appendix, not captured"},
+  {"biomarker": "TC", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.97", "ci_lb_reported": "0.95", "ci_ub_reported": "0.98", "base_mean_tx": "189.6", "base_mean_ctrl": "192.1", "se_source": "log_RR_ci", "notes": "Table 2: total cholesterol ratio of week 68 value to baseline, arms 0.97 vs 1.00, treatment ratio 0.97 (0.95 to 0.98); Table 1 geometric mean baseline 189.6 and 192.1 mg/dL"},
+  {"biomarker": "LDL", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.96", "ci_lb_reported": "0.94", "ci_ub_reported": "0.98", "base_mean_tx": "110.3", "base_mean_ctrl": "112.5", "se_source": "log_RR_ci", "notes": "Table 2: LDL cholesterol ratio of week 68 value to baseline, arms 0.97 vs 1.01, treatment ratio 0.96 (0.94 to 0.98); Table 1 geometric mean baseline 110.3 and 112.5 mg/dL"},
+  {"biomarker": "TG", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.84", "ci_lb_reported": "0.81", "ci_ub_reported": "0.87", "base_mean_tx": "126.2", "base_mean_ctrl": "127.9", "se_source": "log_RR_ci", "notes": "Table 2: triglycerides ratio of week 68 value to baseline, arms 0.78 vs 0.93, treatment ratio 0.84 (0.81 to 0.87); Table 1 geometric mean baseline 126.2 and 127.9 mg/dL"},
+  {"biomarker": "hsCRP", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.56", "ci_lb_reported": "0.51", "ci_ub_reported": "0.61", "se_source": "log_RR_ci", "notes": "Table 2: C-reactive protein ratio of week 68 value to baseline, arms 0.47 vs 0.85, treatment ratio 0.56 (0.51 to 0.61); baseline CRP in the supplementary appendix, not captured; labelled C-reactive protein in the paper"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "STEP 1",
+  "design": "STEP 1, multicentre double blind randomised placebo controlled phase 3 trial, semaglutide 2.4 mg weekly vs placebo 2:1, adults with overweight or obesity without diabetes, 1961 randomised, 68 weeks",
+  "reason": "full text group (institutional route) with Tables 1 and 2 read as HTML from the NEJM page through the proxy; eight inventory markers: four as differences with 95 percent CI and four as ratios of the week 68 value to baseline with 95 percent CI",
+  "biomarkers_reported_no_variance": [
+   "eGFR (Table 1 geometric mean baseline only)"
+  ],
+  "other_markers": [
+   "HDL and VLDL cholesterol, free fatty acids ratios",
+   "waist circumference, BMI, body weight in kg",
+   "SF-36 and IWQOL-Lite-CT physical function",
+   "prediabetes subpopulation HbA1c and normoglycaemia"
+  ],
+  "tables_used": [
+   "Table 1 (companion capture)",
+   "Table 2 (companion capture)"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "interactive web based randomisation with matching placebo and double blinding (D1, D2 low); treatment policy estimand with 94.3 percent completing the trial (D3 low); laboratory outcomes (D4 low); registered trial with a prespecified hierarchy of confirmatory and supportive secondary endpoints (D5 low)"
+  },
+  "doubts": [
+   "lipid and CRP rows are treatment ratios of geometric means entered under measure RR by the existing pipeline convention",
+   "the companion abstracts and secondary STEP 1 analyses in the corpus (if any) must not be double counted against this primary report"
+  ]
+ }
+}

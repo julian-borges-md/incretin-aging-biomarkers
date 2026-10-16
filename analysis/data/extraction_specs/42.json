@@ -1,0 +1,72 @@
+{
+ "group": "42",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT04844918",
+  "pmid": "",
+  "doi": "10.1016/j.eprac.2026.09.006",
+  "first_author": "Waki",
+  "year": "2026",
+  "journal": "Endocr Pract",
+  "phase": "3",
+  "drug": "tirzepatide",
+  "receptor_class": "GLP1_GIP",
+  "dose_mg": "10",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "72",
+  "population": "obesity",
+  "n_tx": "65",
+  "n_ctrl": "72",
+  "assessment_timepoint_weeks": "72",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: SURMOUNT-J (NCT04844918), phase 3 double blind placebo controlled trial of once weekly tirzepatide 10 mg or 15 mg vs placebo in Japanese adults with obesity disease, 72 weeks; this Endocrine Practice secondary report (Waki 2026, open access) gives least squares mean (SE) percent changes from baseline at week 72 per arm for the adipokine and inflammation markers (route arm_sems, PCT) in the modified intention to treat population (placebo 75, 10 mg 73, 15 mg 77); the biomarker subset at baseline is 72, 65 and 72 (Table), used as the row n; each dose is its own row set (dose_mg 10 and 15); prespecified secondary and exploratory endpoints (prespecified TRUE); body weight change is in the primary SURMOUNT-J report (Kadowaki 2022), not in this text, pct_weight_change left empty for the companion pass; Table baselines: total adiponectin 4.3, 3.8 and 3.7 mg/L, leptin 22.1, 20.8 and 20.6 ng/mL, TNF 1.1, 1.2 and 1.2 ng/L, hs-CRP 0.3, 0.3 and 0.2 mg/dL (placebo, 10 mg, 15 mg); funded by Eli Lilly (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "adiponectin", "measure": "PCT", "unit": "%", "mean_tx": "37.9", "sem_tx": "10.3", "mean_ctrl": "10.4", "sem_ctrl": "7.8", "base_mean_tx": "3.8", "base_mean_ctrl": "4.3", "se_source": "arm_sems", "notes": "Results text and Fig. 1B: total adiponectin LSM (SE) percent change at week 72, tirzepatide 10 mg 37.9 (10.3) vs placebo 10.4 (7.8), P below 0.05; HMW adiponectin 78.9 (10.0) vs 0.9 (5.3) recorded in other markers"},
+  {"biomarker": "leptin", "measure": "PCT", "unit": "%", "mean_tx": "-57.3", "sem_tx": "3.6", "mean_ctrl": "-8.4", "sem_ctrl": "7.2", "base_mean_tx": "20.8", "base_mean_ctrl": "22.1", "se_source": "arm_sems", "notes": "Results text and Fig. 1C: leptin LSM (SE) percent change at week 72, tirzepatide 10 mg minus 57.3 (3.6) vs placebo minus 8.4 (7.2), P below 0.001"},
+  {"biomarker": "TNF_alpha", "measure": "PCT", "unit": "%", "mean_tx": "-21.8", "sem_tx": "3.4", "mean_ctrl": "-3.8", "sem_ctrl": "4.0", "base_mean_tx": "1.2", "base_mean_ctrl": "1.1", "se_source": "arm_sems", "notes": "Results text and Fig. 1D: TNF LSM (SE) percent change at week 72, tirzepatide 10 mg minus 21.8 (3.4) vs placebo minus 3.8 (4.0), P below 0.001"},
+  {"biomarker": "hsCRP", "measure": "PCT", "unit": "%", "mean_tx": "-55.1", "sem_tx": "4.7", "mean_ctrl": "-17.7", "sem_ctrl": "8.0", "base_mean_tx": "0.3", "base_mean_ctrl": "0.3", "se_source": "arm_sems", "notes": "Results text and Fig. 1E: hs-CRP LSM (SE) percent change at week 72, tirzepatide 10 mg minus 55.1 (4.7) vs placebo minus 17.7 (8.0), P below 0.001; baseline hs-CRP printed in mg/dL"},
+  {"biomarker": "adiponectin", "dose_mg": "15", "n_tx": "72", "measure": "PCT", "unit": "%", "mean_tx": "48.7", "sem_tx": "10.6", "mean_ctrl": "10.4", "sem_ctrl": "7.8", "base_mean_tx": "3.7", "base_mean_ctrl": "4.3", "se_source": "arm_sems", "notes": "Results text and Fig. 1B: total adiponectin LSM (SE) percent change at week 72, tirzepatide 15 mg 48.7 (10.6) vs placebo 10.4 (7.8), P below 0.01"},
+  {"biomarker": "leptin", "dose_mg": "15", "n_tx": "72", "measure": "PCT", "unit": "%", "mean_tx": "-63.1", "sem_tx": "2.9", "mean_ctrl": "-8.4", "sem_ctrl": "7.2", "base_mean_tx": "20.6", "base_mean_ctrl": "22.1", "se_source": "arm_sems", "notes": "Results text and Fig. 1C: leptin LSM (SE) percent change at week 72, tirzepatide 15 mg minus 63.1 (2.9) vs placebo minus 8.4 (7.2), P below 0.001"},
+  {"biomarker": "TNF_alpha", "dose_mg": "15", "n_tx": "72", "measure": "PCT", "unit": "%", "mean_tx": "-19.4", "sem_tx": "3.4", "mean_ctrl": "-3.8", "sem_ctrl": "4.0", "base_mean_tx": "1.2", "base_mean_ctrl": "1.1", "se_source": "arm_sems", "notes": "Results text and Fig. 1D: TNF LSM (SE) percent change at week 72, tirzepatide 15 mg minus 19.4 (3.4) vs placebo minus 3.8 (4.0), P below 0.01"},
+  {"biomarker": "hsCRP", "dose_mg": "15", "n_tx": "72", "measure": "PCT", "unit": "%", "mean_tx": "-65.3", "sem_tx": "3.4", "mean_ctrl": "-17.7", "sem_ctrl": "8.0", "base_mean_tx": "0.2", "base_mean_ctrl": "0.3", "se_source": "arm_sems", "notes": "Results text and Fig. 1E: hs-CRP LSM (SE) percent change at week 72, tirzepatide 15 mg minus 65.3 (3.4) vs placebo minus 17.7 (8.0), P below 0.001"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "tirzepatide",
+  "trial_id": "NCT04844918",
+  "design": "SURMOUNT-J, phase 3 double blind placebo controlled trial, tirzepatide 10 mg and 15 mg weekly vs placebo, Japanese adults with obesity disease, 225 in the modified intention to treat population, 72 weeks",
+  "reason": "full text group (institutional route); four inventory markers per dose (adiponectin, leptin, TNF-alpha, hsCRP) as least squares mean (SE) percent changes per arm from the results text of the secondary report; glucose, insulin and C-peptide are reported as OGTT areas under the curve, not fasting values",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "high molecular weight adiponectin (78.9 (10.0) and 88.4 (10.0) vs 0.9 (5.3) percent)",
+   "procollagen III, cytokeratin 18, ELF score, FIB-4",
+   "glucose, insulin and C-peptide areas under the curve during a 75 g OGTT",
+   "Matsuda index, insulin secretion and beta cell function indices",
+   "VAT, SAT and hepatic fat fraction (correlation analyses; the contrasts are in the primary report)",
+   "HOMA2 parameters (correlations only)"
+  ],
+  "tables_used": [
+   "Table (baseline)",
+   "results text for Fig. 1"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "phase 3 double blind placebo controlled trial with central randomisation (D1, D2 low); modified intention to treat with mixed model repeated measures (D3 low); laboratory assays (D4 low); registered trial, the biomarker endpoints are prespecified secondary or exploratory (D5 low)"
+  },
+  "doubts": [
+   "pct_weight_change and the VAT and hepatic fat contrasts are in the primary SURMOUNT-J report (Kadowaki 2022, Lancet Diabetes Endocrinol), not a record of the corpus; companion pass",
+   "row n uses the biomarker subset at baseline (72, 65, 72); the LSM analysis set may differ slightly",
+   "the placebo arm is shared by the two dose rows"
+  ]
+ }
+}

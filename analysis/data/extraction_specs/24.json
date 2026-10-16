@@ -1,0 +1,71 @@
+{
+ "group": "24",
+ "extractor": "S",
+ "study": {
+  "trial_id": "SOUL",
+  "pmid": "",
+  "doi": "10.1001/jamacardio.2026.0245",
+  "first_author": "Mulvagh",
+  "year": "2026",
+  "journal": "JAMA Cardiol",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "14",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "156",
+  "population": "T2D",
+  "n_tx": "4825",
+  "n_ctrl": "4825",
+  "assessment_timepoint_weeks": "156",
+  "pct_weight_change": "-3.26",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: SOUL, phase 3b international double blind placebo controlled cardiovascular outcomes trial of once daily oral semaglutide (target dose 14 mg, dose_mg 14 from the primary report, not printed in this secondary text) vs placebo in adults 50 years or older with type 2 diabetes and ASCVD and or CKD; full analysis set 4825 per arm; this JAMA Cardiology post hoc secondary analysis (Mulvagh 2026) reports estimated treatment differences (ETD, ANCOVA with multiple imputation) and estimated treatment ratios (ETR) vs placebo at weeks 13, 104 (hsCRP) and 156; rows taken at the longest on treatment timepoint, week 156, and week 104 for hsCRP (brief rule 1), the week 13 values in the row notes; ETDs with 95 percent CI by route ci_95 (MD), ratios to baseline by measure RR (log_RR_ci, ratio of geometric means convention); post hoc analyses of supportive secondary endpoints (prespecified FALSE; HbA1c and body weight were supportive secondary endpoints of the trial); pct_weight_change is the week 156 ETD in percent body weight, minus 3.26 (95 percent CI minus 3.55 to minus 2.98); Table 2 baselines are medians (IQR): SBP 134 and 135 mm Hg, HbA1c 7.8 and 7.8 percent, LDL-C 72.6 and 70.7 mg/dL, hsCRP 0.2 and 0.2 mg/dL (not entered as means); funded by Novo Nordisk (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-1.83", "ci_lb_reported": "-2.47", "ci_ub_reported": "-1.18", "se_source": "ci_95", "notes": "Results text: SBP ETD at week 156 minus 1.83 mm Hg (minus 2.47 to minus 1.18), P below .001; week 13 ETD minus 3.19 (minus 3.76 to minus 2.62); baseline medians 134 and 135 mm Hg (Table 2), no mean denominator"},
+  {"biomarker": "DBP", "measure": "MD", "unit": "mmHg", "yi_reported": "0.33", "ci_lb_reported": "-0.06", "ci_ub_reported": "0.73", "p_reported": "0.10", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Results text: DBP ETD at week 156 0.33 mm Hg (minus 0.06 to 0.73), P .10"},
+  {"biomarker": "HbA1c", "measure": "MD", "unit": "%", "yi_reported": "-0.47", "ci_lb_reported": "-0.52", "ci_ub_reported": "-0.42", "se_source": "ci_95", "notes": "Results text: HbA1c ETD at week 156 minus 0.47 percentage points (minus 0.52 to minus 0.42), P below .001; week 13 ETD minus 0.82 (minus 0.85 to minus 0.79); baseline medians 7.8 and 7.8 percent (Table 2)"},
+  {"biomarker": "TC", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.99", "ci_lb_reported": "0.98", "ci_ub_reported": "1.00", "p_reported": "0.03", "p_is_bound": "FALSE", "se_source": "log_RR_ci", "notes": "Results text: total cholesterol ETR at week 156 0.99 (0.98 to 1.00), P .03, minus 4.21 percent from baseline with semaglutide; week 13 ETR 0.94 (0.94 to 0.95)"},
+  {"biomarker": "TG", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.94", "ci_lb_reported": "0.93", "ci_ub_reported": "0.96", "se_source": "log_RR_ci", "notes": "Results text: triglycerides ETR at week 156 0.94 (0.93 to 0.96), P below .001, minus 11.70 percent from baseline with semaglutide; week 13 ETR 0.93 (0.92 to 0.94)"},
+  {"biomarker": "LDL", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "1.00", "ci_lb_reported": "0.98", "ci_ub_reported": "1.02", "p_reported": "0.87", "p_is_bound": "FALSE", "se_source": "log_RR_ci", "notes": "Results text: LDL-C ETR at week 156 1.00 (0.98 to 1.02), P .87; week 13 ETR 0.94 (0.93 to 0.95); semaglutide arm minus 7.53 and minus 4.22 percent from baseline at weeks 13 and 156"},
+  {"biomarker": "hsCRP", "measure": "RR", "unit": "ratio to baseline", "assessment_timepoint_weeks": "104", "yi_reported": "0.77", "ci_lb_reported": "0.74", "ci_ub_reported": "0.81", "se_source": "log_RR_ci", "notes": "Results text: hsCRP ETR at week 104 (last hsCRP assessment) 0.77 (0.74 to 0.81), P below .001, semaglutide arm minus 21.03 percent from baseline; week 13 ETR 0.81 (0.78 to 0.84)"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "SOUL",
+  "design": "SOUL, phase 3b double blind placebo controlled cardiovascular outcomes trial, oral semaglutide vs placebo, type 2 diabetes with ASCVD and or CKD, 9650 randomised, median follow up about 4 years, risk factor contrasts at weeks 13, 104 and 156",
+  "reason": "full text group (institutional route); seven inventory markers from the results text as ETDs with 95 percent CI (SBP, DBP, HbA1c) and ETRs with 95 percent CI (TC, TG, LDL, hsCRP) at the longest on treatment timepoint",
+  "biomarkers_reported_no_variance": [
+   "eGFR (Table 2 baseline medians only; renal outcomes are in a separate report)"
+  ],
+  "other_markers": [
+   "pulse pressure and pulse",
+   "non-HDL-C and HDL-C ratios",
+   "body weight percent change (covariate)",
+   "subgroup ETDs for ASCVD only, CKD only and ASCVD plus CKD"
+  ],
+  "tables_used": [
+   "Table 2 (baseline medians)",
+   "results text (ETDs and ETRs)"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "large double blind placebo controlled outcomes trial (D1, D2 low); ANCOVA with multiple imputation on the full analysis set (D3 low); laboratory and standardised measurements under blinding (D4 low); post hoc timepoint analyses of supportive secondary endpoints, though the endpoints themselves were trial endpoints (D5 some concerns)"
+  },
+  "doubts": [
+   "dose_mg 14 is the SOUL target dose from the primary report; this text does not print the dose",
+   "baseline values are medians (IQR) in this report; the MD rows (SBP, DBP, HbA1c) carry no mean denominator and convert only through the hand keyed BASELINE table or the primary report",
+   "hsCRP is at week 104, the last hsCRP assessment, while the other rows are at week 156"
+  ]
+ }
+}

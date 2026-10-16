@@ -1,0 +1,65 @@
+{
+ "group": "102",
+ "extractor": "S",
+ "study": {
+  "trial_id": "STEP-HFpEF program pooled",
+  "pmid": "",
+  "doi": "10.1016/j.jacc.2024.04.022",
+  "first_author": "Petrie",
+  "year": "2024",
+  "journal": "J Am Coll Cardiol",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "2.4",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "52",
+  "population": "obesity",
+  "n_tx": "",
+  "n_ctrl": "",
+  "assessment_timepoint_weeks": "52",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: prespecified pooled analysis of the two double blind placebo controlled STEP-HFpEF program trials (STEP-HFpEF NCT04788511 and STEP-HFpEF DM NCT04916470), once weekly semaglutide 2.4 mg (dose_mg 2.4) vs placebo for 52 weeks in obesity related heart failure with preserved ejection fraction, 1145 randomised in total (the per arm split is in the primary reports, not printed here, n left empty); NT-proBNP was an exploratory endpoint measured centrally at baseline, 20 and 52 weeks; the overall estimated treatment ratio at 52 weeks with 95 percent CI is entered as measure RR (log_RR_ci, ratio of geometric means convention); hsCRP treatment ratios are printed by NT-proBNP tertile only (no overall value in this text); body weight contrasts are by tertile only, pct_weight_change empty (the pooled overall values are in Butler 2024, Lancet, companion pass); population obesity with HFpEF (the STEP-HFpEF DM half has type 2 diabetes), recorded as obesity; funded by Novo Nordisk (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "NTproBNP", "measure": "RR", "unit": "ratio to baseline", "yi_reported": "0.82", "ci_lb_reported": "0.74", "ci_ub_reported": "0.91", "p_reported": "0.0002", "p_is_bound": "FALSE", "se_source": "log_RR_ci", "notes": "Results text: NT-proBNP percentage reduction at 52 weeks minus 22.19 percent semaglutide vs minus 4.87 percent placebo, estimated treatment ratio 0.82 (95 percent CI 0.74 to 0.91), P 0.0002; at 20 weeks 0.81 (0.74 to 0.89); full analysis set of the pooled program"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "STEP-HFpEF program pooled",
+  "design": "prespecified pooled analysis of two double blind placebo controlled trials (STEP-HFpEF and STEP-HFpEF DM), semaglutide 2.4 mg weekly vs placebo, obesity related HFpEF, 1145 randomised, 52 weeks",
+  "reason": "full text group (institutional route); one inventory marker (NT-proBNP) with an overall estimated treatment ratio and 95 percent CI; hsCRP and body weight are printed by baseline NT-proBNP tertile only",
+  "biomarkers_reported_no_variance": [
+   "hsCRP (treatment ratios by NT-proBNP tertile at 52 weeks: 0.58 (0.47 to 0.71), 0.73 (0.60 to 0.90), 0.61 (0.49 to 0.76); no overall ratio in this text, the overall values are in the STEP-HFpEF and STEP-HFpEF DM primary reports)"
+  ],
+  "other_markers": [
+   "KCCQ clinical summary score",
+   "6 minute walk distance",
+   "hierarchical composite endpoint (win ratio)",
+   "body weight percent change by tertile"
+  ],
+  "tables_used": [
+   "Table 1 (baseline by tertile)",
+   "Table 2 (by tertile)",
+   "results text (overall NT-proBNP)"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "two double blind placebo controlled trials with stratified randomisation (D1, D2 low); full analysis set with multiple imputation (D3 low); central laboratory NT-proBNP (D4 low); prespecified pooled analysis with NT-proBNP as a named exploratory endpoint (D5 low)"
+  },
+  "doubts": [
+   "n per arm not printed in this text (1145 in total); the STEP-HFpEF (529) and STEP-HFpEF DM (616) primary reports give the split",
+   "the pooled trial id groups two registered trials; if the primary reports are extracted separately the pooled row must not be double counted"
+  ]
+ }
+}

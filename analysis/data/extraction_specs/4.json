@@ -1,0 +1,77 @@
+{
+ "group": "4",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT05412004 study 1",
+  "pmid": "41540105",
+  "doi": "10.1038/s41591-025-04071-1",
+  "first_author": "Malhotra",
+  "year": "2026",
+  "journal": "Nat Med",
+  "phase": "3",
+  "drug": "tirzepatide",
+  "receptor_class": "GLP1_GIP",
+  "dose_mg": "15",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "52",
+  "population": "obesity",
+  "n_tx": "114",
+  "n_ctrl": "120",
+  "assessment_timepoint_weeks": "52",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: SURMOUNT-OSA (NCT05412004), two 52 week randomised double blind placebo controlled phase 3 studies of tirzepatide at the maximum tolerated dose (10 or 15 mg weekly, dose_mg 15 recorded as the target dose) vs placebo in adults with obesity and moderate to severe obstructive sleep apnoea; study 1 without PAP therapy (114 tirzepatide, 120 placebo), study 2 on PAP therapy (120 tirzepatide, 115 placebo), analysed as randomised; this Nature Medicine secondary report (Malhotra 2026) gives the prespecified cardiometabolic endpoints per study in Table 2: estimated treatment differences with 95 percent CI for SBP and DBP at week 48 (route ci_95, MD) and ETDs as estimate plus or minus standard error for the percent changes in hsCRP, lipids, fasting insulin and HOMA-IR at week 52 (route se_reported, PCT); HOMA-IR was analysed post hoc (prespecified FALSE on those rows); each study is entered as its own trial id (rows carry the study 2 n); weight change per study is in the primary N Engl J Med report (Malhotra 2024, not a packet text), pct_weight_change left empty for the companion pass; funded by Eli Lilly (industry_funded TRUE); population obstructive sleep apnoea with obesity, held under amendment A6; rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-7.9", "ci_lb_reported": "-11.0", "ci_ub_reported": "-4.9", "base_mean_tx": "128.2", "base_mean_ctrl": "130.3", "assessment_timepoint_weeks": "48", "se_source": "ci_95", "notes": "Table 2 study 1: change in SBP from baseline at week 48, ETD minus 7.9 (minus 11.0 to minus 4.9) mmHg, arms minus 9.6 plus or minus 1.1 vs minus 1.7 plus or minus 1.1; Table 1 baseline 128.2 and 130.3"},
+  {"biomarker": "DBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-3.2", "ci_lb_reported": "-5.4", "ci_ub_reported": "-1.0", "base_mean_tx": "83.7", "base_mean_ctrl": "83.9", "assessment_timepoint_weeks": "48", "se_source": "ci_95", "notes": "Table 2 study 1: change in DBP from baseline at week 48, ETD minus 3.2 (minus 5.4 to minus 1.0) mmHg; Table 1 baseline 83.7 and 83.9"},
+  {"biomarker": "hsCRP", "measure": "PCT", "unit": "%", "yi_reported": "-28.9", "se_reported": "8.2", "base_mean_tx": "3.6", "base_mean_ctrl": "3.8", "se_source": "se_reported", "notes": "Table 2 study 1: percent change in hsCRP from baseline at week 52, ETD minus 28.9 plus or minus 8.2 (P 0.003), arms minus 44.2 plus or minus 4.4 vs minus 21.4 plus or minus 6.6; Table 1 baseline geometric means 3.6 and 3.8 mg/L"},
+  {"biomarker": "TG", "measure": "PCT", "unit": "%", "yi_reported": "-32.2", "se_reported": "3.8", "se_source": "se_reported", "notes": "Table 2 study 1: percent change in triglycerides from baseline at week 52, ETD minus 32.2 plus or minus 3.8, arms minus 32.9 plus or minus 2.6 vs minus 1.0 plus or minus 4.0"},
+  {"biomarker": "LDL", "measure": "PCT", "unit": "%", "yi_reported": "-4.8", "se_reported": "4.2", "se_source": "se_reported", "notes": "Table 2 study 1: percent change in LDL-C from baseline at week 52, ETD minus 4.8 plus or minus 4.2 (not significant), arms minus 8.9 plus or minus 2.7 vs minus 4.3 plus or minus 3.0"},
+  {"biomarker": "fasting_insulin", "measure": "PCT", "unit": "%", "yi_reported": "-41.4", "se_reported": "5.0", "se_source": "se_reported", "notes": "Table 2 study 1: percent change in fasting insulin from baseline at week 52, ETD minus 41.4 plus or minus 5.0, arms minus 44.2 plus or minus 3.3 vs minus 4.7 plus or minus 5.9"},
+  {"biomarker": "HOMA_IR", "measure": "PCT", "unit": "%", "prespecified_endpoint": "FALSE", "yi_reported": "-48.0", "se_reported": "4.9", "se_source": "se_reported", "notes": "Table 2 study 1: percent change in HOMA-IR from baseline at week 52 (post hoc), ETD minus 48.0 plus or minus 4.9, arms minus 51.2 plus or minus 3.2 vs minus 6.2 plus or minus 6.4"},
+  {"biomarker": "SBP", "trial_id": "NCT05412004 study 2", "n_tx": "120", "n_ctrl": "115", "measure": "MD", "unit": "mmHg", "yi_reported": "-4.3", "ci_lb_reported": "-7.3", "ci_ub_reported": "-1.2", "base_mean_tx": "130.7", "base_mean_ctrl": "130.5", "assessment_timepoint_weeks": "48", "se_source": "ci_95", "notes": "Table 2 study 2: change in SBP from baseline at week 48, ETD minus 4.3 (minus 7.3 to minus 1.2) mmHg, arms minus 7.6 plus or minus 1.1 vs minus 3.3 plus or minus 1.2; Table 1 baseline 130.7 and 130.5"},
+  {"biomarker": "DBP", "trial_id": "NCT05412004 study 2", "n_tx": "120", "n_ctrl": "115", "measure": "MD", "unit": "mmHg", "yi_reported": "-1.2", "ci_lb_reported": "-3.4", "ci_ub_reported": "0.9", "base_mean_tx": "83.2", "base_mean_ctrl": "80.5", "assessment_timepoint_weeks": "48", "se_source": "ci_95", "notes": "Table 2 study 2: change in DBP from baseline at week 48, ETD minus 1.2 (minus 3.4 to 0.9) mmHg; Table 1 baseline 83.2 and 80.5"},
+  {"biomarker": "hsCRP", "trial_id": "NCT05412004 study 2", "n_tx": "120", "n_ctrl": "115", "measure": "PCT", "unit": "%", "yi_reported": "-45.1", "se_reported": "8.0", "base_mean_tx": "3.0", "base_mean_ctrl": "2.7", "se_source": "se_reported", "notes": "Table 2 study 2: percent change in hsCRP from baseline at week 52, ETD minus 45.1 plus or minus 8.0 (P below 0.001), arms minus 50.7 plus or minus 4.8 vs minus 10.4 plus or minus 9.8; Table 1 baseline geometric means 3.0 and 2.7 mg/L"},
+  {"biomarker": "TG", "trial_id": "NCT05412004 study 2", "n_tx": "120", "n_ctrl": "115", "measure": "PCT", "unit": "%", "yi_reported": "-31.5", "se_reported": "3.7", "se_source": "se_reported", "notes": "Table 2 study 2: percent change in triglycerides from baseline at week 52, ETD minus 31.5 plus or minus 3.7, arms minus 35.2 plus or minus 2.3 vs minus 5.4 plus or minus 3.8"},
+  {"biomarker": "LDL", "trial_id": "NCT05412004 study 2", "n_tx": "120", "n_ctrl": "115", "measure": "PCT", "unit": "%", "yi_reported": "-10.3", "se_reported": "3.0", "se_source": "se_reported", "notes": "Table 2 study 2: percent change in LDL-C from baseline at week 52, ETD minus 10.3 plus or minus 3.0 (P 0.001), arms minus 10.2 plus or minus 2.0 vs 0.0 plus or minus 2.5"},
+  {"biomarker": "fasting_insulin", "trial_id": "NCT05412004 study 2", "n_tx": "120", "n_ctrl": "115", "measure": "PCT", "unit": "%", "yi_reported": "-45.4", "se_reported": "5.4", "se_source": "se_reported", "notes": "Table 2 study 2: percent change in fasting insulin from baseline at week 52, ETD minus 45.4 plus or minus 5.4, arms minus 48.5 plus or minus 3.4 vs minus 5.6 plus or minus 6.9"},
+  {"biomarker": "HOMA_IR", "trial_id": "NCT05412004 study 2", "n_tx": "120", "n_ctrl": "115", "measure": "PCT", "unit": "%", "prespecified_endpoint": "FALSE", "yi_reported": "-54.5", "se_reported": "5.0", "se_source": "se_reported", "notes": "Table 2 study 2: percent change in HOMA-IR from baseline at week 52 (post hoc), ETD minus 54.5 plus or minus 5.0, arms minus 55.8 plus or minus 3.3 vs minus 2.7 plus or minus 7.9"}
+ ],
+ "json": {
+  "status": "held_pending_decision",
+  "molecule": "tirzepatide",
+  "trial_id": "NCT05412004 study 1; NCT05412004 study 2",
+  "design": "SURMOUNT-OSA, two 52 week randomised double blind placebo controlled phase 3 studies, tirzepatide maximum tolerated dose vs placebo, obesity with moderate to severe obstructive sleep apnoea, 234 and 235 randomised",
+  "reason": "population obstructive sleep apnoea with obesity, held under amendment A6 (Director decision on held populations); fourteen rows (seven inventory markers per study) extracted in full from Table 2 of the Nature Medicine cardiometabolic report and kept in staging; the group also holds the eClinicalMedicine early weight reduction post hoc analysis (no treatment contrast) and the N Engl J Med primary report by DOI only",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "HDL-C, non-HDL-C, VLDL-C percent changes",
+   "apnoea hypopnoea index and sleep apnoea specific hypoxic burden",
+   "mediation of the cardiometabolic effects by weight and OSA metrics",
+   "body weight (primary report)"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 2"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "randomised double blind placebo controlled phase 3 program with a published protocol (D1, D2 low); mixed model repeated measures on participants as randomised (D3 low); laboratory and standardised pressure measurement under blinding (D4 low); cardiometabolic endpoints prespecified in the statistical analysis plan, HOMA-IR post hoc (D5 low)"
+  },
+  "doubts": [
+   "held population: obstructive sleep apnoea with obesity; study 1 and study 2 are entered as separate trial ids",
+   "dose_mg 15 records the target maximum tolerated dose; participants received 10 or 15 mg",
+   "pct_weight_change and the baseline denominators for the lipid, insulin and HOMA-IR percent rows are not in this text; the N Engl J Med primary report is the companion for the pass",
+   "the eClinicalMedicine text (early weight reduction groups) carries no randomised contrast"
+  ]
+ }
+}
