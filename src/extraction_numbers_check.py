@@ -74,7 +74,9 @@ def main(argv):
             print(f"  text not found: {f}")
     if extra:
         print("texts searched: " + ", ".join(files))
-    text = text.replace("−", "-").replace("–", "-")
+    # Lancet style sources print 79\u00b74 for 79.4; the middle dot is normalised so that a
+    # correctly transcribed number is not reported missing.
+    text = text.replace("−", "-").replace("–", "-").replace("\u00b7", ".")
     # thousands separators (17,947 mm2; 5,771 ng/L) are removed so that the extraction's plain
     # integers match; a decimal comma (27,32) survives because it never sits before three digits
     text = re.sub(r"(?<=\d),(?=\d{3}\b)", "", text)
