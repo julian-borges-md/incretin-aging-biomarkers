@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Twelve gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
+# Thirteen gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
 #
 # This file is the tracked copy and the one to edit. The chain lived at work/run_gates.sh until
 # 16 October, where the gitignore keeps it out of version control: the script that validates the
@@ -33,7 +33,7 @@ done
 # effect and standard error, which is the part of the amendment A5 verifier pass that scales. Each
 # one fails only on a case not yet written up in its triage document, so a new defect blocks the
 # chain while the known and judged ones do not.
-for g in packet_grouping_check extraction_attachment_check pvalue_reconcile; do
+for g in packet_grouping_check extraction_attachment_check pvalue_reconcile duplicate_numbers_check; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" > "work/gate_$g.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"
