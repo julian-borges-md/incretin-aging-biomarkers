@@ -55,11 +55,25 @@ POOL = os.path.join(ROOT, "search/screening/fulltext_pool_2026-10-16.csv")
 EPMC_MANIFEST = os.path.join(ROOT, "work/fulltext/pool/MANIFEST_epmc_2026-10-16.csv")
 CTGOV_MANIFEST = os.path.join(ROOT, "work/fulltext/registry/MANIFEST_ctgov_2026-10-16.csv")
 DIRECT_MANIFEST = os.path.join(ROOT, "work/fulltext/direct/MANIFEST_direct_2026-10-16.csv")
+PROXY_MANIFEST = os.path.join(ROOT, "work/fulltext/proxy/MANIFEST_proxy_2026-10-16.csv")
 OUTDIR = os.path.join(ROOT, "search/screening")
 SUMMARY = os.path.join(OUTDIR, "FULLTEXT_SCREENING_SUMMARY.md")
 CAP_FULLTEXT = 48000
 CAP_REGISTRY = 30000
-SOURCE_ORDER = ["conference_abstract", "registry_summary", "ctgov_entry", "epmc_fulltext", "direct_fulltext"]
+SOURCE_ORDER = ["conference_abstract", "registry_summary", "ctgov_entry", "epmc_fulltext", "direct_fulltext",
+                "proxy_fulltext", "proxy_partial"]
+# proxy_fulltext: publisher page text captured in the browser through the institutional
+# route (src/proxy_harvest.py manifest, status fulltext: three section marks and more than
+# 12,000 characters). proxy_partial: a capture of at least 2,000 characters that did not meet
+# that rule (abstract pages, but also complete short documents such as letters, comments and
+# reviews without methods sections); the label tells the reviewers so. The capture is the
+# page's visible text, so the site navigation before the abstract heading, the reference list
+# and publisher boilerplate lines are removed before the text is capped (patterns below).
+PROXY_KEY = re.compile(r"^pool([12])_n(\d+)$")
+PROXY_ABSTRACT = re.compile(r"^\s*(Abstract|Summary|ABSTRACT)\s*$", re.M)
+PROXY_REFERENCES = re.compile(r"^\s*(References|REFERENCES|Bibliography)\s*$", re.M)
+PROXY_NOISE = re.compile(r"^(Download: Download (full-size|high-res) image.*|Opens in a new window|Show more|Share|Cite"
+                         r"|View PDF|Google Scholar|.*View in ScopusGoogle Scholar.*)$")
 
 FULLTEXT_ADDENDUM = """
 Full text stage. You now have the complete document (a journal article, a
@@ -100,6 +114,34 @@ def read_manifest(path, key):
     return out
 
 
+def read_proxy_manifest():
+    """Captures made through the institutional route, keyed like the other manifests."""
+    if not os.path.exists(PROXY_MANIFEST):
+        return {}
+    out = {}
+    with open(PROXY_MANIFEST, newline="") as fh:
+        for r in csv.DictReader(fh):
+            m = PROXY_KEY.match(r["key"])
+            if m:
+                out[(m.group(1), int(m.group(2)))] = r
+    return out
+
+
+def proxy_text(path):
+    """Page text without the capture header (KEY, SOURCE, TITLE), the navigation before
+    the abstract heading (only when that heading sits in the first quarter of the page),
+    the reference list (first References heading after 40 percent of the page) and the
+    boilerplate lines in PROXY_NOISE. Deterministic; the chars kept are logged per record."""
+    raw = open(path).read()
+    body = raw.split("\n\n", 1)[1] if "\n\n" in raw else raw
+    m = PROXY_ABSTRACT.search(body)
+    start = m.start() if m and m.start() < len(body) * 0.25 else 0
+    m = PROXY_REFERENCES.search(body, int(len(body) * 0.4))
+    end = m.start() if m else len(body)
+    lines = [ln for ln in body[start:end].split("\n") if not PROXY_NOISE.match(ln.strip())]
+    return "\n".join(lines)
+
+
 def load_items():
     """Pool records with their text source and text."""
     if not os.path.exists(POOL):
@@ -110,6 +152,7 @@ def load_items():
     epmc = read_manifest(EPMC_MANIFEST, None)
     ctgov = read_manifest(CTGOV_MANIFEST, None)
     direct = read_manifest(DIRECT_MANIFEST, None)
+    proxy = read_proxy_manifest()
     # abstracts come from the gated exports through the screening parser
     abstracts = {}
     for pool_name in ("embase", "batch2"):
@@ -146,6 +189,18 @@ def load_items():
                 source = "direct_fulltext"
                 kind = "preprint, full text" if d["status"].endswith("_preprint") else "journal article, full text as published on the publisher site"
                 text = f"Document type: {kind}\nTitle: {r['title']}\n\n" + open(d["file"]).read()[:CAP_FULLTEXT]
+            else:
+                px = proxy.get(key)
+                if px and px["status"] == "fulltext" and os.path.exists(px["file"]):
+                    source = "proxy_fulltext"
+                    text = (f"Document type: journal article, full text as published on the publisher site "
+                            f"through the institutional route\nTitle: {r['title']}\n\n" + proxy_text(px["file"])[:CAP_FULLTEXT])
+                elif px and px["status"] == "partial" and int(px["chars"] or 0) >= 2000 and os.path.exists(px["file"]):
+                    source = "proxy_partial"
+                    text = (f"Document type: publisher or index page as captured in the browser. This may be the complete "
+                            f"document (a letter, editorial, comment or review without methods sections) or only the abstract "
+                            f"of a longer article whose full text was not captured; judge from what is present\n"
+                            f"Title: {r['title']}\n\n" + proxy_text(px["file"])[:CAP_FULLTEXT])
         items.append(dict(pool=r["pool"], n=int(r["n"]), key=f"{r['pool']}-{r['n']}", source=source, text=text,
                           title=r["title"], matched_known=r["matched_known"] in ("True", "yes", "1"),
                           study_group=r["study_group"], route=r["route"]))

@@ -38,3 +38,47 @@ Produced by `src/direct_fetch.py`: DOI resolved and the publisher page saved as 
 
 Full texts obtained this way: 8 (publisher open access pages and preprints), screened as the `direct_fulltext` source. Everything else on this list needs the institutional route (BU EZproxy), which requires a live sign in.
 
+## Institutional route (BU EZproxy, browser capture)
+
+Each remaining DOI was opened in the browser through `https://ezproxy.bu.edu/login?url=https://doi.org/<doi>` (publisher hosts where the DOI route fails: NEJM `www-nejm-org.ezproxy.bu.edu/doi/full/`, Springer `link-springer-com.ezproxy.bu.edu/article/`, ClinicalKey titles through the ScienceDirect PII page, Thieme `products/ejournals/html/`); the page's visible text was saved from the browser as a local file with a KEY header, then moved and classified by `src/proxy_harvest.py` (manifest beside the files, gitignored). The sign in was done by the Director; the agent never entered credentials. Classification: `fulltext` = three of the four section marks (Methods, Results, Discussion, References; English or Russian) and more than 12,000 characters; `partial` otherwise (abstract pages, but also complete short documents such as letters, comments and reviews without methods sections).
+
+| Outcome | Records |
+|---|---|
+| fulltext | 91 |
+| partial | 23 |
+
+Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_fulltext` source, `partial` as the `proxy_partial` source with a label that says the page may be complete or abstract only (19 records; the other 4 partial captures are resolver or error pages under 2,000 characters and count as not retrieved).
+
+| Host of the full text captures | Records |
+|---|---|
+| www-sciencedirect-com.ezproxy.bu.edu | 41 |
+| onlinelibrary-wiley-com.ezproxy.bu.edu | 10 |
+| dom-pubs-pericles-prod-literatumonline-com.ezproxy.bu.edu | 9 |
+| www-nejm-org.ezproxy.bu.edu | 8 |
+| link-springer-com.ezproxy.bu.edu | 5 |
+| academic-oup-com.ezproxy.bu.edu | 5 |
+| journals-sagepub-com.ezproxy.bu.edu | 2 |
+| jamanetwork-com.ezproxy.bu.edu | 1 |
+| www-cambridge-org.ezproxy.bu.edu | 1 |
+| portlandpress-com.ezproxy.bu.edu | 1 |
+| www-tandfonline-com.ezproxy.bu.edu | 1 |
+| journals-lww-com.ezproxy.bu.edu | 1 |
+| www-thieme-connect-com.ezproxy.bu.edu | 1 |
+| www-ahajournals-org.ezproxy.bu.edu | 1 |
+| www.omet-endojournals.ru | 1 |
+| www.oaepublish.com | 1 |
+| diabetesjournals-org.ezproxy.bu.edu | 1 |
+| www.wjgnet.com | 1 |
+
+### Records still without a text (recorded by hand from the capture attempts)
+
+| Record | Identifier | What was found |
+|---|---|---|
+| 1-48 | 10.13429/j.cnki.cjcr.2026.06.008 | chndoi.org resolver page only (423 characters); Chinese journal, full text not on a reachable site |
+| 1-90 | 10.25258/ijddt.16.44s.15 | DOI does not resolve (impactfactor.org placeholder, 105 characters) |
+| 1-160 | 10.31838/ijprt/15.02.374 | DOI not found at doi.org |
+| 1-183 | 10.3760/cma.j.cn115791-20240318-00120 | yiigle.com page did not render (131 characters) |
+| 1-443 | no DOI; Int J Clin Exp Med 2020;13(2):1219 | publisher site answered 509 Bandwidth Limit Exceeded; not in PubMed |
+| 1-595 | no DOI; Dokkyo J Med Sci 2014;41(3):211 | not located online; not in PubMed |
+| 2-223 | no DOI; Drug Invention Today 2019;12(11):2549 | not located online; not in PubMed |
+
