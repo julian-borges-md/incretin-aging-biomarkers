@@ -51,7 +51,24 @@ invisible(lapply(required_packages, function(p) {
   library(p, character.only = TRUE)
 }))
 
-DATA_FILE <- "analysis/data/extraction_master.csv"
+# Ported 2026-10-16 from the arm level master to the harmonised one, resolving the divergence
+# recorded in docs/PIPELINE_DIVERGENCE_2026-10-15.md as option A. The reason is in that document and
+# in docs/LESSONS.md: this literature reports between group contrasts with intervals, not arm level
+# means and standard deviations, so the standardised mean difference this pipeline was written around
+# cannot be computed for most rows. The harmonised master carries the analysis ready quantity,
+# yi_pct and vi_pct on the percent change scale, for 486 of the 524 rows.
+#
+# This port does not change the analysis the manuscript reports. The gate scripts have been pooling
+# percent change since the schema correction, and every number in the Results already comes from that
+# scale. What the port changes is that there is now ONE implementation rather than two, and the
+# prespecified features the gate scripts never implemented, the permutation meta regression, the
+# bias corrected and accelerated composite intervals, the estimator sweep, the influence diagnostics
+# and the output manifest, run on the real data instead of on a pipeline that could not start.
+#
+# The departure from the registered plan is the pooling scale, percent change rather than Hedges' g.
+# That departure is already present in the reported numbers and is a protocol deviation for the
+# Director to approve and the manuscript to disclose; it is not introduced here.
+DATA_FILE <- "analysis/data/extraction_master_harmonised.csv"
 OUT_DIR   <- "analysis/output"
 
 dir.create(OUT_DIR, showWarnings = FALSE, recursive = TRUE)
@@ -70,6 +87,14 @@ writeLines(capture.output(sessioninfo::session_info()),
 
 RECEPTOR_CLASSES <- c("GLP1_mono", "GLP1_GIP", "GLP1_GCGR", "GLP1_GIP_GCGR")
 
+# The outcome_type values that pool on the continuous scale. The schema grew two further values
+# after this pipeline was written, "contrast" for a row carrying a published between group effect
+# and "arm_means" for one carrying both arms, and both pool exactly as "continuous" does once the
+# harmonisation layer has put them on one scale. Naming the set here rather than testing equality
+# against "continuous" is what keeps a schema addition from silently dropping rows: the earlier
+# equality test would have pooled 453 rows and ignored 68 without saying so.
+CONTINUOUS_TYPES <- c("continuous", "contrast", "arm_means")
+
 check_integrity <- function(d) {
   errs <- character(0)
 
@@ -80,22 +105,25 @@ check_integrity <- function(d) {
                             paste(bad_class, collapse = ", ")))
   }
 
-  # Continuous outcomes need mean, SD and n in both arms to compute Hedges' g.
-  cont <- dplyr::filter(d, outcome_type == "continuous")
-  incomplete <- dplyr::filter(
-    cont,
-    is.na(mean_tx) | is.na(sd_tx) | is.na(n_tx) |
-    is.na(mean_ctrl) | is.na(sd_ctrl) | is.na(n_ctrl)
-  )
-  if (nrow(incomplete)) {
-    errs <- c(errs, sprintf("%d continuous rows missing mean/SD/n.",
-                            nrow(incomplete)))
-  }
-
-  # SDs must be strictly positive. A zero or negative SD silently produces an
-  # infinite effect size, so it is caught here instead.
-  if (any(cont$sd_tx <= 0, na.rm = TRUE) || any(cont$sd_ctrl <= 0, na.rm = TRUE)) {
-    errs <- c(errs, "Non-positive standard deviation present.")
+  # Continuous outcomes need an effect and a variance on the percent change scale. The original
+  # rule required arm level mean, SD and n in both arms, which the standardised mean difference
+  # needs but this literature does not report: 392 of the 453 continuous rows failed it, which is
+  # what stopped this pipeline. The rule now matches what the analysis actually consumes, which is
+  # the principle build_master.R adopted on 2026-10-15, require only what the analysis needs where
+  # it needs it. Rows without a convertible effect are not an integrity failure; they are the
+  # documented 38 row limitation and are dropped at the effect size step with a count.
+  cont <- dplyr::filter(d, outcome_type %in% CONTINUOUS_TYPES)
+  if (!all(c("yi_pct", "vi_pct") %in% names(d))) {
+    errs <- c(errs, "Harmonised columns yi_pct and vi_pct are absent: run src/harmonise_units.R.")
+  } else {
+    usable <- dplyr::filter(cont, !is.na(yi_pct), !is.na(vi_pct))
+    if (nrow(usable) == 0) {
+      errs <- c(errs, "No continuous row carries both yi_pct and vi_pct.")
+    }
+    # A non-positive variance silently produces an infinite weight, so it is caught here.
+    if (any(usable$vi_pct <= 0, na.rm = TRUE)) {
+      errs <- c(errs, "Non-positive variance present on the percent change scale.")
+    }
   }
 
   # Every biomarker needs a declared aging direction for the composite.
@@ -103,9 +131,18 @@ check_integrity <- function(d) {
     errs <- c(errs, "aging_direction must be exactly +1 or -1.")
   }
 
-  # Weight change is the meta-regression covariate and cannot be missing.
-  if (any(is.na(d$pct_weight_change))) {
-    errs <- c(errs, "pct_weight_change missing for at least one trial.")
+  # Weight change is the meta regression covariate, so it is required where that regression runs and
+  # not on every row of the corpus. The original rule failed the whole pipeline when any row lacked
+  # it, which is the same over-requirement as above: a trial reporting a biomarker but no weight
+  # change is a trial the weight adjusted analysis excludes, not a corrupt record. The count is
+  # reported so the exclusion is visible, and the regression itself filters and states its own n.
+  n_no_weight <- sum(is.na(d$pct_weight_change))
+  if (n_no_weight == nrow(d)) {
+    errs <- c(errs, "pct_weight_change is missing on every row: the covariate is absent.")
+  } else if (n_no_weight > 0) {
+    message(sprintf(paste0("  note: %d of %d rows carry no pct_weight_change and are excluded ",
+                           "from the weight adjusted meta regression only."),
+                    n_no_weight, nrow(d)))
   }
 
   if (length(errs)) stop(paste(c("EXTRACTION INTEGRITY FAILURE:", errs),
@@ -136,23 +173,52 @@ dat$receptor_class <- factor(dat$receptor_class, levels = RECEPTOR_CLASSES)
 # log odds ratio, which is the appropriate scale for pooling proportions and is
 # back transformed for presentation.
 
-es_continuous <- metafor::escalc(
-  measure = "SMD",
-  m1i = mean_tx,   sd1i = sd_tx,   n1i = n_tx,
-  m2i = mean_ctrl, sd2i = sd_ctrl, n2i = n_ctrl,
-  data = dplyr::filter(dat, outcome_type == "continuous"),
-  slab = trial_id
-)
+# The effect size is read from the harmonisation layer rather than recomputed here. escalc with
+# measure "SMD" needs m1i, sd1i, n1i and their comparator counterparts; those are present on 160 of
+# the 524 rows and complete on fewer, because the trials in this corpus publish a between group
+# contrast with an interval. src/harmonise_units.R already converts each row's native effect to the
+# percent change scale by its declared route and records which route it used, so recomputing here
+# would either reproduce that work or disagree with it. Reading it keeps one definition.
+#
+# yi is therefore a percent change in the biomarker, not a standardised mean difference, and vi its
+# variance on that scale. Every downstream function in this pipeline takes a frame of yi and vi and
+# is indifferent to which scale they are on; what changes is the interpretation of the pooled number,
+# which is the protocol deviation named at the top of this file.
+es_continuous <- dplyr::filter(dat, outcome_type %in% CONTINUOUS_TYPES,
+                               !is.na(yi_pct), !is.na(vi_pct), vi_pct > 0)
+n_dropped <- sum(dat$outcome_type %in% CONTINUOUS_TYPES) - nrow(es_continuous)
+message(sprintf(paste0("  effect sizes: %d continuous rows on the percent change scale, ",
+                       "%d dropped for lacking a convertible effect"),
+                nrow(es_continuous), n_dropped))
+# The raw mean difference is retained where the row's native scale was already absolute, which is
+# the only case in which it means the same thing across trials of one biomarker. It is taken from
+# the native columns BEFORE yi is overwritten below, since the native effect lives in yi itself.
+es_continuous$yi_md <- ifelse(es_continuous$unit_family == "absolute", es_continuous$yi, NA)
+es_continuous$vi_md <- ifelse(es_continuous$unit_family == "absolute",
+                              es_continuous$se_native^2, NA)
+es_continuous$yi <- es_continuous$yi_pct
+es_continuous$vi <- es_continuous$vi_pct
 
-es_continuous_md <- metafor::escalc(
-  measure = "MD",
-  m1i = mean_tx,   sd1i = sd_tx,   n1i = n_tx,
-  m2i = mean_ctrl, sd2i = sd_ctrl, n2i = n_ctrl,
-  data = dplyr::filter(dat, outcome_type == "continuous"),
-  slab = trial_id
-)
-es_continuous$yi_md <- es_continuous_md$yi
-es_continuous$vi_md <- es_continuous_md$vi
+# Collapse to one arm per trial per biomarker, keeping the highest dose. Several trials contribute
+# multiple dose arms against a single shared control, and pooling those as independent studies
+# overstates precision: the first run of this port pooled 18 liver fat rows where the analysis pools
+# 9, 44 HbA1c rows where it pools 38, and every interval came out too narrow. The rule and its
+# justification are defined in src/pool_biomarkers.R, decision 1, which is the operational analysis;
+# this is the same rule applied here so that the two implementations pool the same rows. It is NOT a
+# second definition on purpose, and consolidating the two into one shared step is the remaining work
+# on this port, because a rule stated twice is the defect that has bitten this repository three times.
+#
+# This rule is absent from the registered plan, which assumed one contrast per trial. It is a real
+# analytic decision, it is visible in the pooled k of every biomarker, and it needs to be disclosed
+# in the Methods rather than left implicit in a script.
+n_before <- nrow(es_continuous)
+es_continuous <- es_continuous |>
+  dplyr::group_by(trial_id, biomarker) |>
+  dplyr::slice_max(order_by = dose_mg, n = 1, with_ties = FALSE) |>
+  dplyr::ungroup()
+message(sprintf(paste0("  shared control collapse: %d rows kept, %d dose arms dropped ",
+                       "(one arm per trial per biomarker, highest dose)"),
+                nrow(es_continuous), n_before - nrow(es_continuous)))
 
 es_binary <- metafor::escalc(
   measure = "OR",
@@ -198,6 +264,13 @@ pool_effect <- function(es_df, estimator = "REML", use_hksj = NULL) {
 
   pred <- predict(fit)
 
+  # A prediction interval needs tau to be estimable, which takes at least three studies. metafor
+  # will return one from two, where it is an interval around a between study variance estimated from
+  # a single degree of freedom and means nothing a reader should act on. Suppressed below k = 3, the
+  # rule src/pool_biomarkers.R states as decision 3; without this the port disagreed with the
+  # analysis on exactly the two biomarkers that have two trials, body fat percentage and lean mass.
+  pi_estimable <- k >= 3
+
   tibble::tibble(
     k         = k,
     n_total   = sum(es_df$n_tx, es_df$n_ctrl, na.rm = TRUE),
@@ -205,8 +278,8 @@ pool_effect <- function(es_df, estimator = "REML", use_hksj = NULL) {
     se        = fit$se,
     ci_lb     = fit$ci.lb,
     ci_ub     = fit$ci.ub,
-    pi_lb     = pred$pi.lb,     # prediction interval lower bound
-    pi_ub     = pred$pi.ub,     # prediction interval upper bound
+    pi_lb     = if (pi_estimable) pred$pi.lb else NA_real_,
+    pi_ub     = if (pi_estimable) pred$pi.ub else NA_real_,
     p_value   = fit$pval,
     tau2      = fit$tau2,
     tau2_se   = fit$se.tau2,
@@ -241,6 +314,20 @@ primary_results <- purrr::map_dfr(biomarkers, function(bm) {
 })
 
 readr::write_csv(primary_results, file.path(OUT_DIR, "table3_primary_results.csv"))
+
+# Table 2 is the overall pooling per biomarker, across receptor classes, and is what the manuscript
+# reports as the primary result; the class stratified Table 3 above is the receptor class signature.
+# This pipeline produced only the stratified table, which is why the gate scripts grew their own
+# pooling and the two implementations diverged. Producing both here, from the one pool_effect, is
+# what allows the port to be checked rather than asserted: table2_pipeline.csv must reproduce the
+# gate scripts' table2_pooled_by_biomarker.csv to the last decimal, and
+# src/table2_reproduction_check.py is the comparison.
+table2_pipeline <- purrr::map_dfr(biomarkers, function(bm) {
+  res <- pool_effect(dplyr::filter(es_continuous, biomarker == bm))
+  if (is.null(res)) return(NULL)
+  dplyr::mutate(res, biomarker = bm, .before = 1)
+})
+readr::write_csv(table2_pipeline, file.path(OUT_DIR, "table2_pipeline.csv"))
 
 
 ## ---------------------------------------------------------------------------

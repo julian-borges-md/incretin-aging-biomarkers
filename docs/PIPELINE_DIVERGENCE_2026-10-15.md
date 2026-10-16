@@ -34,3 +34,55 @@ Recommendation: A, in a dedicated session, with the gate chain kept green throug
 ## Environment
 
 Installed on the workstation during this probe: `netmeta` 3.7-0 (with `meta` 8.5-0), `dmetar` from GitHub, `patchwork`, `sessioninfo`. `renv.lock` is still absent; `requirements.R` is the only dependency record. Generating the lock file belongs to the same session as the port.
+
+## Resolution, 16 October 2026: option A executed, one blocker remains
+
+Option A was taken. `analysis/M5_AGE_analysis_pipeline.R` now reads
+`analysis/data/extraction_master_harmonised.csv`, takes `yi_pct` and `vi_pct` as the effect and its
+variance rather than recomputing a standardised mean difference from arm level data this literature
+does not publish, and applies the two selection rules the gate scripts had and it did not.
+
+`check_integrity` was relaxed to the build master principle, require only what the analysis needs
+where it needs it. The old rule failed on 392 of 453 continuous rows for missing arm SDs and on any
+row missing `pct_weight_change`; the covariate is now required where the meta regression runs, which
+excludes 161 rows from that regression alone and is reported rather than fatal.
+
+### The acceptance test
+
+`src/table2_reproduction_check.py` compares the ported pipeline's per biomarker pooling against the
+gate scripts' `table2_pooled_by_biomarker.csv` on estimate, both confidence bounds, both prediction
+bounds, tau squared and k.
+
+**28 of 28 shared biomarkers agree to within 0.001.** Six biomarkers the gate scripts carry are
+absent from the pipeline's table for reasons the test states as a rule rather than a list: four have
+k = 1 and `pool_effect` refuses fewer than two trials, and two are binary outcomes pooled on the log
+odds ratio scale in their own table.
+
+Reaching that agreement took two corrections to the port, and both were found by the test rather than
+by reading:
+
+| Correction | Why it mattered |
+|---|---|
+| Collapse to one arm per trial per biomarker, highest dose | The first run pooled 18 liver fat rows where the analysis pools 9, 44 HbA1c rows where it pools 38, and 94 dose arms in total. Dose arms share a control, so pooling them as independent studies narrows every interval. The rule is `src/pool_biomarkers.R` decision 1 |
+| Suppress prediction intervals below k = 3 | metafor returns one from two studies, where tau rests on a single degree of freedom. It disagreed with the analysis on exactly the two biomarkers that have two trials, body fat percentage and lean mass |
+
+### What this surfaced, for the Director
+
+| Item | Status |
+|---|---|
+| The pooling scale is percent change, not Hedges' g as registered | A protocol deviation already present in every reported number. The port does not introduce it; it makes the registered pipeline compute what is reported. Needs approval and a Methods disclosure |
+| One arm per trial per biomarker, highest dose | A real analytic decision, absent from the registered plan, visible in the pooled k of every biomarker, and currently implicit in a script. Needs a Methods sentence |
+| Four biomarkers are reported in Table 2 with k = 1 | BMD, ICAM1, YKL40 and MR-proANP appear in a synthesis table with an estimate and a confidence interval that are one trial's. A reader infers synthesis. Recommend a separate single trial section of the table rather than removal, since the evidence is real and the presentation is what misleads |
+| The weight adjusted meta regression does not complete | `metafor::rma()` reports "Fisher scoring algorithm did not converge" on the second biomarker of the loop. This is the prespecified inferential core and it has never run before today, so the failure is new information rather than a regression. It is the remaining blocker on the port |
+
+### Remaining work on the port
+
+1. The convergence failure above. Options are an optimiser change, a fallback estimator recorded per
+   biomarker, or skipping the affected biomarker with the reason carried into the table; the choice
+   affects what the manuscript can claim, so it is not a silent fix.
+2. The shared control collapse is now stated in two places, `src/pool_biomarkers.R` and the pipeline.
+   That is the duplicated rule defect this repository has hit three times. One of them must become
+   the definition and the other must call it.
+3. Figures 1, 4 and 5 are generated only by this pipeline and `figures/` is still empty; they follow
+   once the run completes.
+4. `renv.lock` is still absent. `requirements.R` remains the only dependency record.
