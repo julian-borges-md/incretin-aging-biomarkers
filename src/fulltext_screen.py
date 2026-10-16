@@ -238,6 +238,10 @@ def dec_path(rev):
 
 
 ADJ_PATH = os.path.join(OUTDIR, "fulltext_adjudication_002.csv")
+# When this file exists, the adjudication of disagreements is delegated to the reviewer it names
+# (the session's cloud model, on the Director's instruction) and the local adjudicator is not called;
+# the delegated reviewer writes the same adjudication file through src/session_adjudicate.py.
+ADJUDICATOR_FILE = os.path.join(OUTDIR, "ADJUDICATOR.txt")
 FIELDS = ["key", "pool", "n", "source", "decision", "failed", "reason", "duration_weeks", "comparator", "biomarkers_reported", "chars", "seconds"]
 
 
@@ -276,6 +280,10 @@ def screen(cfg, items, reviewer, sources, limit=None):
 
 
 def adjudicate(cfg, items):
+    if os.path.exists(ADJUDICATOR_FILE):
+        print("adjudication delegated:", open(ADJUDICATOR_FILE).read().strip().splitlines()[0], flush=True)
+        print("nothing done here; pending disagreements: python3 -I src/session_adjudicate.py list", flush=True)
+        return
     A, B = read_dec(dec_path("A")), read_dec(dec_path("B"))
     done = read_dec(ADJ_PATH)
     dis = [it for it in items if it["key"] in A and it["key"] in B and A[it["key"]]["decision"] != B[it["key"]]["decision"]
@@ -318,9 +326,12 @@ def summarise(cfg, items):
             final[key] = A[key]["decision"]
         elif key in ADJ:
             final[key] = ADJ[key]["decision"]
+    adjudicator = ("a third agent adjudicating disagreements (local model named in the untracked configuration file)"
+                   if not os.path.exists(ADJUDICATOR_FILE) else
+                   "disagreements adjudicated by " + open(ADJUDICATOR_FILE).read().strip().splitlines()[0])
     lines = ["# Full text screening of the pool\n",
-             "Two independent reviewer agents (different local models, temperature 0, fixed seed, blinded to each other), a third agent "
-             "adjudicating disagreements, criteria v2 plus the full text addendum. Models are named only in the untracked configuration file. "
+             "Two independent reviewer agents (different local models, temperature 0, fixed seed, blinded to each other), "
+             + adjudicator + ", criteria v2 plus the full text addendum. "
              "Produced by `src/fulltext_screen.py summarise`.\n",
              "| Text source | Records | Screened by both | Final include | Final exclude | Pending |\n|---|---|---|---|---|---|"]
     for src in SOURCE_ORDER + ["awaiting_fulltext", "already_extracted"]:

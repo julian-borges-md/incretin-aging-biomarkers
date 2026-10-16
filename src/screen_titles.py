@@ -60,6 +60,7 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 from collections import Counter, defaultdict
 
@@ -262,7 +263,7 @@ def parse_ris():
     return out
 
 
-def ollama_chat(cfg, model, system, user, max_retries=3):
+def ollama_chat(cfg, model, system, user, max_retries=6):
     body = json.dumps({
         "model": model,
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
@@ -278,9 +279,18 @@ def ollama_chat(cfg, model, system, user, max_retries=3):
                                          headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=600) as resp:
                 return json.loads(resp.read().decode())["message"]["content"]
-        except Exception as e:  # network or model error: retry, then give up loudly
+        except urllib.error.HTTPError as e:  # the server's reason is in the body; keep it for the log
+            try:
+                detail = e.read().decode("utf-8", errors="replace")[:300]
+            except Exception:
+                detail = ""
+            last = f"{e} :: {detail}"
+            print(f"  ollama {e.code} on attempt {attempt + 1}: {detail[:160]}", flush=True)
+            time.sleep(min(15 * 2 ** attempt, 180))  # a model swap under memory pressure can take minutes
+        except Exception as e:  # network error: retry, then give up loudly
             last = e
-            time.sleep(5 * (attempt + 1))
+            print(f"  ollama call error on attempt {attempt + 1}: {e}", flush=True)
+            time.sleep(min(15 * 2 ** attempt, 180))
     raise RuntimeError(f"ollama call failed after {max_retries} attempts: {last}")
 
 
