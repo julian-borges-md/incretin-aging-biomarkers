@@ -1,0 +1,133 @@
+{
+ "group": "243",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT00614120 Nanjing adipokine substudy",
+  "pmid": "",
+  "doi": "10.1016/j.diabres.2015.05.051",
+  "first_author": "Zhang",
+  "year": "2015",
+  "journal": "Diabetes Res Clin Pract",
+  "phase": "3",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "",
+  "comparator": "glimepiride 4 mg plus metformin",
+  "comparator_type": "active",
+  "duration_weeks": "16",
+  "population": "T2D",
+  "n_tx": "33",
+  "n_ctrl": "11",
+  "assessment_timepoint_weeks": "16",
+  "pct_weight_change": "-0.6",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "FALSE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: single centre (Nanjing First Hospital) double blind double dummy active controlled substudy of NCT00614120 in Chinese type 2 diabetes on metformin; liraglutide once daily pooled across 0.6 mg (n 11), 1.2 mg (n 12) and 1.8 mg (n 10) plus metformin (n 33) versus glimepiride 4 mg plus metformin (n 11); 16 weeks in the methods and abstract, the Table 1 caption says 14 weeks, 16 recorded with the discrepancy noted; dose_mg left empty because the liraglutide arm of Table 1 pools the three dose subgroups; Table 1 prints mean plus or minus SD per arm at baseline and after treatment for SBP, DBP, HbA1c and FBG (route arm_change_imputed_r, correlation 0.5) and median with interquartile range for fasting insulin, C peptide, adiponectin and resistin, which cannot be pooled; the adiponectin and resistin change values in the results text carry a dispersion of undeclared type and the subgroup baselines contradict the stated direction (an increase of 0.67 ng/ml printed with baseline 3.35 and after treatment 2.56), so both are recorded in doubts and not extracted; the stated aim was the adipokines, so the extracted rows are parent trial characteristics (prespecified_endpoint FALSE); pct_weight_change from the results text, liraglutide 68.7 to 68.3 kg equals minus 0.6 percent (glimepiride 68.3 to 70.5 kg, plus 3.2 percent; no contrast printed); funding declared None and no conflicts, although the parent trial was Novo Nordisk sponsored (industry_funded FALSE as declared, noted); rob_overall some_concerns"
+ },
+ "rows": [
+  {
+   "biomarker": "HbA1c",
+   "measure": "MD",
+   "unit": "percent",
+   "base_mean_tx": "8.3",
+   "base_sd_tx": "1.2",
+   "final_mean_tx": "7.2",
+   "final_sd_tx": "1.1",
+   "base_mean_ctrl": "8.3",
+   "base_sd_ctrl": "1.0",
+   "final_mean_ctrl": "7.3",
+   "final_sd_ctrl": "1.2",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 1 HbA1c percent NGSP, baseline and after treatment per arm; the same row in IFCC units is 67 plus or minus 13 to 55 plus or minus 12 and 67 plus or minus 11 to 56 plus or minus 13; asterisk marks p below 0.05 versus baseline"
+  },
+  {
+   "biomarker": "fasting_glucose",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "base_mean_tx": "9.6",
+   "base_sd_tx": "2.64",
+   "final_mean_tx": "7.97",
+   "final_sd_tx": "2.28",
+   "base_mean_ctrl": "9.95",
+   "base_sd_ctrl": "2.35",
+   "final_mean_ctrl": "8.14",
+   "final_sd_ctrl": "2.91",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 1 FBG mmol/l baseline and after treatment per arm; asterisk marks p below 0.05 versus baseline in both arms"
+  },
+  {
+   "biomarker": "SBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "base_mean_tx": "131",
+   "base_sd_tx": "16",
+   "final_mean_tx": "134",
+   "final_sd_tx": "15",
+   "base_mean_ctrl": "130",
+   "base_sd_ctrl": "20",
+   "final_mean_ctrl": "138",
+   "final_sd_ctrl": "17",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 1 SBP mmHg baseline and after treatment per arm; both arms rose, the liraglutide arm less, no within arm significance marked"
+  },
+  {
+   "biomarker": "DBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "base_mean_tx": "81",
+   "base_sd_tx": "8",
+   "final_mean_tx": "83",
+   "final_sd_tx": "10",
+   "base_mean_ctrl": "81",
+   "base_sd_ctrl": "8",
+   "final_mean_ctrl": "86",
+   "final_sd_ctrl": "10",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 1 DBP mmHg baseline and after treatment per arm; no within arm significance marked"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "liraglutide",
+  "trial_id": "NCT00614120 Nanjing adipokine substudy",
+  "design": "single centre double blind double dummy active controlled substudy of NCT00614120, liraglutide pooled across three doses plus metformin versus glimepiride 4 mg plus metformin, 44 Chinese patients with type 2 diabetes, 16 weeks",
+  "reason": "full text group (institutional route); four inventory markers printed as mean and SD per arm at baseline and after treatment, taken by the imputed change route; adiponectin and resistin, the stated endpoints, are printed as medians with interquartile range in the table and as changes with an undeclared dispersion in the text, and the subgroup values contradict the stated direction, so they are left to a dispersion type decision",
+  "biomarkers_reported_no_variance": [
+   "adiponectin",
+   "resistin",
+   "fasting_insulin",
+   "C_peptide"
+  ],
+  "other_markers": [
+   "resistin",
+   "waist and hip circumference",
+   "waist to hip and waist to height ratio",
+   "postprandial blood glucose",
+   "BMI and body weight"
+  ],
+  "tables_used": [
+   "Table 1",
+   "results text"
+  ],
+  "rob": {
+   "d1_randomisation": "some_concerns",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "randomised within the parent trial but the substudy arms are 33 against 11 with no allocation ratio or concealment described (D1 some concerns); double blind double dummy with placebo for each agent (D2 low); no account of withdrawals or missing samples in the substudy (D3 some concerns); central laboratory analyses by MDS Pharma Services with HPLC HbA1c (D4 low); a single site adipokine substudy of a multicentre trial reporting markers outside the parent protocol, with internally inconsistent adiponectin values (D5 some concerns)"
+  },
+  "doubts": [
+   "duration printed as 16 weeks in the methods and abstract and as 14 weeks in the Table 1 caption; 16 recorded",
+   "adiponectin change 0.74 plus or minus 0.19 ng/ml (liraglutide) and minus 0.44 plus or minus 0.09 ng/ml (glimepiride) and resistin minus 1.34 plus or minus 0.34 pg/ml and 0.14 plus or minus 0.41 pg/ml carry a dispersion of undeclared type, and ng/ml for adiponectin is three orders below the usual microgram per millilitre scale; the dose subgroup adiponectin values print an increase with a lower after treatment median, so the direction cannot be verified; a Director decision on admitting these two rows under a declared dispersion type is required",
+   "the liraglutide arm pools 0.6, 1.2 and 1.8 mg, so dose_mg is empty and the dose response claim of the paper is not represented",
+   "pct_weight_change minus 0.6 percent is arithmetic from the printed kilogram means and is expected to be flagged by the numbers check"
+  ]
+ }
+}

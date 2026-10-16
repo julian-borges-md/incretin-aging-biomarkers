@@ -131,9 +131,55 @@ BASELINE <- tibble::tribble(
   # Dutour 2016 (group 226, companion full paper through the institutional route): the HbA1c row
   # carries arm changes with SEMs; the paper gives the study population's baseline HbA1c (n 44),
   # not per arm, in the Results text.
-  "Dutour 2016", "HbA1c",  7.5,  "Dutour 2016 Results text: mean HbA1c 7.5 (SEM 0.2) percent in the 44 randomised participants"
+  "Dutour 2016", "HbA1c",  7.5,  "Dutour 2016 Results text: mean HbA1c 7.5 (SEM 0.2) percent in the 44 randomised participants",
+  # BELIEVE (group 31, Heymsfield 2026 Nat Med): Table 1 prints fasting insulin as a geometric mean
+  # with CV per arm (footnote c), the same scale the week 48 LSM change is reported on (footnote f,
+  # log transformed MMRM). n weighted over the three arms the two extracted rows contrast:
+  # placebo 110.4 (n 56), semaglutide 1.0 mg 113.7 (n 56), semaglutide 2.4 mg 116.6 (n 57).
+  "BELIEVE",     "fasting_insulin", (110.4*56 + 113.7*56 + 116.6*57)/169,
+  "Heymsfield 2026 Table 1 (geometric mean, CV): (110.4*56 + 113.7*56 + 116.6*57)/169 pmol/L",
+  # SOUL (group 24, Mulvagh 2026 JAMA Cardiol): Table 2 prints baseline vital signs and laboratory
+  # values as medians with IQR per full analysis set arm, not means, so these three denominators are
+  # medians under amendment A12 (admitted only for the approximately symmetric markers listed in
+  # MEDIAN_BASELINE_OK below, and labelled here so a sensitivity analysis can drop them).
+  "SOUL",        "SBP",   (134*4825 + 135*4825)/9650,
+  "Mulvagh 2026 Table 2 median (IQR): (134*4825 + 135*4825)/9650 mm Hg, median baseline under A12",
+  "SOUL",        "DBP",   (77*4825 + 78*4825)/9650,
+  "Mulvagh 2026 Table 2 median (IQR): (77*4825 + 78*4825)/9650 mm Hg, median baseline under A12",
+  "SOUL",        "HbA1c", 7.8,
+  "Mulvagh 2026 Table 2 median (IQR): 7.8 percent in both arms, median baseline under A12",
+  # PROXYMO (group 158, Shankar 2024 Clin Gastroenterol Hepatol, NCT04019561): the first capture
+  # copied only the demographic half of Table 1, so the ten blood pressure, pulse and lipid rows had
+  # no denominator. The whole table was read on 2026-10-16 through the institutional route and is in
+  # work/fulltext/companion/shankar2024_proxymo_table1_full.txt. Values are mean (SD) per arm,
+  # n weighted over the three ITT arms the two dose rows contrast: placebo 24, 300 ug 25, 600 ug 25.
+  "NCT04019561", "SBP",   (124.9*24 + 127.5*25 + 128.2*25)/74,
+  "Shankar 2024 Table 1: (124.9*24 + 127.5*25 + 128.2*25)/74 mmHg",
+  "NCT04019561", "DBP",   (78.6*24 + 76.6*25 + 77.2*25)/74,
+  "Shankar 2024 Table 1: (78.6*24 + 76.6*25 + 77.2*25)/74 mmHg",
+  "NCT04019561", "resting_heart_rate", (77.3*24 + 75.0*25 + 75.0*25)/74,
+  "Shankar 2024 Table 1: (77.3*24 + 75.0*25 + 75.0*25)/74 bpm",
+  "NCT04019561", "TC",    (5.2*24 + 4.7*25 + 5.1*25)/74,
+  "Shankar 2024 Table 1: (5.2*24 + 4.7*25 + 5.1*25)/74 mmol/L",
+  "NCT04019561", "LDL",   (3.1*24 + 2.5*25 + 2.9*25)/74,
+  "Shankar 2024 Table 1: (3.1*24 + 2.5*25 + 2.9*25)/74 mmol/L"
 )
 stopifnot(!any(duplicated(BASELINE[c("trial_id", "biomarker")])))
+
+# A12 (2026-10-16): a baseline printed only as a median may serve as the percent scale denominator,
+# but only for markers whose baseline distribution is approximately symmetric, where the median and
+# the mean differ by far less than the effect being scaled. Skewed markers (hsCRP, triglycerides,
+# insulin, leptin, adiponectin, the transaminases) are refused: for those a median denominator would
+# rescale the effect by an unknown amount, which is the error the unconvertible rule exists to avoid.
+# Every median entry says so in baseline_source, and this check enforces the restriction at source
+# time rather than trusting the author of the entry.
+MEDIAN_BASELINE_OK <- c("SBP", "DBP", "HbA1c", "resting_heart_rate", "eGFR", "BMD", "lean_mass",
+                        "body_fat_pct", "fasting_glucose")
+median_rows <- BASELINE[grepl("median", BASELINE$baseline_source, ignore.case = TRUE), ]
+if (nrow(median_rows) > 0 && !all(median_rows$biomarker %in% MEDIAN_BASELINE_OK)) {
+  bad <- setdiff(median_rows$biomarker, MEDIAN_BASELINE_OK)
+  stop("A12 refuses a median baseline for a skewed marker: ", paste(bad, collapse = ", "))
+}
 
 # events_log_RR (2026-10-16): a binary histology outcome from events per arm. Its percent value is
 # the relative change in the proportion responding, not a change in a marker's level; the two
