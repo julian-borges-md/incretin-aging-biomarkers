@@ -85,6 +85,14 @@ fulltext-access:
 registry-harvest:
 	python3 -I src/ctgov_harvest.py
 
+# Full text screening by the same three agent design (criteria v2 plus the full text addendum)
+fulltext-screen:
+	python3 -I src/fulltext_screen.py screen
+fulltext-adjudicate:
+	python3 -I src/fulltext_screen.py adjudicate
+fulltext-summary:
+	python3 -I src/fulltext_screen.py summarise
+
 clean:
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep

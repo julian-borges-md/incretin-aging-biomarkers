@@ -26,3 +26,5 @@ search/screening/*.log
 search/screening/fulltext_pool_*.csv
 __pycache__/
 search/screening/fulltext_access_*.csv
+search/screening/fulltext_decisions_*.csv
+search/screening/fulltext_adjudication_*.csv
