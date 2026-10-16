@@ -36,7 +36,7 @@ TEXT_SOURCES = {"epmc_fulltext", "direct_fulltext", "proxy_fulltext"}
 def final_decision(key, A, B, ADJ):
     """Record level outcome: agreed decision, else the adjudicator's, else pending."""
     if key in A and key in B:
-        if A[key]["decision"] == B[key]["decision"]:
+        if A[key]["decision"] == B[key]["decision"] and A[key]["decision"] != "error":
             return A[key]["decision"], "agreed"
         if key in ADJ:
             return ADJ[key]["decision"], "adjudicated"

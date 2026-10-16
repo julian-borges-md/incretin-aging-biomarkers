@@ -30,7 +30,7 @@ hba1c_sd,numeric,no,SD of baseline HbA1c
 pct_weight_change,numeric,yes,Mean percentage body weight change (meta-regression covariate)
 biomarker,string,yes,Biomarker name matching the 26-marker inventory
 hallmark_domain,string,yes,Aging hallmark domain
-aging_direction,integer,yes,+1 if decrease is favorable; -1 if decrease is unfavorable
+aging_direction,integer,yes,Sign of the favourable change as the pipeline uses it (pool_biomarkers.R: favourable = aging_direction * est > 0): -1 when a decrease is favourable (hsCRP); +1 when an increase is favourable (adiponectin HOMA-beta lean mass). Earlier text of this line had the signs reversed; corrected 2026-10-16 against the code and the master
 clinical_weight,numeric,yes,Pre-specified clinical importance weight for NBAIS scheme c
 outcome_type,factor,yes,continuous or binary
 mean_tx,numeric,conditional,Mean change in treatment arm (continuous only)

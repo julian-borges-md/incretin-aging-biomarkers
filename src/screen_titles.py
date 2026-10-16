@@ -286,6 +286,10 @@ def ollama_chat(cfg, model, system, user, max_retries=6):
                 detail = ""
             last = f"{e} :: {detail}"
             print(f"  ollama {e.code} on attempt {attempt + 1}: {detail[:160]}", flush=True)
+            if "prediction aborted" in detail:
+                # The runner abandoned this generation (token repeat limit): deterministic for the
+                # record at temperature 0, so a retry only costs time. Seen 2026-10-16 on proxy texts.
+                raise RuntimeError(f"ollama refused the record: {detail[:160]}")
             time.sleep(min(15 * 2 ** attempt, 180))  # a model swap under memory pressure can take minutes
         except Exception as e:  # network error: retry, then give up loudly
             last = e
@@ -367,8 +371,12 @@ def screen(cfg, recs, reviewer, limit=None, subset=None):
         t_all = time.time()
         for i, rec in enumerate(todo, 1):
             t0 = time.time()
-            raw = ollama_chat(cfg, model, criteria_text(), record_text(rec))
-            dec, failed, reason = parse_decision(raw)
+            try:
+                raw = ollama_chat(cfg, model, criteria_text(), record_text(rec))
+                dec, failed, reason = parse_decision(raw)
+            except RuntimeError as e:  # the server refused the record: keep an "error" row, go on (2026-10-16)
+                dec, failed, reason = "error", "", f"model error: {str(e)[:160]}"
+                print(f"  {reviewer}: record {rec['n']} recorded as error after repeated server failures", flush=True)
             w.writerow(dict(n=rec["n"], accession=rec["accession"], decision=dec, failed=failed,
                             reason=reason, seconds=f"{time.time() - t0:.1f}"))
             fh.flush()

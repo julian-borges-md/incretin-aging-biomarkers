@@ -13,6 +13,8 @@ A record enters the pool by one of three routes
   v1_include     pool 1 (Embase articles), final include under criteria v1
   v2_rescued     pool 1, finally excluded under v1, included by either
                  reviewer under criteria v2
+  pool3_include  pool 3 (Web of Science records in neither earlier export),
+                 final include under criteria v2; joined once chain4's summary exists
   pool2_include  pool 2 (Embase registry records and CENTRAL records not in
                  the Embase export), final include under criteria v2
 
@@ -132,12 +134,33 @@ for r in p2:
     if p2_final[r["n"]] == "include":
         rows.append(dict(r, pool="2", stage="pool2_include"))
         n_p2_inc += 1
+# Pool 3: the Web of Science records in neither earlier export (batch3), screened under v2 by chain4.
+# The pool is built without it until chain4's summary exists, so the script runs at every stage.
+n_p3_inc = 0
+st.POOL, st.CRITERIA_VERSION = "batch3", "v2"
+P3_SUMMARY = os.path.join(ROOT, "search/screening/SCREENING_SUMMARY_batch3_v2.md")
+if os.path.exists(P3_SUMMARY):
+    p3 = load_pool("batch3")
+    p3_final = st.final_decisions("v2")
+    if len(p3_final) != len(p3):
+        print(f"FAIL: pool 3 has {len(p3)} records but {len(p3_final)} final decisions")
+        sys.exit(1)
+    for r in p3:
+        if p3_final[r["n"]] == "include":
+            rows.append(dict(r, pool="3", stage="pool3_include"))
+            n_p3_inc += 1
+else:
+    print("pool 3 (batch3) has no screening summary yet: pool built from pools 1 and 2 only")
 st.POOL, st.CRITERIA_VERSION = "embase", "v1"
 
 EXPECTED = dict(v1_include=338, v2_rescued=24, pool2_include=185)
+EXPECTED_POOL3 = None  # set from SCREENING_SUMMARY_batch3_v2.md once chain4 has run, then gated like the others
 got = dict(v1_include=n_v1_inc, v2_rescued=n_v2_resc, pool2_include=n_p2_inc)
 if got != EXPECTED:
     print(f"FAIL: stage counts {got} differ from the committed summaries {EXPECTED}")
+    sys.exit(1)
+if os.path.exists(P3_SUMMARY) and EXPECTED_POOL3 is not None and n_p3_inc != EXPECTED_POOL3:
+    print(f"FAIL: pool 3 includes {n_p3_inc} differ from the committed summary {EXPECTED_POOL3}")
     sys.exit(1)
 
 # ---------------------------------------------------------------------------
@@ -251,7 +274,7 @@ md = ["# Full text screening pool, assembled 16 October 2026\n",
       "Per record rows (with titles) are in the untracked `fulltext_pool_2026-10-16.csv` beside the decision files.\n",
       "| Quantity | Value |\n|---|---|",
       f"| Records in the pool | {n} |",
-      f"| By stage | v1 include {by_stage['v1_include']}; v2 rescued {by_stage['v2_rescued']}; pool 2 include {by_stage['pool2_include']} |",
+      f"| By stage | v1 include {by_stage['v1_include']}; v2 rescued {by_stage['v2_rescued']}; pool 2 include {by_stage['pool2_include']}; pool 3 include {by_stage['pool3_include']}" + ("" if os.path.exists(P3_SUMMARY) else " (pool 3 not screened yet)") + " |",
       f"| By source | " + "; ".join(f"{k} {v}" for k, v in by_source.most_common()) + " |",
       f"| With DOI / with PMID / with an NCT identifier in the record | {with_doi} / {with_pmid} / {with_nct} |",
       f"| Linked to a known relevant trial at screening | {n_known} |",

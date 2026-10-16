@@ -270,8 +270,16 @@ def screen(cfg, items, reviewer, sources, limit=None):
         for i, it in enumerate(todo, 1):
             c = dict(cfg, num_ctx=ctx_for(it["text"]), num_predict=400)
             t0 = time.time()
-            raw = st.ollama_chat(c, model, system_prompt(), it["text"])
-            dec, failed, reason, dur, comp, bio = parse(raw)
+            try:
+                raw = st.ollama_chat(c, model, system_prompt(), it["text"])
+                dec, failed, reason, dur, comp, bio = parse(raw)
+            except RuntimeError as e:
+                # The server refused every attempt for this record (seen 2026-10-16: Ollama's
+                # "prediction aborted, token repeat limit reached", deterministic at temperature 0).
+                # The record keeps a row with decision "error" so the run goes on; an "error" row is a
+                # disagreement for the adjudicator, never an include or an exclude.
+                dec, failed, reason, dur, comp, bio = "error", "", f"model error: {str(e)[:160]}", "", "", ""
+                print(f"  {reviewer}: {it['key']} recorded as error after repeated server failures", flush=True)
             w.writerow(dict(key=it["key"], pool=it["pool"], n=it["n"], source=it["source"], decision=dec, failed=failed,
                             reason=reason, duration_weeks=dur, comparator=comp, biomarkers_reported=bio,
                             chars=len(it["text"]), seconds=f"{time.time() - t0:.1f}"))
@@ -317,13 +325,14 @@ def summarise(cfg, items):
     A, B, ADJ = read_dec(dec_path("A")), read_dec(dec_path("B")), read_dec(ADJ_PATH)
     by_source = Counter(it["source"] for it in items)
     both = [it for it in items if it["key"] in A and it["key"] in B]
-    pairs = [(A[it["key"]]["decision"], B[it["key"]]["decision"]) for it in both]
+    errors = [it for it in both if "error" in (A[it["key"]]["decision"], B[it["key"]]["decision"])]
+    pairs = [(A[it["key"]]["decision"], B[it["key"]]["decision"]) for it in both if it not in errors]
     k, se = st.kappa(pairs)
     agree = sum(1 for a, b in pairs if a == b)
     final = {}
     for it in both:
         key = it["key"]
-        if A[key]["decision"] == B[key]["decision"]:
+        if A[key]["decision"] == B[key]["decision"] and A[key]["decision"] != "error":
             final[key] = A[key]["decision"]
         elif key in ADJ:
             final[key] = ADJ[key]["decision"]
@@ -346,8 +355,10 @@ def summarise(cfg, items):
     lines.append(f"| Reviewer 1 include / exclude | {sum(1 for a, _ in pairs if a == 'include')} / {sum(1 for a, _ in pairs if a == 'exclude')} |")
     lines.append(f"| Reviewer 2 include / exclude | {sum(1 for _, b in pairs if b == 'include')} / {sum(1 for _, b in pairs if b == 'exclude')} |")
     lines.append(f"| Agreement | {agree} of {len(pairs)} ({(agree / len(pairs) if pairs else 0):.1%}) |")
+    if errors:
+        lines.append(f"| Records with a reviewer row recorded as model error (outside the agreement statistic, adjudicated) | {len(errors)} |")
     lines.append(f"| Cohen's kappa | {k:.3f} (SE {se:.3f}) |")
-    lines.append(f"| Disagreements adjudicated | {len([1 for it in both if it['key'] in ADJ])} of {len(pairs) - agree} |")
+    lines.append(f"| Disagreements adjudicated | {len([1 for it in both if it['key'] in ADJ])} of {len(pairs) - agree + len(errors)} |")
     lines.append(f"| Final include / exclude / pending | {sum(1 for v in final.values() if v == 'include')} / {sum(1 for v in final.values() if v == 'exclude')} / {len(both) - len(final)} |")
     known = [it for it in both if it["matched_known"]]
     lines.append(f"| Known relevant records with a text, included | {sum(1 for it in known if final.get(it['key']) == 'include')} of {len(known)} |")

@@ -5,7 +5,7 @@ Produced by `src/build_fulltext_pool.py` from the screening decision files and t
 | Quantity | Value |
 |---|---|
 | Records in the pool | 547 |
-| By stage | v1 include 338; v2 rescued 24; pool 2 include 185 |
+| By stage | v1 include 338; v2 rescued 24; pool 2 include 185; pool 3 include 0 (pool 3 not screened yet) |
 | By source | embase 362; central 159; embase_registry 26 |
 | With DOI / with PMID / with an NCT identifier in the record | 381 / 29 / 172 |
 | Linked to a known relevant trial at screening | 38 |

@@ -1,0 +1,37 @@
+biomarker,table1_number,table1_name,hallmark_domain,aging_direction,clinical_weight,weight_status,inventory_status,composite_primary,outcome_type,scan_key,notes
+hsCRP,1,hsCRP,inflammaging,-1,3,prespecified,table1,yes,continuous,crp,
+IL6,2,IL-6,inflammaging,-1,3,prespecified,table1,yes,continuous,il6,
+GDF15,3,GDF-15,mitochondrial_stress,-1,5,prespecified,table1,yes,continuous,gdf15,direction caution: rises with metformin and cachexia
+YKL40,4,YKL-40,inflammaging,-1,2,prespecified,table1,yes,continuous,ykl40,
+ICAM1,5,ICAM-1,endothelial_aging,-1,2,prespecified,table1,yes,continuous,icam1,
+leptin,6,Leptin,adipose_senescence,-1,2,prespecified,table1,yes,continuous,leptin,closest marker to a restatement of fat mass
+fasting_insulin,7,Fasting insulin,nutrient_sensing,-1,3,prespecified,table1,no,continuous,insulin,input to HOMA-IR; Table 2 and S3 only
+HOMA_IR,8,HOMA-IR,nutrient_sensing,-1,4,prespecified,table1,yes,continuous,homa_ir,
+HbA1c,9,HbA1c,nutrient_sensing,-1,4,provisional_2026-10-16,table1,no,continuous,hba1c,percent points or mmol/mol; record the unit
+fasting_glucose,10,Fasting glucose,nutrient_sensing,-1,4,prespecified,table1,no,continuous,glucose,input to HOMA-IR; Table 2 and S3 only
+SBP,11,SBP,vascular_aging,-1,3,provisional_2026-10-16,table1,no,continuous,bp,mmHg
+DBP,12,DBP,vascular_aging,-1,2,provisional_2026-10-16,table1,no,continuous,bp,mmHg
+liver_fat_pdff,13,Liver fat (MRI-PDFF),hepatocellular_senescence,-1,3,prespecified,table1,yes,continuous,liver_fat,MRI PDFF or MRS; CAP is not PDFF and is recorded in notes only
+ALT,14,ALT,hepatocellular_senescence,-1,3,prespecified,table1,no,continuous,alt,U shaped mortality association; Table 2 and S3 only
+AST,15,AST,hepatocellular_senescence,-1,3,prespecified,table1,no,continuous,ast,Table 2 and S3 only
+MASH_resolution,16,MASH resolution,hepatic_age_reversal,1,4,provisional_2026-10-16,table1,no,binary,mash,biopsy trials; events per arm
+fibrosis_improvement,17,Fibrosis improvement,hepatic_age_reversal,1,5,provisional_2026-10-16,table1,no,binary,mash,biopsy trials; events per arm (at least one stage without worsening of MASH)
+TG,18,Triglycerides,lipid_aging,-1,2,provisional_2026-10-16,table1,no,continuous,tg,
+LDL,19,LDL cholesterol,lipid_aging,-1,3,provisional_2026-10-16,table1,no,continuous,ldl,
+TC,20,Total cholesterol,lipid_aging,-1,2,provisional_2026-10-16,table1,no,continuous,tc,
+lean_mass,21,Total lean mass,musculoskeletal_aging,1,4,provisional_2026-10-16,table1,yes,continuous,lean_mass,the unfavourable axis; DXA or MRI; kg or percent of baseline; record the method
+body_fat_pct,22,Body fat percentage,adipose_senescence,-1,2,provisional_2026-10-16,table1,no,continuous,body_fat,DXA or BIA; record the method
+VAT,23,Visceral adipose tissue,adipose_senescence,-1,3,provisional_2026-10-16,table1,no,continuous,vat,MRI or DXA; record the method
+BMD,24,BMD,musculoskeletal_aging,1,3,provisional_2026-10-16,table1,no,continuous,bmd,DXA; site recorded in notes
+eGFR,25,eGFR,renal_aging,1,3,provisional_2026-10-16,table1,no,continuous,egfr,mL/min/1.73 m2; equation in notes
+resting_heart_rate,26,Resting heart rate,autonomic_aging,-1,3,provisional_2026-10-16,table1,no,continuous,heart_rate,bpm; increase is the unfavourable direction
+NTproBNP,,NT-proBNP,cardiac_aging,-1,2,prespecified,opportunistic_pre_amendment,yes,continuous,ntprobnp,retained in the composite because the drug does not move it
+adiponectin,,Adiponectin,adipose_senescence,1,3,prespecified,opportunistic_pre_amendment,no,continuous,adiponectin,excluded from the composite (E3); reported separately
+HOMA_beta,,HOMA-beta,nutrient_sensing,1,3,prespecified,opportunistic_pre_amendment,no,continuous,homa_beta,shares inputs with HOMA-IR
+C_peptide,,C-peptide,nutrient_sensing,-1,2,prespecified,opportunistic_pre_amendment,no,continuous,cpeptide,
+glucagon,,Glucagon,nutrient_sensing,-1,2,prespecified,opportunistic_pre_amendment,no,continuous,glucagon,target engagement for GCGR agonism (E1)
+GGT,,GGT,hepatocellular_senescence,-1,2,prespecified,opportunistic_pre_amendment,yes,continuous,ggt,
+fatty_liver_index,,Fatty liver index,hepatocellular_senescence,-1,3,prespecified,opportunistic_pre_amendment,no,continuous,,derived from BMI and waist (E2)
+TNF_alpha,,TNF-alpha,inflammaging,-1,3,prespecified,added_R2_2026-10-15,no,continuous,tnf,Table 2 and S3 only
+MR_proANP,,MR-proANP,cardiac_aging,-1,2,prespecified,added_R2_2026-10-15,no,continuous,mrproanp,Table 2 and S3 only
+epigenetic_age,,Epigenetic clocks,epigenetic_aging,-1,,not_applicable,not_admitted_descriptive_only,no,continuous,epigenetic_age,not in Table 1; reported descriptively (Corley 2026); no row enters the master
