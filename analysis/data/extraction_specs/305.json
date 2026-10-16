@@ -1,0 +1,97 @@
+{
+ "group": "305",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT01761318",
+  "pmid": "",
+  "doi": "10.1113/ep091815",
+  "first_author": "Hoogstad-van Evert",
+  "year": "2024",
+  "journal": "Exp Physiol",
+  "phase": "4",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1.8",
+  "comparator": "placebo added to standard care",
+  "comparator_type": "placebo",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "22",
+  "n_ctrl": "25",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "-4.6",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: GDF15 analysis of two double blind placebo controlled randomised trials of liraglutide 1.8 mg daily for 26 weeks added to standard care at Leiden University Medical Center, one in Dutch Europids (NCT01761318, Bizino 2019) and one in Dutch South Asians (NCT02660047, van Eyk 2019), with 22 liraglutide and 25 placebo participants in each; the two trials are entered as two rows with their own trial_id because they are separate trials, not arms of one. The results text prints the 26 week minus baseline change in plasma GDF15 per arm as mean plus or minus SD (route arm_sds) and the baseline levels per arm, which supply the percent scale denominators. The baseline characteristics table gives body fat percentage, visceral adipose tissue, HbA1c, total cholesterol and LDL at baseline only, so no other row can be formed here; the 26 week values of those markers are in the two parent reports (groups 174 and the South Asian report). GDF15 is the receptor class discriminator of this review and had one trial in the master before these rows; the three withdrawn claims, including the GDF-15 class differential, stay withdrawn, this is data only. pct_weight_change from the published arm change, Europids minus 4.3 kg on a baseline of 98.6 kg equals minus 4.4 percent (placebo plus 0.1 kg, plus 0.1 percent); South Asians minus 3.9 kg on 81.9 kg equals minus 4.8 percent (placebo minus 0.6 kg, minus 0.8 percent). Liraglutide and placebo were provided by Novo Nordisk (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {
+   "biomarker": "GDF15",
+   "measure": "MD",
+   "unit": "pg/mL",
+   "trial_id": "NCT01761318",
+   "mean_tx": "-124",
+   "sd_tx": "962",
+   "mean_ctrl": "-55",
+   "sd_ctrl": "911",
+   "n_tx": "22",
+   "n_ctrl": "25",
+   "se_source": "arm_sds",
+   "base_mean_tx": "1495",
+   "base_mean_ctrl": "1702",
+   "p_reported": "0.403",
+   "pct_weight_change": "-4.6",
+   "notes": "Europid trial (NCT01761318, Bizino 2019): change in plasma GDF15 over 26 weeks, liraglutide minus 124 plus or minus 962 versus placebo minus 55 plus or minus 911 pg/mL, p 0.403; baseline 1495 plus or minus 838 (liraglutide) and 1702 plus or minus 1056 (placebo); pct_weight_change set to the placebo corrected contrast of the parent report (minus 4.5 kg on a baseline of 98 kg, minus 4.6 percent) so that both records of NCT01761318 carry one value"
+  },
+  {
+   "biomarker": "GDF15",
+   "measure": "MD",
+   "unit": "pg/mL",
+   "trial_id": "NCT02660047",
+   "mean_tx": "-163",
+   "sd_tx": "853",
+   "mean_ctrl": "-74",
+   "sd_ctrl": "732",
+   "n_tx": "22",
+   "n_ctrl": "25",
+   "se_source": "arm_sds",
+   "base_mean_tx": "1834",
+   "base_mean_ctrl": "1814",
+   "p_reported": "0.695",
+   "pct_weight_change": "-4.8",
+   "notes": "South Asian trial (NCT02660047, van Eyk 2019): change in plasma GDF15 over 26 weeks, liraglutide minus 163 plus or minus 853 versus placebo minus 74 plus or minus 732 pg/mL, p 0.695; baseline 1834 plus or minus 790 (liraglutide) and 1814 plus or minus 825 (placebo)"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "liraglutide",
+  "trial_id": "NCT01761318 and NCT02660047",
+  "design": "GDF15 analysis of two double blind placebo controlled randomised trials of liraglutide 1.8 mg for 26 weeks in type 2 diabetes, one in Europids and one in South Asians, 94 participants in total",
+  "reason": "full text group (Europe PMC); the only poolable quantity is the GDF15 change per arm with SD, which exists separately for each of the two trials and is entered as two rows with their own trial identifiers",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "subcutaneous and paracardial adipose tissue",
+   "metformin dose correlations",
+   "baseline body fat percentage, visceral adipose tissue, HbA1c, total cholesterol and LDL (baseline only in this report)"
+  ],
+  "tables_used": [
+   "baseline characteristics table",
+   "results text of the GDF15 section"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "both parent trials randomised 1:1 with stratification for sex and insulin use (D1 low); double blind with a matched placebo supplied by the manufacturer (D2 low); 94 of 94 participants with paired samples in the GDF15 analysis (D3 low); a single batch immunoassay of stored plasma (D4 low); GDF15 was not an endpoint of either parent protocol and this is a later analysis, although the full negative result is reported (D5 some concerns)"
+  },
+  "doubts": [
+   "the combined sentence of the paper prints the two means in the opposite order to the per ethnicity sentences ('between the placebo and liraglutide groups (minus 144 plus or minus 899 vs. minus 64 plus or minus 818 pg/mL vs. liraglutide)'); the per ethnicity values make clear that the liraglutide mean is the larger decrease, so the combined row is not used and the two trial rows are taken instead",
+   "the two trials share a design, a centre and an investigator group, so their GDF15 rows are not fully independent; this is a dependence the pool does not model",
+   "pct_weight_change is arithmetic from the published arm changes and baselines and is expected to be flagged by the numbers check"
+  ]
+ }
+}

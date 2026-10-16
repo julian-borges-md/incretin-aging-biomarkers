@@ -1,0 +1,78 @@
+{
+ "group": "274",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",
+  "pmid": "",
+  "doi": "10.2337/dc09-2361",
+  "first_author": "Bunck",
+  "year": "2010",
+  "journal": "Diabetes Care",
+  "phase": "4",
+  "drug": "exenatide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "",
+  "comparator": "insulin glargine titrated",
+  "comparator_type": "active",
+  "duration_weeks": "52",
+  "population": "T2D",
+  "n_tx": "29",
+  "n_ctrl": "28",
+  "assessment_timepoint_weeks": "52",
+  "pct_weight_change": "-5",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: body composition and cardiovascular biomarker report of the randomised open label trial of exenatide 10 ug twice daily versus titrated insulin glargine added to metformin in type 2 diabetes, 69 randomised (36 exenatide, 33 glargine), 1 year; the glycaemic primary report is Bunck 2009 in the same journal. Table 1 prints n, baseline and endpoint per arm as mean plus or minus SEM for the body composition measures and as geometric mean plus or minus SEM for the circulating biomarkers, then a least squares mean percentage change per arm and a between group difference with 95 percent CI; the table footnote states that both percentage change columns are adjusted for the change in body weight, and the text repeats this ('and body weight change (Table 1)'), so every printed contrast of this paper is a weight adjusted estimand. Only the total lean mass row is therefore extracted, from the unadjusted baseline and endpoint means with their SEMs by route arm_change_imputed_r_sem (amendment A8); the weight adjusted contrasts for leptin, total adiponectin, hsCRP and IL-6 are recorded in doubts for decision D-X9. Trunk fat mass is DXA trunk fat, not visceral adipose tissue, and total fat mass in kilograms has no inventory key (body_fat_pct is a percentage), so neither is a row. pct_weight_change from the Table 1 body weight row, between group difference minus 5 percent (exenatide arm minus 6 percent). Sponsored by Amylin Pharmaceuticals and Eli Lilly with two company employees as authors (industry_funded TRUE); rob_overall some_concerns ; dose_mg left empty: this report does not print the exenatide dose anywhere (the 10 ug twice daily regimen is stated only in the parent glycaemic report, which is not in hand), and the brief forbids a number that is not in the text"
+ },
+ "rows": [
+  {
+   "biomarker": "lean_mass",
+   "measure": "MD",
+   "unit": "kg",
+   "base_mean_tx": "57.8",
+   "base_sd_tx": "2.1",
+   "final_mean_tx": "58.1",
+   "final_sd_tx": "2.4",
+   "base_mean_ctrl": "60.1",
+   "base_sd_ctrl": "1.7",
+   "final_mean_ctrl": "60.6",
+   "final_sd_ctrl": "1.8",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r_sem",
+   "notes": "Table 1 Total lean mass (kg), baseline and endpoint per arm as mean plus or minus SEM (SE as printed), n 29 exenatide and 28 glargine; the paper's own weight adjusted between group difference for this row is minus 1 percent (minus 3 to plus 1), p 0.480, not used because it is a weight adjusted estimand"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "exenatide",
+  "trial_id": "Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",
+  "design": "randomised open label active controlled trial, exenatide 10 ug twice daily versus titrated insulin glargine on metformin, 69 randomised, 1 year; this report covers body composition by DXA and circulating cardiovascular biomarkers",
+  "reason": "full text group (Europe PMC); one unadjusted row (total lean mass) by the SE printed imputed change route. Every circulating biomarker contrast in the paper is adjusted for the change in body weight, a different estimand from the rest of the pool, so those four rows are held for decision D-X9 rather than mixed in",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "high molecular weight adiponectin",
+   "resistin",
+   "monocyte chemoattractant protein 1",
+   "endothelin-1",
+   "total fat mass and trunk fat mass in kilograms",
+   "waist circumference"
+  ],
+  "tables_used": [
+   "Table 1"
+  ],
+  "rob": {
+   "d1_randomisation": "some_concerns",
+   "d2_deviations": "high",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "randomised with the sequence described in the parent report only (D1 some concerns); open label comparison of an injected incretin with titrated basal insulin, where awareness of assignment can affect weight related behaviour (D2 high); 69 randomised but 57 to 60 analysed per row without an account of the difference in this report (D3 some concerns); all samples assayed in a single batch in one laboratory and DXA for body composition (D4 low); a secondary report of outcomes outside the parent protocol's primary, with the contrasts presented only in a weight adjusted form (D5 some concerns)"
+  },
+  "doubts": [
+   "decision D-X9: the only between group contrasts this paper prints are adjusted for the change in body weight (leptin minus 19 percent, minus 34 to minus 1, p 0.045; total adiponectin plus 17 percent, plus 6 to plus 30, p 0.004; hsCRP minus 52 percent, minus 71 to minus 19, p 0.008; IL-6 minus 6 percent, minus 30 to plus 26, p 0.670; and adjusted for fat mass change instead: adiponectin plus 16 percent, plus 5 to plus 28; leptin minus 20 percent, minus 34 to minus 2; hsCRP minus 48 percent, minus 69 to minus 13). A weight adjusted contrast answers whether the marker moves independently of weight loss, which is question Q3's subject, not the total treatment effect the pool estimates. The Director decides whether such rows are admitted, and if so whether they form a separate table rather than entering Table 2",
+   "the biomarker baselines and endpoints are geometric means with SEM, so no unadjusted contrast can be built for them by any declared route"
+  ]
+ }
+}

@@ -1,0 +1,114 @@
+{
+ "group": "188",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT01644500 dulaglutide vs glimepiride (Nanjing First)",
+  "pmid": "",
+  "doi": "10.1155/2019/6423987",
+  "first_author": "Shao",
+  "year": "2019",
+  "journal": "J Diabetes Res",
+  "phase": "4",
+  "drug": "dulaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "",
+  "comparator": "glimepiride once daily",
+  "comparator_type": "active",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "13",
+  "n_ctrl": "10",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "-0.3",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "FALSE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: single centre randomised open label trial at Nanjing First Hospital (NCT01644500), 23 drug naive or minimally treated patients with type 2 diabetes assigned to once weekly dulaglutide (8 cases 0.75 mg, 5 cases 1.5 mg, n 13) or once daily glimepiride (n 10) for 26 weeks; adherence reported as 100 percent in both groups with no serious adverse events. dose_mg empty because the dulaglutide arm pools the 0.75 and 1.5 mg subgroups. The second table prints baseline, 26 week and change values per arm as mean plus or minus SD, so the change columns are the rows (route arm_sds); the HbA1c change of the dulaglutide arm is printed 'minus 1.71 + 0.97', a typographic plus for the plus or minus sign, read as SD 0.97. The primary endpoint was glucose fluctuation by continuous glucose monitoring, so the inventory rows are secondary (prespecified_endpoint FALSE). Lipids, AST and blood pressure are printed at baseline only, with a baseline imbalance in total cholesterol (5.48 versus 4.31 mmol/L, p 0.008) and triglycerides (2.27 versus 1.39, p 0.031) that is recorded in doubts. 8-iso-PGF2alpha is outside the inventory. pct_weight_change from the arm means of the body weight row, 66.85 to 66.62 kg equals minus 0.3 percent (glimepiride 66.60 to 67.80 kg, plus 1.8 percent; the paper prints the weight change as medians, no contrast). Funded by the Scientific and Technological Development Program of Jiangsu Province with no declared conflicts (industry_funded FALSE); rob_overall some_concerns"
+ },
+ "rows": [
+  {
+   "biomarker": "HbA1c",
+   "measure": "MD",
+   "unit": "percent",
+   "mean_tx": "-1.71",
+   "sd_tx": "0.97",
+   "mean_ctrl": "-1.24",
+   "sd_ctrl": "1.15",
+   "se_source": "arm_sds",
+   "base_mean_tx": "8.38",
+   "base_mean_ctrl": "7.91",
+   "notes": "change column of the combined table: dulaglutide minus 1.71 plus or minus 0.97 (printed with a plus sign for the plus or minus), glimepiride minus 1.24 plus or minus 1.15; arm values 8.38 plus or minus 0.93 to 6.68 plus or minus 0.73 and 7.91 plus or minus 0.98 to 6.67 plus or minus 0.74"
+  },
+  {
+   "biomarker": "fasting_glucose",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "mean_tx": "-3.35",
+   "sd_tx": "2.05",
+   "mean_ctrl": "-2.14",
+   "sd_ctrl": "1.81",
+   "se_source": "arm_sds",
+   "base_mean_tx": "11.12",
+   "base_mean_ctrl": "9.59",
+   "notes": "change column: dulaglutide minus 3.35 plus or minus 2.05, glimepiride minus 2.14 plus or minus 1.81; arm values 11.12 plus or minus 2.63 to 7.77 plus or minus 1.33 and 9.59 plus or minus 1.32 to 7.45 plus or minus 0.95"
+  },
+  {
+   "biomarker": "TNF_alpha",
+   "measure": "MD",
+   "unit": "pg/mL",
+   "mean_tx": "-16.51",
+   "sd_tx": "13.15",
+   "mean_ctrl": "-14.79",
+   "sd_ctrl": "10.31",
+   "se_source": "arm_sds",
+   "base_mean_tx": "21.51",
+   "base_mean_ctrl": "20.42",
+   "notes": "change column: dulaglutide minus 16.51 plus or minus 13.15, glimepiride minus 14.79 plus or minus 10.31; arm values 21.51 plus or minus 14.20 to 5.00 plus or minus 2.05 and 20.42 plus or minus 11.11 to 5.63 plus or minus 1.55, both within arm p 0.001"
+  },
+  {
+   "biomarker": "IL6",
+   "measure": "MD",
+   "unit": "pg/mL",
+   "mean_tx": "-1.11",
+   "sd_tx": "0.74",
+   "mean_ctrl": "-1.44",
+   "sd_ctrl": "1.13",
+   "se_source": "arm_sds",
+   "base_mean_tx": "1.42",
+   "base_mean_ctrl": "2.19",
+   "notes": "change column: dulaglutide minus 1.11 plus or minus 0.74, glimepiride minus 1.44 plus or minus 1.13; arm values 1.42 plus or minus 0.84 to 0.31 plus or minus 0.23 and 2.19 plus or minus 1.47 to 0.75 plus or minus 0.65; the baseline IL-6 of the glimepiride arm is 54 percent higher than the dulaglutide arm"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "dulaglutide",
+  "trial_id": "NCT01644500 dulaglutide vs glimepiride (Nanjing First)",
+  "design": "single centre randomised open label trial, once weekly dulaglutide 0.75 or 1.5 mg versus once daily glimepiride, 23 patients with type 2 diabetes, 26 weeks, primary endpoint glucose fluctuation by continuous glucose monitoring",
+  "reason": "full text group (Europe PMC); four inventory markers printed as change from baseline per arm with SD, taken by route arm_sds",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "8-iso-prostaglandin F2alpha",
+   "mean blood glucose, SDBG, MAGE, MODD and percentage time in glucose ranges",
+   "lipids, AST and blood pressure at baseline only",
+   "amylase and lipase"
+  ],
+  "tables_used": [
+   "baseline characteristics table",
+   "combined baseline, 26 week and change table"
+  ],
+  "rob": {
+   "d1_randomisation": "some_concerns",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "randomly assigned with no sequence generation or concealment described, and a baseline imbalance in lipids in a 23 patient trial (D1 some concerns); open label weekly injection versus daily tablet with no blinding described (D2 some concerns); adherence 100 percent and all 23 patients in the tables (D3 low); laboratory measured outcomes (D4 low); the inventory markers are secondary to a continuous glucose monitoring primary endpoint and the trial registration predates the report by six years (D5 some concerns)"
+  },
+  "doubts": [
+   "the dulaglutide arm pools 0.75 mg (8 patients) and 1.5 mg (5 patients), so dose_mg is empty and no dose response is represented",
+   "baseline imbalance between arms in total cholesterol (p 0.008), triglycerides (p 0.031) and IL-6 (1.42 versus 2.19 pg/mL) in a trial of 23 patients; the IL-6 contrast in particular rests on arms that differ at baseline",
+   "pct_weight_change minus 0.3 percent is arithmetic from the printed kilogram means and is expected to be flagged by the numbers check"
+  ]
+ }
+}
