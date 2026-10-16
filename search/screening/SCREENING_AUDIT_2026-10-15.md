@@ -44,3 +44,21 @@ Both reviewers rescreened the 321 records finally excluded under v1 (`SCREENING_
 Of the five known relevant records wrongly excluded under v1, three were rescued (Savvidou 2016 and Forst 2012, the two duration misreadings, now included by both reviewers; Suzuki 2014 by reviewer 2). Two were excluded again by both reviewers under the same wrong reading: Wang 2020 (n 446) and Takeshita 2015 (n 568), both liraglutide against vildagliptin, both read by both models as "no eligible agent in any arm" despite liraglutide in the title and the v2 sentence that the comparator never excludes a trial. That is a reading failure of two different models on two records with the same shape, not a wording problem; a third prompt revision would be fitting the prompt to two records. Both trials are in the adopted mono agonist list and enter the review through that stream regardless, which is the purpose of carrying the known relevant list through screening: the miss is visible and recoverable, not silent. The two correct exclusions among the known linked records (Konstantinidou 2024, non randomised; Ying 2023, mice) were excluded again, as they should be.
 
 Sensitivity of the two stage screen against the 37 plausibly genuine known positives is therefore 35 of 37 (95 per cent), with both residual misses named and recovered by the adopted list. The first stage alone was 32 of 37.
+
+## Pool 2 (criteria v2, run 00:08 to 01:01 on 16 October)
+
+The 51 Embase clinical trial registry records and the 200 CENTRAL records not in the Embase article export were screened under v2 from the start (`SCREENING_SUMMARY_batch2_v2.md`): reviewer 1 182 include / 69 exclude, reviewer 2 144 / 107, agreement 199 of 251 (79.3 per cent), kappa 0.556 (SE 0.055), 52 disagreements adjudicated (48 include, 4 exclude), final 185 include / 66 exclude. By source: registry records 26 include / 25 exclude; CENTRAL only records 159 include / 41 exclude. The include rate is high by design: registry entries and CENTRAL registry derived records rarely state the outcome list, and the criteria say to include when a criterion cannot be judged. Three known relevant records sit in this pool; two were included and one, Zhang 2018 (liraglutide versus metformin, n 232), was excluded by reviewer 2 and the adjudicator on duration, the abstract stating 8 weeks of treatment. That is a correct exclusion under this review's 12 week criterion, which the adopting review did not apply.
+
+No answer was unparseable in either pool after the parser and record text fixes.
+
+## Set going to full text
+
+| Pool | Records | To full text |
+|---|---|---|
+| 1: Embase articles, v1 includes | 659 | 338 |
+| 1: rescued under v2 | (321 rescreened) | 24 |
+| 2: Embase registry records, v2 | 51 | 26 |
+| 2: CENTRAL only records, v2 | 200 | 159 |
+| Total | 910 | 547 |
+
+Within pool duplicates (conference abstracts sharing a supplement DOI, registry entries of trials that are also articles) are resolved at full text, where the unit becomes the trial rather than the record.
