@@ -38,6 +38,7 @@ Usage, from the repository root:
   python3 -I src/fulltext_screen.py screen [--reviewer A|B] [--source NAME] [--limit N]
   python3 -I src/fulltext_screen.py adjudicate
   python3 -I src/fulltext_screen.py summarise
+  python3 -I src/fulltext_screen.py check        state of every chain (built in control, read only)
 """
 import csv
 import json
@@ -382,9 +383,69 @@ def summarise(cfg, items):
     print("\n".join(lines))
 
 
+STALE_MINUTES = 12  # a running step with no new decision row for this long is reported as stale
+
+
+def check():
+    """Built in control, read only: the state of every chain (work/screen_chain*.sh) from its log
+    and the process table, with progress measured on the decision and adjudication files (one row
+    per screened record), never on a process being alive. Exit status 1 when a chain is stale,
+    stopped or dead. A chain in that state is relaunched by hand (it resumes where it stopped):
+        nohup zsh work/screen_<name>.sh >> search/screening/<name>.log 2>&1 &"""
+    import glob
+    import subprocess
+    rows = [ln.split(None, 3) for ln in subprocess.run(
+        ["ps", "-axwwo", "pid=,ppid=,etime=,command="], capture_output=True, text=True).stdout.splitlines()]
+    rows = [r for r in rows if len(r) == 4]
+    files = [p for p in glob.glob(os.path.join(OUTDIR, "*.csv")) if "decisions" in p or "adjudication" in p]
+    newest = max((os.path.getmtime(p) for p in files), default=0.0)
+    age = (time.time() - newest) / 60 if newest else float("inf")
+    runners = sum(1 for r in rows if os.path.basename(r[3].split()[0]) in ("llama-server", "ollama_llama_server"))
+    print(f"check {time.strftime('%Y-%m-%d %H:%M:%S')}: newest decision row {age:.1f} min ago "
+          f"(stale at {STALE_MINUTES}); ollama runners alive: {runners}")
+    print(f"{'chain':9} {'state':9} {'shell':>6} {'running for':>11}  {'step':56} last log line")
+    attention = []
+    for script in sorted(glob.glob(os.path.join(ROOT, "work", "screen_chain*.sh"))):
+        name = os.path.basename(script)[len("screen_"):-3]
+        logp = os.path.join(OUTDIR, f"{name}.log")
+        if not os.path.exists(logp):
+            continue
+        lines = [ln.rstrip("\n") for ln in open(logp, errors="replace") if ln.strip()]
+        marker = "empty"
+        for ln in lines:
+            if ln.startswith(f"{name} complete "):
+                marker = "complete"
+            elif ln.startswith(f"{name} retired"):  # written by hand, with the reason, when a chain's work moved elsewhere
+                marker = "retired"
+            elif ln.startswith("CHAIN STOPPED"):
+                marker = "stopped"
+            elif ln.startswith(f"{name} start ") or ln.startswith("== "):
+                marker = "started"
+        shell = next((r for r in rows if len(r[3].split()) >= 2
+                      and os.path.basename(r[3].split()[0]) in ("zsh", "bash", "sh")
+                      and r[3].split()[1].endswith(f"work/screen_{name}.sh")), None)
+        step = next((r for r in rows if shell and r[1] == shell[0] and "src/" in r[3]
+                     and "ython" in r[3].split()[0]), None)
+        if step:
+            state = "stale" if age >= STALE_MINUTES else "running"
+            stepname, since = step[3].split(" -I ", 1)[-1], step[2]
+        elif shell:
+            state, stepname, since = ("between" if marker == "started" else "waiting"), "-", shell[2]
+        else:
+            state, stepname, since = (marker if marker in ("complete", "retired", "stopped") else "dead"), "-", "-"
+        if state in ("stale", "stopped", "dead"):
+            attention.append(f"{name} {state}")
+        print(f"{name:9} {state:9} {shell[0] if shell else '-':>6} {since:>11}  {stepname[:56]:56} "
+              f"{(lines[-1] if lines else '')[:70]}")
+    print("attention: " + ", ".join(attention) if attention else "attention: none")
+    sys.exit(1 if attention else 0)
+
+
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ("screen", "adjudicate", "summarise", "inventory"):
+    if len(sys.argv) < 2 or sys.argv[1] not in ("screen", "adjudicate", "summarise", "inventory", "check"):
         print(__doc__); sys.exit(2)
+    if sys.argv[1] == "check":
+        check()
     args = sys.argv[2:]
     cfg = st.load_cfg()
     items = load_items()
