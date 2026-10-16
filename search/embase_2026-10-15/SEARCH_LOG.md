@@ -55,14 +55,49 @@ Articles tab, all 659 selected, RIS format, full record content including abstra
 
 **Note on PMIDs.** Although the export dialog lists "Medline PMID" as an included field, no PMID tag appears in the delivered records; linkage to PubMed will have to go through DOI, which is present for 611 of 659. The remaining 48 will need title matching. This is a real limitation for deduplication against our existing PubMed-derived corpus and is recorded rather than worked around silently.
 
+## Clinical trial registry records, exported 15 October 2026, 22:00 EDT
+
+The four lines were rerun in the same institutional session before the export, with the mapping options cleared as above. Every count reproduced exactly: 42,445 / 1,126,492 / 2,948,113 / 710, splitting into 659 Articles and 51 Clinical trials. The reproduction is the evidence that the registry export belongs to the same search as the article export, not a near neighbour of it.
+
+Clinical trials tab, all 51 selected, RIS format, full record content (study overview, collaborators and investigators, all additional options).
+
+| Check | Value |
+|---|---|
+| Search reported | 51 |
+| TY record starts in file | 51 |
+| ER record ends in file | 51 |
+| Distinct registry identifiers (AN) | 51 |
+| **Gate** | **PASS, counts reconcile exactly** |
+| File | `search/embase_2026-10-15/embase_registry_51.ris` (gitignored, licensed content) |
+| Bytes | 624,926 |
+| SHA-256 | `d740d349bf45d00d5311d6cb72cf4c7fc92e64d21ee6bb9744940be6c407665a` |
+
+Download mechanics, recorded because they are not clean: Chrome wrote the export to its temporary download name and did not finalise the rename to `ctrecords.ris` in the Downloads folder (two identical temporary copies with the same SHA-256, one per click). The file above is a copy of that complete temporary file; completeness is established by the TY, ER and identifier counts, not by the browser's download state.
+
+### Registry export composition
+
+| Field | Coverage |
+|---|---|
+| Source | 51 of 51 ClinicalTrials.gov (NCT); no other registry contributes |
+| Study type (C5) | 46 interventional, 5 observational |
+| Recruitment status (C2) | 20 completed, 9 recruiting, 10 not yet recruiting, 3 active not recruiting, 9 unknown status |
+| Results posted on the registry (C6) | 8 yes, 43 no |
+| Phase (SN) | 21 phase 4, 9 phase 2, 2 phase 3, 2 phase 1/2, 1 phase 1, 11 not applicable, 5 blank |
+| Registry record year (Y1) | 2006 to 2026; 17 of 51 from 2025 and 2026 |
+| Overlap with NCT identifiers already in the repository (5) | none |
+
+Five observational records sit in a set retrieved by a randomised design filter; the filter matched on free text (`random*:ti,ab`) within the registry record, not on design. They are screened out at title and abstract level, where the exclusion is counted, rather than removed here.
+
+Reading of the eight with results posted, from the registry title and brief summary only: five fall outside the review population or intervention (NCT02664441 hypothalamic obesity; NCT02417142 schizophrenia; NCT01991197 sitagliptin, a DPP-4 inhibitor, in psoriasis with diabetes; NCT01832532 liraglutide in adults without diabetes with sleep apnoea; NCT01269047 type 1 diabetes). Three are candidates for the mono class with a vascular or inflammatory outcome (NCT03260881 liraglutide, epicardial fat inflammatory genes, type 2 diabetes with coronary disease; NCT03010683 GLP-1 receptor agonists, arterial stiffness and endothelial glycocalyx; NCT00353834 exenatide versus insulin glargine, endothelial function). All 51 go through the same blinded screening as the article records; nothing is decided from this reading.
+
 ## Not yet done
 
 | Item | Status |
 |---|---|
-| 51 clinical trial registry records | Not exported; separate tab, separate export |
+| 51 clinical trial registry records | Exported 22:00 EDT, count gate passed (section above); not yet screened |
 | CENTRAL | Not run |
 | Web of Science | Not run |
-| Deduplication against the existing corpus | Not started |
-| Screening of the 659 | Not started |
+| Deduplication against the existing corpus | Done for the 659 articles (`RECALL_AND_DEDUP.md`); not yet run for the 51 registry records |
+| Screening of the 659 | Running: two blinded local reviewer agents plus adjudicator (`search/screening/`) |
 
 Screening cannot begin as a two-reviewer process until the blinded second screener is configured. Single-reviewer screening of this set would have to be described as such.
