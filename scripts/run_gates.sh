@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Eleven gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
+# Twelve gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
 #
 # This file is the tracked copy and the one to edit. The chain lived at work/run_gates.sh until
 # 16 October, where the gitignore keeps it out of version control: the script that validates the
@@ -26,12 +26,14 @@ for m in manuscript/RESULTS_*.md; do
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: results_numbers_check $m (see work/gate_results_numbers_check.log)" >> "$log"; exit $rc; }
 done
-# Gates ten and eleven are provenance gates over the corpus rather than the pipeline. Ten asks
+# Gates ten to twelve are provenance gates over the corpus rather than the pipeline. Ten asks
 # whether any packet bundles two unrelated studies, which silently drops the study that was not
 # read; eleven asks whether every extracted number is attached to the row's own biomarker in its
-# source. Each one fails only on a case not yet written up in its triage document, so a new defect
-# blocks the chain while the known and judged ones do not.
-for g in packet_grouping_check extraction_attachment_check; do
+# source; twelve asks whether a row's printed p value reconciles with the p implied by its own
+# effect and standard error, which is the part of the amendment A5 verifier pass that scales. Each
+# one fails only on a case not yet written up in its triage document, so a new defect blocks the
+# chain while the known and judged ones do not.
+for g in packet_grouping_check extraction_attachment_check pvalue_reconcile; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" > "work/gate_$g.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"
