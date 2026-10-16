@@ -1,6 +1,6 @@
 # Protocol amendment, 15 October 2026: three analysis rules and the operational inventory
 
-Recorded after full text retrieval of five placebo controlled mono agonist trials (Derosa 2012, Wu 2011, Anholm 2019, Wägner 2019, von Scholten 2017) and before any of their rows entered the master. The amendment is dated and committed so that the order of events is public: rules first, rows second. The prompting observation was structural (what the papers report and in what form), not any pooled result; no class contrast involving these trials had been computed when the rules were written.
+Recorded after full text retrieval of five placebo controlled mono agonist trials (Derosa 2012, Wu 2011, Anholm 2019, Wägner 2019, von Scholten 2017). Provenance of the ordering, so it can be checked in the history: the three rules were stated as open decisions with the recommended option in commit 43adbb3 (`docs/MONO_TRIALS_RETRIEVAL_2026-10-15.md`) while no row from these trials existed in the master; this file and the rows landed together in the following commit. The prompting observation was structural (what the papers report and in what form), not any pooled result; no class contrast involving these trials had been computed when the options were recorded.
 
 ## R1. Parallel group trials reporting baseline and final arm means with SDs but no SD of change
 
