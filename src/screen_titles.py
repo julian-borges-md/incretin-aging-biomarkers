@@ -25,11 +25,20 @@ Stages
 
 Resumable: decisions already on disk are not recomputed.
 
+Pools. The default pool is the Embase article export (659 records, files
+without a suffix). The pool "batch2" is the 51 Embase clinical trial registry
+records plus the 200 CENTRAL records that are not in the Embase article
+export (selected by the in_embase_export flag that src/dedup_embase.py
+central writes); its decision, adjudication and summary files carry the
+suffix _batch2 so the first pool is never touched. Both pools pass the same
+count and SHA-256 gates on their exports before a record is read.
+
 Usage, from the repository root:
-  python3 -I src/screen_titles.py screen [--limit N] [--reviewer A|B]
-  python3 -I src/screen_titles.py adjudicate
-  python3 -I src/screen_titles.py summarise
+  python3 -I src/screen_titles.py screen [--limit N] [--reviewer A|B] [--pool embase|batch2]
+  python3 -I src/screen_titles.py adjudicate [--pool embase|batch2]
+  python3 -I src/screen_titles.py summarise [--pool embase|batch2]
 """
+import hashlib
 import csv
 import json
 import os
@@ -40,11 +49,36 @@ import urllib.request
 from collections import Counter, defaultdict
 
 ROOT = os.getcwd()
-RIS = os.path.join(ROOT, "search/embase_2026-10-15/embase_659.ris")
-DEDUP = os.path.join(ROOT, "search/embase_2026-10-15/embase_659_dedup.csv")
 CFG = os.path.join(ROOT, "search/screening/screener_config.json")
 OUTDIR = os.path.join(ROOT, "search/screening")
-SUMMARY = os.path.join(OUTDIR, "SCREENING_SUMMARY.md")
+
+EXPORTS = {
+    "embase": dict(ris="search/embase_2026-10-15/embase_659.ris", expected=659,
+                   sha256="e8d3a9d4e195375f1d1aaaead76ae0ad0d937206194e152984d71d42405fefb2",
+                   dedup="search/embase_2026-10-15/embase_659_dedup.csv"),
+    "embase_registry": dict(ris="search/embase_2026-10-15/embase_registry_51.ris", expected=51,
+                            sha256="d740d349bf45d00d5311d6cb72cf4c7fc92e64d21ee6bb9744940be6c407665a",
+                            dedup=None),
+    "central": dict(ris="search/central_2026-10-15/central_460.ris", expected=460,
+                    sha256="7c12c88115631e45195e82641d2b0a6f9c5bd0835d48f7972c5b08372c0547f3",
+                    dedup="search/central_2026-10-15/central_460_dedup.csv"),
+}
+POOLS = {
+    "embase": dict(suffix="", title="the Embase export",
+                   members=[("embase", "all")]),
+    "batch2": dict(suffix="_batch2",
+                   title="the Embase clinical trial registry records and the CENTRAL records not in the Embase export",
+                   members=[("embase_registry", "all"), ("central", "not_in_embase")]),
+}
+POOL = "embase"  # set by main() from --pool
+
+
+def pool():
+    return POOLS[POOL]
+
+
+def summary_path():
+    return os.path.join(OUTDIR, f"SCREENING_SUMMARY{pool()['suffix']}.md")
 
 CRITERIA = """You are screening titles and abstracts for a systematic review of randomised
 trials of incretin and glucagon receptor agonists and aging related biomarkers.
@@ -89,9 +123,19 @@ def load_cfg():
         return json.load(fh)
 
 
-def parse_ris():
-    with open(RIS, "rb") as fh:
-        text = fh.read().decode("utf-8", errors="replace")
+def parse_ris_file(name):
+    """Parse one export after its count and hash gate; returns records in file order."""
+    ex = EXPORTS[name]
+    path = os.path.join(ROOT, ex["ris"])
+    if not os.path.exists(path):
+        print(f"FAIL: export not found at {path} (gitignored; place the licensed file there)")
+        sys.exit(1)
+    with open(path, "rb") as fh:
+        raw = fh.read()
+    if hashlib.sha256(raw).hexdigest() != ex["sha256"]:
+        print(f"FAIL: {name}: SHA-256 differs from the logged value")
+        sys.exit(1)
+    text = raw.decode("utf-8", errors="replace")
     recs, cur = [], None
     for line in text.splitlines():
         m = re.match(r"^([A-Z][A-Z0-9])  - ?(.*)$", line)
@@ -106,6 +150,9 @@ def parse_ris():
             cur = None
         elif cur is not None:
             cur[tag].append(val)
+    if len(recs) != ex["expected"]:
+        print(f"FAIL: {name}: parsed {len(recs)} records, expected {ex['expected']}")
+        sys.exit(1)
     out = []
     for i, r in enumerate(recs, 1):
         def first(*tags):
@@ -113,9 +160,46 @@ def parse_ris():
                 if r.get(t):
                     return r[t][0]
             return ""
-        out.append(dict(n=i, accession=first("U2", "AN"), title=first("T1", "TI"),
+        out.append(dict(n=i, source=name, accession=first("U2", "AN"), title=first("T1", "TI"),
                         abstract=first("N2", "AB"), year=re.sub(r"[^0-9]", "", first("Y1", "PY"))[:4],
                         rtype=first("M3", "TY"), doi=first("DO").lower()))
+    return out
+
+
+def read_dedup(name):
+    """Per record flags written by src/dedup_embase.py, keyed by position in that export."""
+    ex = EXPORTS[name]
+    if not ex["dedup"]:
+        return {}
+    path = os.path.join(ROOT, ex["dedup"])
+    if not os.path.exists(path):
+        print(f"FAIL: {path} not found; run src/dedup_embase.py {'central' if name == 'central' else ''} first")
+        sys.exit(1)
+    with open(path, newline="") as fh:
+        return {int(r["n"]): r for r in csv.DictReader(fh)}
+
+
+def parse_ris():
+    """The records of the selected pool, numbered 1..N in pool order, with the
+    known relevant flag carried over from the dedup files where one exists."""
+    out = []
+    for name, rule in pool()["members"]:
+        recs = parse_ris_file(name)
+        flags = read_dedup(name)
+        if rule == "not_in_embase":
+            if not flags or "in_embase_export" not in next(iter(flags.values())):
+                print(f"FAIL: {name}: in_embase_export flag missing; run src/dedup_embase.py central")
+                sys.exit(1)
+            recs = [r for r in recs if flags[r["n"]]["in_embase_export"] == "no"]
+        for r in recs:
+            r["matched_known"] = flags.get(r["n"], {}).get("matched_known") == "yes"
+            r["source_n"] = r["n"]
+        out.extend(recs)
+    for i, r in enumerate(out, 1):
+        r["n"] = i
+    if POOL == "batch2" and len(out) != 251:
+        print(f"FAIL: batch2 pool has {len(out)} records, expected 251 (51 registry plus 200 CENTRAL only)")
+        sys.exit(1)
     return out
 
 
@@ -164,7 +248,11 @@ def record_text(rec):
 
 
 def decisions_path(rev):
-    return os.path.join(OUTDIR, f"decisions_{rev}.csv")
+    return os.path.join(OUTDIR, f"decisions_{rev}{pool()['suffix']}.csv")
+
+
+def adjudication_path():
+    return os.path.join(OUTDIR, f"adjudication_002{pool()['suffix']}.csv")
 
 
 def read_decisions(path):
@@ -201,7 +289,7 @@ def screen(cfg, recs, reviewer, limit=None):
 
 def adjudicate(cfg, recs):
     A, B = read_decisions(decisions_path("A")), read_decisions(decisions_path("B"))
-    path = os.path.join(OUTDIR, "adjudication_002.csv")
+    path = adjudication_path()
     done = read_decisions(path)
     disagreements = [r for r in recs if r["n"] in A and r["n"] in B
                      and A[r["n"]]["decision"] != B[r["n"]]["decision"] and r["n"] not in done]
@@ -245,7 +333,7 @@ def kappa(pairs):
 
 def summarise(cfg, recs):
     A, B = read_decisions(decisions_path("A")), read_decisions(decisions_path("B"))
-    ADJ = read_decisions(os.path.join(OUTDIR, "adjudication_002.csv"))
+    ADJ = read_decisions(adjudication_path())
     both = [r["n"] for r in recs if r["n"] in A and r["n"] in B]
     pairs = [(A[n]["decision"], B[n]["decision"]) for n in both]
     k, se = kappa(pairs)
@@ -256,22 +344,21 @@ def summarise(cfg, recs):
             final[n] = A[n]["decision"]
         elif n in ADJ:
             final[n] = ADJ[n]["decision"]
-    known = {}
-    if os.path.exists(DEDUP):
-        with open(DEDUP, newline="") as fh:
-            for r in csv.DictReader(fh):
-                known[int(r["n"])] = r.get("matched_known") == "yes"
+    known = {r["n"]: r["matched_known"] for r in recs}
     known_ns = [n for n in final if known.get(n)]
     known_inc = sum(1 for n in known_ns if final[n] == "include")
     failA = Counter(c for n in both for c in (A[n]["failed"] or ""))
     failB = Counter(c for n in both for c in (B[n]["failed"] or ""))
     lines = []
-    lines.append("# Title and abstract screening of the Embase export\n")
+    lines.append(f"# Title and abstract screening of {pool()['title']}\n")
     lines.append("Two independent reviewer agents (different local models, temperature 0, fixed seed, blinded to each other), "
                  "a third agent adjudicating disagreements. Models are named only in the untracked configuration file. "
                  "Produced by `src/screen_titles.py summarise`.\n")
     lines.append("| Quantity | Value |\n|---|---|")
-    lines.append(f"| Records in export | {len(recs)} |")
+    lines.append(f"| Records in pool | {len(recs)} |")
+    if len(pool()["members"]) > 1:
+        by_src = Counter(r["source"] for r in recs)
+        lines.append("| Pool composition | " + "; ".join(f"{k} {v}" for k, v in by_src.items()) + " |")
     lines.append(f"| Screened by both reviewers | {len(both)} |")
     lines.append(f"| Reviewer 1 include / exclude | {sum(1 for a, _ in pairs if a == 'include')} / {sum(1 for a, _ in pairs if a == 'exclude')} |")
     lines.append(f"| Reviewer 2 include / exclude | {sum(1 for _, b in pairs if b == 'include')} / {sum(1 for _, b in pairs if b == 'exclude')} |")
@@ -284,8 +371,9 @@ def summarise(cfg, recs):
     lines.append("| Criterion failed | Reviewer 1 | Reviewer 2 |\n|---|---|---|")
     for c in "DPIOT":
         lines.append(f"| {c} | {failA.get(c, 0)} | {failB.get(c, 0)} |")
-    lines.append("\nPer record decisions and reasons stay untracked beside the export (decisions_A.csv, decisions_B.csv, "
-                 "adjudication_002.csv). A known relevant record excluded by screening is listed below for audit.\n")
+    sfx = pool()["suffix"]
+    lines.append(f"\nPer record decisions and reasons stay untracked beside the export (decisions_A{sfx}.csv, decisions_B{sfx}.csv, "
+                 f"adjudication_002{sfx}.csv). A known relevant record excluded by screening is listed below for audit.\n")
     missed = [n for n in known_ns if final[n] == "exclude"]
     if missed:
         lines.append("| n | Title | Reviewer 1 | Reviewer 2 | Adjudicator |\n|---|---|---|---|---|")
@@ -295,7 +383,7 @@ def summarise(cfg, recs):
                          f"{ADJ[n]['decision'] if n in ADJ else ''} |")
     else:
         lines.append("No known relevant record was excluded.")
-    with open(SUMMARY, "w") as fh:
+    with open(summary_path(), "w") as fh:
         fh.write("\n".join(lines) + "\n")
     print("\n".join(lines))
 
@@ -304,6 +392,13 @@ def main():
     if len(sys.argv) < 2 or sys.argv[1] not in ("screen", "adjudicate", "summarise"):
         print(__doc__)
         sys.exit(2)
+    global POOL
+    args = sys.argv[2:]
+    if "--pool" in args:
+        POOL = args[args.index("--pool") + 1]
+        if POOL not in POOLS:
+            print("unknown pool", POOL, "; known:", ", ".join(POOLS))
+            sys.exit(2)
     cfg = load_cfg()
     recs = parse_ris()
     os.makedirs(OUTDIR, exist_ok=True)
@@ -311,7 +406,6 @@ def main():
     if stage == "screen":
         limit = None
         reviewers = ["A", "B"]
-        args = sys.argv[2:]
         if "--limit" in args:
             limit = int(args[args.index("--limit") + 1])
         if "--reviewer" in args:

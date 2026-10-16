@@ -55,6 +55,15 @@ adjudicate:
 screen-summary:
 	python3 -I src/screen_titles.py summarise
 
+# Second pool: the 51 Embase registry records plus the 200 CENTRAL records not
+# in the Embase export; separate decision files (suffix _batch2), same gates.
+screen-batch2:
+	python3 -I src/screen_titles.py screen --pool batch2
+adjudicate-batch2:
+	python3 -I src/screen_titles.py adjudicate --pool batch2
+screen-summary-batch2:
+	python3 -I src/screen_titles.py summarise --pool batch2
+
 clean:
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep
