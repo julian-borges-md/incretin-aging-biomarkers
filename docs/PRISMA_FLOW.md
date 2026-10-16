@@ -80,6 +80,8 @@ Neither stratifies by receptor class, and neither includes tirzepatide, retatrut
 
 The first category is the current bottleneck for Q2 and is a retrieval problem, not an eligibility one.
 
+**Update 2026-10-15, 21:10.** All five trials in the first category were retrieved in full through the BU EZproxy route (none is in PMC). Their status moves from "not accessible" to "retrieved, extraction pending three analysis rule decisions" (final value versus change score for parallel trials without change SDs, inventory reconciliation, crossover handling); details and the per trial extractable quantities are in `docs/MONO_TRIALS_RETRIEVAL_2026-10-15.md`. The Embase search has since been executed (710 hits, 659 article records, `search/embase_2026-10-15/SEARCH_LOG.md`); CENTRAL and Web of Science remain unrun, and the 514 record Web of Science export once attributed to this review belongs to another workstream (`docs/LICENSED_DATABASE_ACCESS.md`). The included set is now 7 trial analyses, 48 rows, 19 biomarkers, 43 rows convertible to the common scale.
+
 ## What a PRISMA diagram cannot yet show
 
 A conventional PRISMA diagram reports records identified, screened, excluded with reasons, and included, with numbers at each step. Stream A can supply those numbers. Stream B cannot, because the screening was done by other groups and we inherited their output.
