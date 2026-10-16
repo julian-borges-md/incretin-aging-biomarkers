@@ -59,7 +59,7 @@ The rescreen rule ("included by either reviewer is rescued") is deliberately asy
 
 ## 6. Full text stage: the text that each record is judged on
 
-A record is judged on the best text available for it, in this order of preference, and the label at the top of the text tells the reviewers what kind of document they have. The inventory is produced by `python3 -I src/fulltext_screen.py inventory`; counts at 08:05 on 16 October:
+A record is judged on the best text available for it, in this order of preference, and the label at the top of the text tells the reviewers what kind of document they have. The inventory is produced by `python3 -I src/fulltext_screen.py inventory`; counts at 08:15 on 16 October:
 
 | Text source | Records | What it is | How it was obtained |
 |---|---|---|---|
@@ -68,9 +68,9 @@ A record is judged on the best text available for it, in this order of preferenc
 | registry_summary | 84 | index record of a trial on another register | the export itself |
 | epmc_fulltext | 108 | open access full text | Europe PMC XML rendered to text, `src/epmc_harvest.py` |
 | direct_fulltext | 8 | publisher open access page or preprint | `src/direct_fetch.py`, no authentication |
-| proxy_fulltext | 92 | full text as published on the publisher site, captured through the institutional route (89), or an open access or repository PDF rendered with pdftotext (3) | browser capture with the Director signed in, `src/proxy_harvest.py` |
-| proxy_partial | 21 | a captured page of at least 2,000 characters that is either the abstract of a longer article (no subscription) or a complete short document (letter, comment, review without methods sections); the label says so and the reviewers judge from what is present | the same |
-| awaiting_fulltext | 4 | no text beyond the index record | listed with reasons in `FULLTEXT_ACCESS_SUMMARY.md` |
+| proxy_fulltext | 94 | full text as published on the publisher site, captured through the institutional route (89), or an open access or repository copy located by title or through OpenAlex (5) | browser capture with the Director signed in, `src/proxy_harvest.py` |
+| proxy_partial | 20 | a captured page of at least 2,000 characters that is either the abstract of a longer article (no subscription) or a complete short document (letter, comment, review without methods sections); the label says so and the reviewers judge from what is present | the same |
+| awaiting_fulltext | 3 | no text beyond the index record | listed with reasons in `FULLTEXT_ACCESS_SUMMARY.md` |
 | already_extracted | 14 | in `extraction_master` before this screen; not rescreened | |
 
 Texts are capped at 48,000 characters (30,000 for registry entries) and captured pages are trimmed by three fixed patterns before the cap (navigation before the abstract heading, the reference list, publisher boilerplate lines); the characters given to each reviewer are logged per record. Fifteen captured texts still exceed the cap and are truncated at the end; in the one case read (1-120, STEP UP) the cut fell inside the safety tables after the efficacy results, the other fourteen have not been read, and the reason field records when a criterion could not be judged.
@@ -81,11 +81,11 @@ Retrieval followed the order: Europe PMC open access (`src/epmc_lookup.py`, `src
 
 For the PRISMA flow, the categories are:
 
-| PRISMA item | Count at 08:05 on 16 October | Composition |
+| PRISMA item | Count at 08:15 on 16 October | Composition |
 |---|---|---|
 | Reports sought for retrieval | 533 | the 547 record pool minus the 14 already extracted |
-| Reports not retrieved | 4 | 1-90 and 1-160 (DOIs that do not resolve), 1-443 (Int J Clin Exp Med 2020, site unavailable, not in PubMed), 2-223 (Drug Invention Today 2019, no copy located) |
-| Reports assessed for eligibility | 529 | of which 21 on an abstract page or a complete short document, 84 on a register index record, and 160 on a conference abstract that is the whole document |
+| Reports not retrieved | 3 | 1-160 (DOI not found), 1-443 (Int J Clin Exp Med 2020, site unavailable, not in PubMed), 2-223 (Drug Invention Today 2019, no copy located) |
+| Reports assessed for eligibility | 530 | of which 20 on an abstract page or a complete short document, 84 on a register index record, and 160 on a conference abstract that is the whole document |
 
 A report assessed on an abstract page because the library holds no subscription (for example 1-142 in Hormones, 1-532 in Circulation: Cardiovascular Imaging) is assessed, not unretrieved; the limitation is stated in the record's reason field and the title is a candidate for an interlibrary request (Section 9).
 
@@ -109,7 +109,7 @@ A report assessed on an abstract page because the library holds no subscription 
 | D-S2 Treat version 2 as a clarification (methods text: "criteria clarified after a sensitivity audit of the first run; the 321 exclusions were rescreened under the clarified wording") rather than as a protocol change | clarification; amendment logged with the registry | clarification, with the audit file cited |
 | D-S3 Rescue rule for the rescreen ("either reviewer includes") stated as such in the methods | state it; silently fold into the adjudicated counts | state it |
 | D-S4 Records assessed on an abstract page for lack of a subscription | interlibrary request for the eligible ones after the full text decisions; author contact; record as assessed with limitation | interlibrary request for the ones the screen includes, limitation stated for the rest |
-| D-S5 The 4 reports not retrieved | record as not retrieved; further search by hand | record as not retrieved, retry 1-443 once more when the site answers |
+| D-S5 The 3 reports not retrieved | record as not retrieved; further search by hand | record as not retrieved, retry 1-443 once more when the site answers |
 | D-S6 Web of Science | run the drafted string before the full text stage closes; run later; omit with justification | the Director's call, outside this statement |
 | D-S7 The two residual known misses entering through the adopted list | state in methods as a documented second source; treat as a screening failure to be reported | state as a documented second source, with the sensitivity figure reported |
 

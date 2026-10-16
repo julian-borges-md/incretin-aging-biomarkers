@@ -84,10 +84,21 @@ if os.path.exists(OA):
         loc = r["oa_url"] or r["pdf_url"] or r["note"] or ""
         md.append(f"| {r['key']} | {r['is_oa'] or 'not queried'} {r['oa_status']} | {loc[:80]} | {st_now} |")
     md.append("")
+    md.append("\n### Subscription gap: trial reports assessed on an abstract page only (candidates for an interlibrary request, Director's decision D-S4)\n")
+    md.append("| Record | Journal | Why only the abstract |\n|---|---|---|")
+    for row in (
+        ("1-142", "Hormones 2025 (Springer)", "no BU subscription; dulaglutide with or without probiotics, cardiovascular risk factors, randomised"),
+        ("1-532", "Circulation: Cardiovascular Imaging 2016 (AHA)", "no BU access to the full text; liraglutide in STEMI, randomised, placebo"),
+        ("2-55", "Journal of Dermatological Treatment 2020 (Taylor and Francis)", "no BU access; liraglutide in psoriasis with type 2 diabetes, randomised"),
+        ("1-183", "Chinese Journal of Diabetes 2025 (CMA, yiigle)", "article body behind the CMA paywall; liraglutide versus basal insulin, randomised"),
+        ("1-48", "Chinese Journal of Clinical Research 2026 (CNKI)", "CNKI not in the BU EZproxy; semaglutide plus metformin, IL-6/JAK2/STAT3 axis"),
+        ("1-255", "Alternative Therapies in Health and Medicine 2024", "journal site returns an empty page; PubMed abstract only"),
+    ):
+        md.append(f"| {row[0]} | {row[1]} | {row[2]} |")
+    md.append("\nThe other partial captures are complete short documents (editorials, comments, reviews, a supplement abstract) for which the page is the whole document.")
     md.append("\n### Records still without a text (recorded by hand from the capture attempts)\n")
     md.append("| Record | Identifier | What was found |\n|---|---|---|")
     for row in (
-        ("1-90", "10.25258/ijddt.16.44s.15", "DOI does not resolve (impactfactor.org placeholder, 105 characters)"),
         ("1-160", "10.31838/ijprt/15.02.374", "DOI not found at doi.org"),
         ("1-443", "no DOI; Int J Clin Exp Med 2020;13(2):1219", "publisher site answered 509 Bandwidth Limit Exceeded; not in PubMed"),
         ("2-223", "no DOI; Drug Invention Today 2019;12(11):2549", "ResearchGate lists it with the abstract and a request full text button only; not in PubMed; publisher PDF not located"),

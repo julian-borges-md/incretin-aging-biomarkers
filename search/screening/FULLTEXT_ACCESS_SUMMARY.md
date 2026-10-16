@@ -44,10 +44,10 @@ Each remaining DOI was opened in the browser through `https://ezproxy.bu.edu/log
 
 | Outcome | Records |
 |---|---|
-| fulltext | 92 |
-| partial | 23 |
+| fulltext | 94 |
+| partial | 21 |
 
-Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_fulltext` source, `partial` as the `proxy_partial` source with a label that says the page may be complete or abstract only (21 records; the other 2 partial captures are resolver or error pages under 2,000 characters and count as not retrieved).
+Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_fulltext` source, `partial` as the `proxy_partial` source with a label that says the page may be complete or abstract only (20 records; the other 1 partial captures are resolver or error pages under 2,000 characters and count as not retrieved).
 
 | Host of the full text captures | Records |
 |---|---|
@@ -68,6 +68,8 @@ Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_ful
 | www.jstage.jst.go.jp | 1 |
 | www.oaepublish.com | 1 |
 | diabetesjournals-org.ezproxy.bu.edu | 1 |
+| impactfactor.org | 1 |
+| pjps.pk | 1 |
 | www.spandidos-publications.com | 1 |
 | www.wjgnet.com | 1 |
 | dmu.repo.nii.ac.jp | 1 |
@@ -84,9 +86,9 @@ Produced by `src/oa_locations.py` (one GET per DOI, no key, no email). A locatio
 | Record | OpenAlex | Location | State in the manifest |
 |---|---|---|---|
 | 1-18 | False closed |  | partial |
-| 1-33 | True diamond | https://doi.org/10.36721/pjps.2026.39.7.204.1 | partial |
+| 1-33 | True diamond | https://doi.org/10.36721/pjps.2026.39.7.204.1 | fulltext |
 | 1-48 | False closed |  | partial |
-| 1-90 | True bronze | https://doi.org/10.25258/ijddt.16.44s.15 | partial |
+| 1-90 | True bronze | https://doi.org/10.25258/ijddt.16.44s.15 | fulltext |
 | 1-142 | False closed |  | partial |
 | 1-153 | False closed |  | partial |
 | 1-160 | not queried  | http 404 | partial |
@@ -112,11 +114,23 @@ Produced by `src/oa_locations.py` (one GET per DOI, no key, no email). A locatio
 | 2-241 | False closed |  | partial |
 
 
+### Subscription gap: trial reports assessed on an abstract page only (candidates for an interlibrary request, Director's decision D-S4)
+
+| Record | Journal | Why only the abstract |
+|---|---|---|
+| 1-142 | Hormones 2025 (Springer) | no BU subscription; dulaglutide with or without probiotics, cardiovascular risk factors, randomised |
+| 1-532 | Circulation: Cardiovascular Imaging 2016 (AHA) | no BU access to the full text; liraglutide in STEMI, randomised, placebo |
+| 2-55 | Journal of Dermatological Treatment 2020 (Taylor and Francis) | no BU access; liraglutide in psoriasis with type 2 diabetes, randomised |
+| 1-183 | Chinese Journal of Diabetes 2025 (CMA, yiigle) | article body behind the CMA paywall; liraglutide versus basal insulin, randomised |
+| 1-48 | Chinese Journal of Clinical Research 2026 (CNKI) | CNKI not in the BU EZproxy; semaglutide plus metformin, IL-6/JAK2/STAT3 axis |
+| 1-255 | Alternative Therapies in Health and Medicine 2024 | journal site returns an empty page; PubMed abstract only |
+
+The other partial captures are complete short documents (editorials, comments, reviews, a supplement abstract) for which the page is the whole document.
+
 ### Records still without a text (recorded by hand from the capture attempts)
 
 | Record | Identifier | What was found |
 |---|---|---|
-| 1-90 | 10.25258/ijddt.16.44s.15 | DOI does not resolve (impactfactor.org placeholder, 105 characters) |
 | 1-160 | 10.31838/ijprt/15.02.374 | DOI not found at doi.org |
 | 1-443 | no DOI; Int J Clin Exp Med 2020;13(2):1219 | publisher site answered 509 Bandwidth Limit Exceeded; not in PubMed |
 | 2-223 | no DOI; Drug Invention Today 2019;12(11):2549 | ResearchGate lists it with the abstract and a request full text button only; not in PubMed; publisher PDF not located |
