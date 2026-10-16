@@ -37,14 +37,32 @@ dat <- readr::read_csv("analysis/data/extraction_master_harmonised.csv",
 # The amendment was written on 2026-10-15 and, until this block, had no code
 # behind it: EUREXA (exenatide vs glimepiride) was being counted toward mono
 # class coverage. Declarative rules do not restrict anything. This does.
-is_placebo_controlled <- function(comparator) {
-  !is.na(comparator) & tolower(trimws(comparator)) == "placebo"
+# A13 (2026-10-16): the first version of this test compared the free text comparator field with the
+# single word "placebo", which silently excluded four placebo controlled trials whose comparator text
+# is descriptive ("placebo added to standard care", "visually matching placebo", "placebo
+# (canagliflozin and combination arms not entered)") and so dropped 18 mono class rows from every
+# class contrast. The schema already carries the controlled vocabulary in comparator_type, so that
+# column decides when it is present and the string test remains the fallback for rows that predate
+# the column. Deciding a restriction from free text is the error; the vocabulary exists for this.
+is_placebo_controlled <- function(comparator, comparator_type = NULL) {
+  txt <- !is.na(comparator) & grepl("^placebo\\b", tolower(trimws(comparator)))
+  if (is.null(comparator_type)) return(txt)
+  ty <- tolower(trimws(ifelse(is.na(comparator_type), "", comparator_type)))
+  ifelse(ty %in% c("placebo", "active", "lifestyle"), ty == "placebo", txt)
 }
-# Counterexample in both senses, run every time.
+# Counterexamples in both senses, run every time.
 stopifnot(identical(is_placebo_controlled(c("placebo", "glimepiride", NA, "Placebo ")),
                     c(TRUE, FALSE, FALSE, TRUE)))
+stopifnot(identical(
+  is_placebo_controlled(
+    c("placebo added to standard care", "visually matching placebo", "glimepiride",
+      "insulin glargine titrated", "placebo", "lifestyle counselling", "placebo"),
+    c("placebo", "placebo", "active", "ACTIVE", NA, "lifestyle", "active")),
+  c(TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, FALSE)))
+# The last pair is the one that matters: a row whose text says placebo but whose type says active is
+# an active controlled row (a third arm recorded against the wrong text) and must be excluded.
 
-excluded <- filter(dat, !is_placebo_controlled(comparator))
+excluded <- filter(dat, !is_placebo_controlled(comparator, comparator_type))
 if (nrow(excluded) > 0) {
   message("EXCLUDED FROM CLASS CONTRASTS, active or unstated comparator (amendment 2026-10-15):")
   ex <- excluded |> count(trial_id, receptor_class, comparator, name = "rows")
@@ -58,8 +76,8 @@ if (nrow(excluded) > 0) {
 } else {
   message("Comparator restriction: every row is placebo controlled; nothing excluded.\n")
 }
-dat <- filter(dat, is_placebo_controlled(comparator))
-stopifnot(all(is_placebo_controlled(dat$comparator)))
+dat <- filter(dat, is_placebo_controlled(comparator, comparator_type))
+stopifnot(all(is_placebo_controlled(dat$comparator, dat$comparator_type)))
 
 CLASSES <- c("GLP1_mono","GLP1_GIP","GLP1_GCGR","GLP1_GIP_GCGR")
 
