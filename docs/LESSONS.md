@@ -90,6 +90,10 @@ Concretely: any signed quantity needs a counterexample in both senses. Any contr
 
 ---
 
+## Unattended execution
+
+**A job that is alive is not a job that is progressing, and a session is not a supervisor.** The full text chain stopped at 08:33 on 16 October on a transient Ollama 500 during a model swap (three attempts inside 15 seconds) and was relaunched six minutes later only because the session happened to be active; the steps behind it in that chain would otherwise have stayed undone until the next check in. A hung request is worse: it looks healthy in the process table for the whole 600 s HTTP timeout, six times over. The check ins of a cloud session are the wrong supervisor: they are minutes to hours apart, they end with the session, and they cannot act while the session is asleep. Added 2026-10-16. Supervision now runs on the machine that runs the jobs (`src/chain_manager.py`): progress is read from the artefacts (a decision row per record), not from process liveness; each intervention is the smallest that can restore progress (runner, then step, then chain, then the Ollama app) with a budget per six hours so a crash loop cannot burn the GPU; every observation that led to an action, and the action, is written to a log; and a pause file lets a human stop a chain on purpose without the manager undoing it. The session's check ins read the manager's log instead of the process table.
+
 ## Verification
 
 **"Repository not found" is an identity result before it is an existence result.** A private repository answers "not found" to any identity without access. On a workstation holding two GitHub identities, the keychain helper serves whichever account the CLI last made active, so `git ls-remote` from an interactive session can fail against a repository that an unattended job pushes to successfully every few hours. Two repositories were recorded as non-existent on this basis on 2026-10-15; both exist. Added 2026-10-15. The test that settles existence runs with the helper chain reset to the credential that the job itself uses, and a successful push in the job's own log outranks a failed lookup from elsewhere.

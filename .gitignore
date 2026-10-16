@@ -31,3 +31,7 @@ search/screening/fulltext_adjudication_*.csv
 search/screening/fulltext_resolution_*.csv
 search/screening/fulltext_results_*.csv
 search/screening/biomarker_scan_*.csv
+search/screening/manager_status.json
+search/screening/manager_status.json.tmp
+search/screening/manager.err
+work/MANAGER_PAUSE
