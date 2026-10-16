@@ -114,17 +114,32 @@ for (i in seq_len(nrow(grid))) {
 # trials differ: population, duration, assay, era, sponsor.
 message("\nCONTRAST SUPPORT")
 message(strrep("-", 76))
-n_repl <- 0
+# A14 (2026-10-16): two counts, because one of them has a perverse property. The strict count
+# requires EVERY class present to have two or more trials, so adding a single trial of a third class
+# to a marker that already had two well populated classes REMOVES it from the count: data reduces
+# the tally. The pairwise count asks whether at least two classes have two or more trials each, which
+# is the condition that makes the contrast between THOSE two classes free of single trial
+# confounding, and it is monotone in the data. Both are printed; the manuscript reports both and
+# names the definition it uses.
+n_repl_strict <- 0
+n_repl_pair <- 0
 for (i in seq_len(nrow(grid))) {
   r <- grid[i,]
   present <- CLASSES[c(r$GLP1_mono, r$GLP1_GIP, r$GLP1_GCGR, r$GLP1_GIP_GCGR) > 0]
   reps    <- c(r$GLP1_mono, r$GLP1_GIP, r$GLP1_GCGR, r$GLP1_GIP_GCGR)
   reps    <- reps[reps > 0]
+  well    <- CLASSES[c(r$GLP1_mono, r$GLP1_GIP, r$GLP1_GCGR, r$GLP1_GIP_GCGR) >= 2]
   if (length(present) < 2) {
     v <- sprintf("only %s", paste(present, collapse=", "))
   } else if (all(reps >= 2)) {
-    v <- sprintf("REPLICATED across %s", paste(present, collapse=" vs "))
-    n_repl <- n_repl + 1
+    v <- sprintf("REPLICATED in every class present: %s", paste(present, collapse=" vs "))
+    n_repl_strict <- n_repl_strict + 1
+    n_repl_pair <- n_repl_pair + 1
+  } else if (length(well) >= 2) {
+    v <- sprintf("REPLICATED PAIRWISE: %s have two or more trials each; %s has one",
+                 paste(well, collapse=" and "),
+                 paste(setdiff(present, well), collapse=", "))
+    n_repl_pair <- n_repl_pair + 1
   } else {
     v <- sprintf("CONFOUNDED: %s, one trial per class",
                  paste(present, collapse=" vs "))
@@ -132,8 +147,8 @@ for (i in seq_len(nrow(grid))) {
   message(sprintf("  %-18s %s", r$biomarker, v))
 }
 
-message(sprintf("\nBiomarkers supporting a replicated class contrast: %d of %d",
-                n_repl, nrow(grid)))
+message(sprintf("\nBiomarkers supporting a replicated class contrast: %d of %d with every class replicated, %d of %d with at least two classes replicated",
+                n_repl_strict, nrow(grid), n_repl_pair, nrow(grid)))
 
 ## ---------------------------------------------------------------------------
 ## 3. Descriptive class signature, explicitly not a contrast

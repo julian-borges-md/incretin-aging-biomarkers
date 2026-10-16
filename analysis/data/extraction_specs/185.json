@@ -1,0 +1,76 @@
+{
+ "group": "185",
+ "extractor": "S",
+ "study": {
+  "trial_id": "MDI-liraglutide study (Sweden)",
+  "pmid": "",
+  "doi": "",
+  "first_author": "not named in the capture",
+  "year": "2019",
+  "journal": "Diabetes Obes Metab",
+  "phase": "4",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1.8",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "24",
+  "population": "T2D",
+  "n_tx": "63",
+  "n_ctrl": "59",
+  "assessment_timepoint_weeks": "24",
+  "pct_weight_change": "-3.8",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: double blind placebo controlled trial of liraglutide added to multiple daily insulin injections in type 2 diabetes (the MDI-liraglutide study), 124 enrolled and 122 randomised with at least one valid follow up, 63 liraglutide and 59 placebo, 24 weeks; this report covers anthropometric measures and adiponectin. Table 2 prints baseline and 24 week values per arm as mean (SD) with the median and range beneath, the change per arm as mean (SD) with its 95 percent CI, and the baseline adjusted liraglutide minus placebo difference as mean (SD) with 95 percent CI and p. The adiponectin row is the only inventory marker and is taken from that baseline adjusted difference (route ci_95), with the Table 2 baseline arm means as the denominator. Sagittal abdominal diameter, waist and hip circumference and BMI are outside the inventory. pct_weight_change from the printed weight change, minus 3.8 kg on a baseline of 98.8 kg equals minus 3.8 percent (the placebo arm did not change). Liraglutide and placebo supplied by the manufacturer for an investigator initiated trial (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {
+   "biomarker": "adiponectin",
+   "measure": "MD",
+   "unit": "mg/L",
+   "yi_reported": "0.85",
+   "ci_lb_reported": "-0.37",
+   "ci_ub_reported": "2.06",
+   "p_reported": "0.17",
+   "se_source": "ci_95",
+   "base_mean_tx": "4.47",
+   "base_sd_tx": "2.17",
+   "base_mean_ctrl": "4.39",
+   "base_sd_ctrl": "2.21",
+   "notes": "Table 2 adiponectin mg/L: baseline 4.47 (2.17) to 5.97 (4.79) in the liraglutide arm (change 1.43 (3.80), 0.44 to 2.42) and 4.39 (2.21) to 4.99 (3.28) in the placebo arm (change 0.56 (2.53), minus 0.13 to 1.26); baseline adjusted difference 0.85 (3.26), 95 percent CI minus 0.37 to 2.06, p 0.17"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "liraglutide",
+  "trial_id": "MDI-liraglutide study (Sweden)",
+  "design": "double blind placebo controlled randomised trial, liraglutide 1.8 mg added to multiple daily insulin injections versus placebo, 122 randomised with type 2 diabetes, 24 weeks",
+  "reason": "full text group (Europe PMC); adiponectin is the only inventory marker and carries the trial's own baseline adjusted between group difference with a 95 percent CI",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "sagittal abdominal diameter",
+   "waist and hip circumference",
+   "BMI and body weight",
+   "insulin dose"
+  ],
+  "tables_used": [
+   "Table 2"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "randomised with a matched placebo in a double blind design (D1 and D2 low); 122 of 124 enrolled had at least one valid follow up and the analysis reports n per cell (D3 low); laboratory adiponectin and calibrated scales with a single scale per patient (D4 low); adiponectin is a secondary endpoint of an anthropometric report, and the baseline predictors of its change are explored post hoc (D5 some concerns)"
+  },
+  "doubts": [
+   "the authorship and DOI are not in the captured text; the trial is identified by its name (MDI-liraglutide study) and journal",
+   "adiponectin rose in both arms (1.43 and 0.56 mg/L) and the baseline adjusted difference is not significant, so this row is a null contrast in a placebo controlled mono agonist trial, which is useful weight against the adiponectin pool rather than a positive finding",
+   "pct_weight_change minus 3.8 percent is arithmetic from the printed change and baseline"
+  ]
+ }
+}

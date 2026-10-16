@@ -236,6 +236,28 @@ if (length(bad_class) > 0) {
   errs <- c(errs, paste("unknown receptor_class:", paste(bad_class, collapse = ", ")))
 }
 
+# comparator_type is a controlled vocabulary and amendment A13 made the
+# placebo controlled restriction of the class contrast read it instead of the
+# free text comparator. A cell spelled ACTIVE rather than active therefore
+# decides an analysis by its capitalisation: two rows of EUREXA carried that
+# spelling and were silently outside the vocabulary until this check was
+# written. Case is part of the vocabulary, so the check is exact, not folded.
+COMPARATOR_TYPES <- c("placebo", "active", "lifestyle", "NA")
+comparator_type_outside <- function(x) {
+  v <- ifelse(is.na(x), "NA", as.character(x))
+  sort(unique(v[!v %in% COMPARATOR_TYPES & nzchar(v)]))
+}
+stopifnot(
+  length(comparator_type_outside(c("placebo", "active", "lifestyle", NA, "", "NA"))) == 0,
+  identical(comparator_type_outside(c("active", "ACTIVE", "Placebo", "placebo ")),
+            c("ACTIVE", "Placebo", "placebo "))
+)
+bad_comparator_type <- comparator_type_outside(dat$comparator_type)
+if (length(bad_comparator_type) > 0) {
+  errs <- c(errs, paste("comparator_type outside the controlled vocabulary (case is part of it):",
+                        paste(sprintf("%s", bad_comparator_type), collapse = ", ")))
+}
+
 if (any(is.na(dat$pct_weight_change))) {
   # NOT a fatal error. pct_weight_change is the meta-regression covariate, and
   # rows lacking it are simply excluded from that model. They remain perfectly
