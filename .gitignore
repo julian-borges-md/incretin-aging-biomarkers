@@ -25,3 +25,4 @@ search/screening/*.log
 # Full text pool per record rows carry export titles; the summary is committed
 search/screening/fulltext_pool_*.csv
 __pycache__/
+search/screening/fulltext_access_*.csv

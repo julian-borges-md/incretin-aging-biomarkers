@@ -75,6 +75,12 @@ screen-summary-v2:
 fulltext-pool:
 	python3 -I src/build_fulltext_pool.py
 
+# Full text access: Europe PMC lookup (no key, no email), open access harvest into work/fulltext/pool, counts summary
+fulltext-access:
+	python3 -I src/epmc_lookup.py
+	python3 -I src/epmc_harvest.py
+	python3 -I src/fulltext_access_summary.py
+
 clean:
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep
