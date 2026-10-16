@@ -44,7 +44,7 @@ Each remaining DOI was opened in the browser through `https://ezproxy.bu.edu/log
 
 | Outcome | Records |
 |---|---|
-| fulltext | 91 |
+| fulltext | 92 |
 | partial | 23 |
 
 Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_fulltext` source, `partial` as the `proxy_partial` source with a label that says the page may be complete or abstract only (19 records; the other 4 partial captures are resolver or error pages under 2,000 characters and count as not retrieved).
@@ -69,6 +69,10 @@ Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_ful
 | www.oaepublish.com | 1 |
 | diabetesjournals-org.ezproxy.bu.edu | 1 |
 | www.wjgnet.com | 1 |
+| dmu.repo.nii.ac.jp | 1 |
+
+One record without a DOI (1-595, Dokkyo J Med Sci 2014;41(3):211) was found as a PDF in the Dokkyo Medical University repository (dmu.repo.nii.ac.jp), rendered with pdftotext and added to the same manifest.
+
 
 ### Records still without a text (recorded by hand from the capture attempts)
 
@@ -79,6 +83,5 @@ Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_ful
 | 1-160 | 10.31838/ijprt/15.02.374 | DOI not found at doi.org |
 | 1-183 | 10.3760/cma.j.cn115791-20240318-00120 | yiigle.com page did not render (131 characters) |
 | 1-443 | no DOI; Int J Clin Exp Med 2020;13(2):1219 | publisher site answered 509 Bandwidth Limit Exceeded; not in PubMed |
-| 1-595 | no DOI; Dokkyo J Med Sci 2014;41(3):211 | not located online; not in PubMed |
-| 2-223 | no DOI; Drug Invention Today 2019;12(11):2549 | not located online; not in PubMed |
+| 2-223 | no DOI; Drug Invention Today 2019;12(11):2549 | ResearchGate lists it with the abstract and a request full text button only; not in PubMed; publisher PDF not located |
 

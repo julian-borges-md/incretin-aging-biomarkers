@@ -4,7 +4,9 @@ Run from the repository root: python3 -I src/proxy_harvest.py (inputs under work
 import csv, glob, json, os, re, shutil
 loop = json.load(open("work/proxy_loop.json")) + [dict(key="pool1_n22", doi="10.1016/j.jacc.2026.04.044"),
     # records outside the first loop: two with a DOI not in closed_access_todo at loop time, one PubMed abstract page (no DOI, PMID 38940809)
-    dict(key="pool1_n294", doi="10.1016/j.jacc.2023.09.811"), dict(key="pool1_n625", doi="10.1111/j.1472-8206.2010.00888.x"), dict(key="pool1_n255", doi="")]
+    dict(key="pool1_n294", doi="10.1016/j.jacc.2023.09.811"), dict(key="pool1_n625", doi="10.1111/j.1472-8206.2010.00888.x"), dict(key="pool1_n255", doi=""),
+    # repository PDF rendered with pdftotext (Dokkyo Medical University repository), no DOI
+    dict(key="pool1_n595", doi="")]
 dl = os.path.expanduser("~/Downloads"); keep = os.path.join(dl, "fulltext_captures"); os.makedirs(keep, exist_ok=True)
 M = "work/fulltext/proxy/MANIFEST_proxy_2026-10-16.csv"
 rows = {r["key"]: r for r in csv.DictReader(open(M))} if os.path.exists(M) else {}

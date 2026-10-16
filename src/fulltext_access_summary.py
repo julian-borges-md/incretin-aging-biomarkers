@@ -69,6 +69,7 @@ if os.path.exists(PROXY):
     md.append("| Host of the full text captures | Records |\n|---|---|")
     for k, v in hosts.most_common():
         md.append(f"| {k} | {v} |")
+    md.append("\nOne record without a DOI (1-595, Dokkyo J Med Sci 2014;41(3):211) was found as a PDF in the Dokkyo Medical University repository (dmu.repo.nii.ac.jp), rendered with pdftotext and added to the same manifest.\n")
     md.append("\n### Records still without a text (recorded by hand from the capture attempts)\n")
     md.append("| Record | Identifier | What was found |\n|---|---|---|")
     for row in (
@@ -77,8 +78,7 @@ if os.path.exists(PROXY):
         ("1-160", "10.31838/ijprt/15.02.374", "DOI not found at doi.org"),
         ("1-183", "10.3760/cma.j.cn115791-20240318-00120", "yiigle.com page did not render (131 characters)"),
         ("1-443", "no DOI; Int J Clin Exp Med 2020;13(2):1219", "publisher site answered 509 Bandwidth Limit Exceeded; not in PubMed"),
-        ("1-595", "no DOI; Dokkyo J Med Sci 2014;41(3):211", "not located online; not in PubMed"),
-        ("2-223", "no DOI; Drug Invention Today 2019;12(11):2549", "not located online; not in PubMed"),
+        ("2-223", "no DOI; Drug Invention Today 2019;12(11):2549", "ResearchGate lists it with the abstract and a request full text button only; not in PubMed; publisher PDF not located"),
     ):
         md.append(f"| {row[0]} | {row[1]} | {row[2]} |")
     md.append("")
