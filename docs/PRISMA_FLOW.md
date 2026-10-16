@@ -101,3 +101,54 @@ The diagram will therefore be drawn for Stream A only, with Stream B shown as a 
 | Full text retrieval for the 547 record pool | 16 October 2026: a text in hand for 530 of the 533 records that need one (14 already extracted): 160 conference abstracts (the record is the document), 56 ClinicalTrials.gov entries (public API), 84 other register summaries (index record only), 108 Europe PMC open access full texts, 8 publisher open access pages or preprints, 89 full texts captured through BU EZproxy and 5 from repository or open access copies located by title or through OpenAlex, 20 publisher or index pages of at least 2,000 characters that may be complete short documents or abstracts only (6 of them trial reports behind subscriptions BU lacks, listed for interlibrary request); 3 records without any text, listed with reasons (`search/screening/FULLTEXT_ACCESS_SUMMARY.md`). The three agent full text screen runs over every record with a text (`src/fulltext_screen.py`, `FULLTEXT_SCREENING_SUMMARY.md` when complete) |
 | Full-text retrieval of the five paywalled placebo-controlled trials | Done 15 October 2026 through BU EZproxy; all five extracted under amendment R1 to R4 |
 | Record counts at each PRISMA step for Stream A | Partially available, needs reconstruction from search logs |
+
+## Update 2026-10-16, 14:30 local: the full text screening stage is complete
+
+The full text pool closed at 576 records (the 547 record pool of 15 October plus the 29 pool 3 records
+that the Web of Science only export contributed after title screening under criteria v2). Every record
+with a text was read independently by two local reviewer agents (different models, temperature 0, fixed
+seed, blinded to each other) under criteria v2 plus the full text addendum, and every disagreement was
+settled by the session's cloud model reading the same text, on the Director's instruction of 16 October
+08:45 local. `search/screening/FULLTEXT_SCREENING_SUMMARY.md` is produced by `src/fulltext_screen.py
+summarise` from the three decision files and is the auditable record.
+
+| Quantity | Value | Note |
+|---|---|---|
+| Records in the full text pool | 576 | 158 conference abstracts, 84 other register summaries, 56 ClinicalTrials.gov entries, 120 Europe PMC full texts, 8 publisher open access pages, 94 full texts through the institutional route, 33 publisher or index pages (partial), 3 without any text, 20 already in the master |
+| Records needing a screen (with a text) | 553 | 576 minus the 3 without a text and the 20 already extracted |
+| Screened by both reviewers | 558 | the 553 plus 5 already extracted records that carried a text and were screened anyway; the apparent mismatch in the summary table is this and nothing else |
+| Reviewer 1 include / exclude | 538 / 20 | one reviewer is far more inclusive than the other |
+| Reviewer 2 include / exclude / model error | 389 / 167 / 2 | the two error rows sit outside the agreement statistic and were adjudicated |
+| Raw agreement | 409 of 556 (73.6 per cent) | |
+| Cohen's kappa | 0.160 (SE 0.059) | low because the marginals are extremely unbalanced; reported as it is, with the agreement, and discussed in the limitations |
+| Disagreements adjudicated | 149 of 149 | 51 to include, 98 to exclude |
+| Final include / exclude / pending | 440 / 118 / 0 | |
+| Known relevant records with a text, included | 26 of 28 | the two excluded are listed by key in the summary for audit: a tirzepatide meta analysis (1-76) and a 14 day flash glucose monitoring study (1-441) |
+
+Criterion failures recorded by the reviewers, as counts of records (reviewer 1 then reviewer 2):
+design 16 then 50, population 4 then 57, intervention 5 then 63, outcome 4 then 72, timing 3 then 57.
+
+The 440 included records group into 338 candidate studies (`src/extraction_packets.py`), of which 148
+have a full text and 190 only an abstract, register entry or partial publisher page. Grouping is by DOI,
+title and registry identifier, so one study with a conference abstract, a register entry and a full text
+is one packet.
+
+### Extraction status of the included studies at this update
+
+| Ledger status | Groups | Meaning |
+|---|---|---|
+| extracted | 43 | rows written to `analysis/data/extraction_*.csv` |
+| already_extracted | 16 | the trial is in the master under another record |
+| no_usable_contrast_scan | 104 | closed by the deterministic variance mark scan (`src/abstract_scan.py`) without an agent read |
+| no_usable_contrast | 60 | read, but no dispersion, interval or exact p from which a standard error is recoverable |
+| excluded_at_extraction | 26 | eligibility failure visible only at extraction (reviews, single arm or same intervention in both arms, no incretin) |
+| molecule_not_admitted | 3 | NNC0090-2746, lixisenatide, orforglipron class agents |
+| held_pending_decision | 12 | populations held under amendment A6 (PCOS, OSA, HIV, schizophrenia, knee osteoarthritis), the amylin co formulation under D-X1, and the stratified table case D-X8 |
+| ongoing_no_results | 8 | registered, no results posted |
+| queued | 68 | released by this packet rebuild, extraction in progress |
+
+The master at this update holds 388 rows over 54 trials or trial analyses and 35 biomarkers, 361 of them
+convertible to the placebo corrected percent change scale; the 27 unconvertible rows are mean differences
+in absolute units whose baseline denominator is not printed in any text in hand, listed by trial in
+`work/gate_harmonise_units.log`. A PRISMA diagram drawn now would therefore be accurate for
+identification, screening and eligibility, and provisional for the included count.
