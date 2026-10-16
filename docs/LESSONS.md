@@ -68,6 +68,26 @@ Concretely: any signed quantity needs a counterexample in both senses. Any contr
 
 ---
 
+## Retrieval
+
+**Ask an index for an open access location before calling a record closed.** The Europe PMC open access flag covers PMC only. Of 27 records left as partial pages or nothing after the publisher route, OpenAlex returned an open access location for 10 in one pass (no key, no email); the J-STAGE and Spandidos PDFs rendered to complete texts within minutes, and the record that had cost the most browser time (Endocrine Journal 2017) was open the whole time. Order of routes for the next review: Europe PMC open access, then OpenAlex and PMC author manuscripts, then the institutional proxy, then repositories by title; the proxy is the expensive route and goes last. Added 2026-10-16.
+
+**Section headings prove nothing about completeness.** A structured abstract carries Methods and Results, and an abstract page carries a reference list, so three abstract pages (Springer, AHA, yiigle) passed a rule of three section marks and more than 12,000 characters. Heading rules were then tested across all 115 captures and did not generalise: Springer repeats the Abstract heading at the foot of the page, ScienceDirect lists References in its outline, Wiley brief reports have no Discussion heading. The rule stays simple, the borderline captures are read, and each exception is named in the script with its reason. Fitting a rule to the case in front of you is how the next false positive is made. Added 2026-10-16.
+
+**The browser allows what a hand does and blocks what a script does.** Chrome refuses script triggered downloads after the first per origin, and blocked a local HTTP sink under its local network access permission. A real click on an injected anchor holding a Blob URL downloads every time, with "Ask where to save" off. The visible page text captured through that click, with a KEY header for the harvest script, is the route that survived; the captures are licensed content and stay out of git with their manifest. Added 2026-10-16.
+
+**A proxied hostname proves authentication; it does not prove access.** Through the proxy a DOI lands on the publisher's abstract page whenever the library has no subscription (Hormones, Circulation: Cardiovascular Imaging), and that page reads as a full text to a length rule. Confirm the hostname, then confirm the text, and record "no subscription" as an outcome of its own rather than as a retrieval failure; it is the input to an interlibrary request. Added 2026-10-16.
+
+**Each publisher has one working door, and it is rarely the DOI.** NEJM needs the hyphenated proxy host and `/doi/full/`; ClinicalKey journals are reached through the ScienceDirect PII page; Thieme through its ejournals html path; Springer through `/article/<doi>` on the proxied host; Ovid gives the abstract only; CNKI is not configured in the proxy at all. Each door is recorded when found (`FULLTEXT_ACCESS_SUMMARY.md`), so the next review starts from the table and not from the DOI. Added 2026-10-16.
+
+**No DOI does not mean no copy.** Dokkyo Journal of Medical Sciences 2014 had no DOI and no PubMed record; a plain title search found the university repository PDF. Japanese and Chinese journals keep their own repositories and index pages. Try the title before recording a report as not retrieved. Added 2026-10-16.
+
+**A partial bucket holds two different things, and the reader must be told which.** Abstract pages and complete short documents (letters, comments, reviews without methods sections) both fail a methods and results rule. Rather than pretend the rule can separate them, the full text screen labels such captures as "may be the complete document or only the abstract; judge from what is present", and the reviewers' reasons say which it was. Added 2026-10-16.
+
+**Trim the capture, never the article.** Publisher pages carry navigation, reading assistants, image download lines and reference lists; 40 of 91 captures exceeded the context cap before trimming and 15 after. The trimming is three patterns applied identically to every capture (navigation before the abstract heading, the reference list after 40 percent of the page, a short list of boilerplate lines) and the characters kept are logged per record. No capture is edited by hand. Added 2026-10-16.
+
+---
+
 ## Verification
 
 **"Repository not found" is an identity result before it is an existence result.** A private repository answers "not found" to any identity without access. On a workstation holding two GitHub identities, the keychain helper serves whichever account the CLI last made active, so `git ls-remote` from an interactive session can fail against a repository that an unattended job pushes to successfully every few hours. Two repositories were recorded as non-existent on this basis on 2026-10-15; both exist. Added 2026-10-15. The test that settles existence runs with the helper chain reset to the credential that the job itself uses, and a successful push in the job's own log outranks a failed lookup from elsewhere.

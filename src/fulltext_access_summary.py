@@ -70,7 +70,20 @@ if os.path.exists(PROXY):
     for k, v in hosts.most_common():
         md.append(f"| {k} | {v} |")
     md.append("\nThree captures that the rule marked `fulltext` were reclassified as `partial` after reading (1-142 Springer abstract page, 1-532 AHA abstract page, 1-183 yiigle abstract page with its reference list); they are named in `src/proxy_harvest.py` with the reason, and the rule itself is unchanged. Two Chinese language records are abstract pages reached on a second attempt (1-183 Chinese Journal of Diabetes on yiigle; 1-48 Chinese Journal of Clinical Research on CNKI oversea, which the BU EZproxy does not cover).\n")
-    md.append("\nOne record without a DOI (1-595, Dokkyo J Med Sci 2014;41(3):211) was found as a PDF in the Dokkyo Medical University repository (dmu.repo.nii.ac.jp), rendered with pdftotext and added to the same manifest.\n")
+    md.append("\nOne record without a DOI (1-595, Dokkyo J Med Sci 2014;41(3):211) was found as a PDF in the Dokkyo Medical University repository (dmu.repo.nii.ac.jp), rendered with pdftotext and added to the same manifest; open access PDFs located through OpenAlex (below) are added the same way under the record's existing key.\n")
+OA = "work/fulltext/oa_locations_2026-10-16.csv"
+if os.path.exists(OA):
+    oa = list(csv.DictReader(open(OA)))
+    pmx = {r["key"]: r for r in pm}
+    md.append("### Open access locations asked of OpenAlex for the records still on a partial page or without a text\n")
+    md.append("Produced by `src/oa_locations.py` (one GET per DOI, no key, no email). A location marked captured was fetched, rendered with pdftotext where it was a PDF, and now serves as the record's full text.\n")
+    md.append("| Record | OpenAlex | Location | State in the manifest |\n|---|---|---|---|")
+    for r in oa:
+        k = "pool" + r["key"].replace("-", "_n")
+        st_now = pmx.get(k, {}).get("status", "none")
+        loc = r["oa_url"] or r["pdf_url"] or r["note"] or ""
+        md.append(f"| {r['key']} | {r['is_oa'] or 'not queried'} {r['oa_status']} | {loc[:80]} | {st_now} |")
+    md.append("")
     md.append("\n### Records still without a text (recorded by hand from the capture attempts)\n")
     md.append("| Record | Identifier | What was found |\n|---|---|---|")
     for row in (

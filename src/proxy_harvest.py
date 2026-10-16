@@ -8,7 +8,11 @@ loop = json.load(open("work/proxy_loop.json")) + [dict(key="pool1_n22", doi="10.
     # repository PDF rendered with pdftotext (Dokkyo Medical University repository), no DOI
     dict(key="pool1_n595", doi=""),
     # Chinese language journals reached on a second attempt: yiigle abstract page (DOI 10.3760) and CNKI oversea abstract page (DOI 10.13429; CNKI is not configured in the BU EZproxy)
-    dict(key="pool1_n183", doi="10.3760/cma.j.cn115791-20240318-00120"), dict(key="pool1_n48", doi="10.13429/j.cnki.cjcr.2026.06.008")]
+    dict(key="pool1_n183", doi="10.3760/cma.j.cn115791-20240318-00120"), dict(key="pool1_n48", doi="10.13429/j.cnki.cjcr.2026.06.008"),
+    ]
+# Open access PDFs located through OpenAlex (src/oa_locations.py) and rendered with pdftotext are
+# dropped into ~/Downloads under their existing key (pool1_n511, pool1_n530, ...): the newest file
+# carrying the KEY header wins, so a later capture replaces an earlier abstract page.
 dl = os.path.expanduser("~/Downloads"); keep = os.path.join(dl, "fulltext_captures"); os.makedirs(keep, exist_ok=True)
 M = "work/fulltext/proxy/MANIFEST_proxy_2026-10-16.csv"
 rows = {r["key"]: r for r in csv.DictReader(open(M))} if os.path.exists(M) else {}

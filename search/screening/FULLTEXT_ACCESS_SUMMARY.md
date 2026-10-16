@@ -44,10 +44,10 @@ Each remaining DOI was opened in the browser through `https://ezproxy.bu.edu/log
 
 | Outcome | Records |
 |---|---|
-| fulltext | 90 |
-| partial | 25 |
+| fulltext | 92 |
+| partial | 23 |
 
-Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_fulltext` source, `partial` as the `proxy_partial` source with a label that says the page may be complete or abstract only (23 records; the other 2 partial captures are resolver or error pages under 2,000 characters and count as not retrieved).
+Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_fulltext` source, `partial` as the `proxy_partial` source with a label that says the page may be complete or abstract only (21 records; the other 2 partial captures are resolver or error pages under 2,000 characters and count as not retrieved).
 
 | Host of the full text captures | Records |
 |---|---|
@@ -65,15 +65,51 @@ Captures of at least 2,000 characters are screened: `fulltext` as the `proxy_ful
 | journals-lww-com.ezproxy.bu.edu | 1 |
 | www-thieme-connect-com.ezproxy.bu.edu | 1 |
 | www.omet-endojournals.ru | 1 |
+| www.jstage.jst.go.jp | 1 |
 | www.oaepublish.com | 1 |
 | diabetesjournals-org.ezproxy.bu.edu | 1 |
+| www.spandidos-publications.com | 1 |
 | www.wjgnet.com | 1 |
 | dmu.repo.nii.ac.jp | 1 |
 
 Three captures that the rule marked `fulltext` were reclassified as `partial` after reading (1-142 Springer abstract page, 1-532 AHA abstract page, 1-183 yiigle abstract page with its reference list); they are named in `src/proxy_harvest.py` with the reason, and the rule itself is unchanged. Two Chinese language records are abstract pages reached on a second attempt (1-183 Chinese Journal of Diabetes on yiigle; 1-48 Chinese Journal of Clinical Research on CNKI oversea, which the BU EZproxy does not cover).
 
 
-One record without a DOI (1-595, Dokkyo J Med Sci 2014;41(3):211) was found as a PDF in the Dokkyo Medical University repository (dmu.repo.nii.ac.jp), rendered with pdftotext and added to the same manifest.
+One record without a DOI (1-595, Dokkyo J Med Sci 2014;41(3):211) was found as a PDF in the Dokkyo Medical University repository (dmu.repo.nii.ac.jp), rendered with pdftotext and added to the same manifest; open access PDFs located through OpenAlex (below) are added the same way under the record's existing key.
+
+### Open access locations asked of OpenAlex for the records still on a partial page or without a text
+
+Produced by `src/oa_locations.py` (one GET per DOI, no key, no email). A location marked captured was fetched, rendered with pdftotext where it was a PDF, and now serves as the record's full text.
+
+| Record | OpenAlex | Location | State in the manifest |
+|---|---|---|---|
+| 1-18 | False closed |  | partial |
+| 1-33 | True diamond | https://doi.org/10.36721/pjps.2026.39.7.204.1 | partial |
+| 1-48 | False closed |  | partial |
+| 1-90 | True bronze | https://doi.org/10.25258/ijddt.16.44s.15 | partial |
+| 1-142 | False closed |  | partial |
+| 1-153 | False closed |  | partial |
+| 1-160 | not queried  | http 404 | partial |
+| 1-183 | not queried  | http 404 | partial |
+| 1-184 | False closed |  | partial |
+| 1-255 | not queried  | no DOI; OpenAlex not queried | partial |
+| 1-271 | True bronze | http://www.cell.com/article/S2666634024000461/pdf | partial |
+| 1-273 | True hybrid | https://academic.oup.com/eurheartjsupp/article-pdf/26/Supplement_1/i127/57239785 | partial |
+| 1-278 | True bronze | https://academic.oup.com/eurheartj/advance-article-pdf/doi/10.1093/eurheartj/eha | partial |
+| 1-304 | True bronze | https://doi.org/10.1016/j.mmm.2023.06.003 | partial |
+| 1-308 | False closed |  | partial |
+| 1-310 | True hybrid | https://doi.org/10.1016/j.ijcard.2023.03.054 | partial |
+| 1-411 | True bronze | http://www.cell.com/article/S1550413121001194/pdf | partial |
+| 1-443 | not queried  | no DOI; OpenAlex not queried | none |
+| 1-502 | False closed |  | partial |
+| 1-511 | True diamond | http://www.spandidos-publications.com/etm/14/4/3279/download | fulltext |
+| 1-530 | True diamond | https://www.jstage.jst.go.jp/article/endocrj/64/3/64_EJ16-0449/_pdf | fulltext |
+| 1-532 | False closed |  | partial |
+| 1-536 | False closed |  | partial |
+| 1-607 | False closed |  | partial |
+| 2-55 | False closed |  | partial |
+| 2-223 | not queried  | no DOI; OpenAlex not queried | none |
+| 2-241 | False closed |  | partial |
 
 
 ### Records still without a text (recorded by hand from the capture attempts)
