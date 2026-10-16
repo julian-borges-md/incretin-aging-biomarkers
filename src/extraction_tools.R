@@ -213,6 +213,21 @@ resolve_effect <- function(row) {
     return(list(yi = cc$yi, se = cc$se, route = "arm_sems"))
   }
 
+  # Route 5b (2026-10-16, systematic corpus): per arm mean changes with no dispersion, and an
+  # exact two sided p value for the between arm comparison. Conference abstracts print this
+  # shape constantly ("-11.3 vs 1.7 nmol/L, p = 0.01"). The contrast is the difference of the
+  # arm means and its standard error is recovered from the p value exactly as in Route 4, so the
+  # same bound rule applies: a p bound or a rounded zero gives no row. The subtraction is done
+  # here, not by the extractor (brief rule 8), so the route is recorded for every such row.
+  if (has(row$mean_tx) && has(row$mean_ctrl) && has(row$p_reported) &&
+      !has(row$sem_tx) && !has(row$sd_tx)) {
+    yi <- row$mean_tx - row$mean_ctrl
+    bound <- isTRUE(row$p_is_bound)
+    se <- se_from_p(yi, row$p_reported, is_bound = bound)
+    if (!is.na(se)) return(list(yi = yi, se = se, route = "arm_means_exact_p"))
+    return(list(yi = yi, se = NA_real_, route = "p_bound_unusable"))
+  }
+
   # Route 6: baseline and final arm means with SDs, change score SD imputed
   # through the recorded pre post correlation (amendment R1). The correlation
   # is mandatory on the row; a row that reaches this route without it stops

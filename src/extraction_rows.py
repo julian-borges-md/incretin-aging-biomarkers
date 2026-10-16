@@ -13,7 +13,7 @@ Spec (JSON on stdin or in a file passed as the second argument)
              comparator, comparator_type, duration_weeks, population, n_tx, n_ctrl,
              assessment_timepoint_weeks, pct_weight_change, prespecified_endpoint, industry_funded,
              rob_overall, notes},                      # defaults for every row
-   "rows": [{"biomarker": "hsCRP", "measure": "abs_change", "mean_tx": ..., "sd_tx": ..., ...,
+   "rows": [{"biomarker": "hsCRP", "measure": "MD", "unit": "mg/L", "mean_tx": ..., "sd_tx": ..., ...,
              "notes": "..."}, ...],                     # per row overrides and route fields
    "json": {"status": "extracted", "molecule": "...", "design": "...", "reason": "...",
             "biomarkers_reported_no_variance": [...], "other_markers": [...], "tables_used": [...],
@@ -34,7 +34,7 @@ STAGING = os.path.join(ROOT, "work", "extraction", "staging")
 INVENTORY = os.path.join(ROOT, "analysis", "data", "biomarker_inventory.csv")
 HEADER = ("trial_id,pmid,doi,first_author,year,journal,phase,drug,receptor_class,dose_mg,comparator,comparator_type,"
           "duration_weeks,population,n_tx,n_ctrl,biomarker,hallmark_domain,aging_direction,clinical_weight,outcome_type,"
-          "measure,yi_reported,ci_lb_reported,ci_ub_reported,se_reported,p_reported,p_is_bound,se_source,mean_tx,sem_tx,"
+          "measure,unit,yi_reported,ci_lb_reported,ci_ub_reported,se_reported,p_reported,p_is_bound,se_source,mean_tx,sem_tx,"
           "sd_tx,mean_ctrl,sem_ctrl,sd_ctrl,base_mean_tx,base_sd_tx,final_mean_tx,final_sd_tx,base_mean_ctrl,"
           "base_sd_ctrl,final_mean_ctrl,final_sd_ctrl,corr_assumed,events_tx,events_ctrl,assessment_timepoint_weeks,"
           "pct_weight_change,prespecified_endpoint,industry_funded,rob_overall,notes").split(",")

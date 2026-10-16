@@ -1,0 +1,79 @@
+{
+ "group": "226",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Dutour 2016 abstract",
+  "pmid": "",
+  "doi": "",
+  "first_author": "",
+  "year": "2016",
+  "journal": "conference abstract",
+  "phase": "",
+  "drug": "exenatide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "0.01",
+  "comparator": "reference treatment (French guidelines)",
+  "comparator_type": "active",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "",
+  "n_ctrl": "",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "",
+  "rob_overall": "some_concerns",
+  "notes": "2016 conference abstract (no author on the record): 44 obese T2D uncontrolled on oral agents randomised to exenatide 10 ug bid or reference treatment, 26 weeks, 3T MRI and 1H MRS 45 min after a standardised meal; per arm n not given (44 total); the exenatide dose is not stated in the abstract, 0.01 mg (10 ug twice daily, the licensed dose) is entered as an assumption to confirm in the full paper; the \u00b1 values are read as SEM (HbA1c 7.5 \u00b1 0.2 percent for 44 patients cannot be an SD), to be confirmed in the full paper (companion paper needed: Dutour 2016 Diabetes Obes Metab); weight change exenatide -5.5 \u00b1 1.2 kg vs -0.2 \u00b1 0.8 kg (p=0.001), baseline weight not given (BMI 36.1), so pct_weight_change empty; prespecified endpoints not named in the abstract (ectopic fat was the aim); extracted by the session (S) from the abstract, 2026-10-16"
+ },
+ "rows": [
+  {
+   "biomarker": "liver_fat_pdff",
+   "measure": "pct_change",
+   "mean_tx": "-23.8",
+   "sem_tx": "9.5",
+   "mean_ctrl": "12.5",
+   "sem_ctrl": "9.6",
+   "se_source": "arm_sems",
+   "notes": "hepatic triglyceride content by 1H MRS (HTGC), percent change from baseline per arm, between group p=0.007 (recorded here, not used as a route); reference group increased (+12.5)"
+  },
+  {
+   "biomarker": "HbA1c",
+   "measure": "abs_change",
+   "mean_tx": "-0.7",
+   "sem_tx": "0.3",
+   "mean_ctrl": "-0.7",
+   "sem_ctrl": "0.4",
+   "se_source": "arm_sems",
+   "notes": "HbA1c change in percentage points per arm, p=0.29 between groups; baseline 7.5 \u00b1 0.2 percent overall"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "design": "randomised, open label, two arm, 26 weeks, single centre (France)",
+  "biomarkers_reported_no_variance": [
+   "HOMA_IR",
+   "adiponectin"
+  ],
+  "other_markers": [
+   "epicardial adipose tissue (EAT -8.8 \u00b1 2.1 vs -1.2 \u00b1 1.6 percent, p=0.003)",
+   "pancreatic and myocardial triglyceride content (no difference)"
+  ],
+  "tables_used": [
+   "abstract text"
+  ],
+  "rob": {
+   "d1_randomisation": "some_concerns",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "abstract only: randomisation stated without method (D1 some concerns); open label active comparator (D2 some concerns); attrition not reported (D3 some concerns); MRI and MRS outcomes are objective (D4 low); no registration or endpoint hierarchy in the abstract (D5 some concerns); to be re rated from the full paper"
+  },
+  "doubts": [
+   "SEM versus SD of the \u00b1 values",
+   "per arm n",
+   "companion full paper needed (Dutour 2016 DOM)"
+  ]
+ }
+}
