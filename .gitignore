@@ -16,3 +16,9 @@ search/**/*.ris
 
 # Per record dedup flags carry the export titles; counts live in RECALL_AND_DEDUP.md
 search/**/*_dedup.csv
+
+# Screener configuration names local models; the repository names none
+search/screening/screener_config.json
+search/screening/decisions_*.csv
+search/screening/adjudication_*.csv
+search/screening/*.log

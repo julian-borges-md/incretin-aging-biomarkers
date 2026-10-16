@@ -42,6 +42,15 @@ sensitivity:
 dedup:
 	python3 -I src/dedup_embase.py
 
+# Title and abstract screening by two blinded local reviewer agents, a third
+# adjudicating; models named only in the untracked search/screening/screener_config.json.
+screen:
+	python3 -I src/screen_titles.py screen
+adjudicate:
+	python3 -I src/screen_titles.py adjudicate
+screen-summary:
+	python3 -I src/screen_titles.py summarise
+
 clean:
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep

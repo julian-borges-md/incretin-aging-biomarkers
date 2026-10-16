@@ -1,0 +1,328 @@
+#!/usr/bin/env python3
+"""
+screen_titles.py
+
+Title and abstract screening of the Embase export by two independent,
+blinded, deterministic reviewer agents, with a third agent adjudicating
+disagreements. Implements the three agent review design approved on
+2026-10-15 (reviewers 013A and 013B, different models, blinded to each other
+and to any prior decision; adjudicator 002; kappa per stage logged).
+
+The models run locally. Their names live in search/screening/
+screener_config.json, which is gitignored, so this repository names no
+product. Every call is made with temperature 0 and a fixed seed, so a rerun
+with the same configuration reproduces the same decisions.
+
+Stages
+  screen      each reviewer sees title, abstract, year and record type only,
+              and returns include or exclude with the failed criteria and a
+              one sentence reason, as JSON
+  adjudicate  for every disagreement the adjudicator sees the record and
+              both reasons and decides, with its own reason
+  summarise   counts, per stage agreement, Cohen's kappa, recall of the
+              screening against records already known to be relevant,
+              written to search/screening/SCREENING_SUMMARY.md
+
+Resumable: decisions already on disk are not recomputed.
+
+Usage, from the repository root:
+  python3 -I src/screen_titles.py screen [--limit N] [--reviewer A|B]
+  python3 -I src/screen_titles.py adjudicate
+  python3 -I src/screen_titles.py summarise
+"""
+import csv
+import json
+import os
+import re
+import sys
+import time
+import urllib.request
+from collections import Counter, defaultdict
+
+ROOT = os.getcwd()
+RIS = os.path.join(ROOT, "search/embase_2026-10-15/embase_659.ris")
+DEDUP = os.path.join(ROOT, "search/embase_2026-10-15/embase_659_dedup.csv")
+CFG = os.path.join(ROOT, "search/screening/screener_config.json")
+OUTDIR = os.path.join(ROOT, "search/screening")
+SUMMARY = os.path.join(OUTDIR, "SCREENING_SUMMARY.md")
+
+CRITERIA = """You are screening titles and abstracts for a systematic review of randomised
+trials of incretin and glucagon receptor agonists and aging related biomarkers.
+Apply these pre specified eligibility criteria. At this stage a record is
+EXCLUDED only when the title or abstract shows that it clearly fails at least
+one criterion; when a criterion cannot be judged from the text, treat it as
+met and INCLUDE, because full text screening follows.
+
+D  Design: a randomised controlled trial in humans, parallel or crossover,
+   including secondary or post hoc analyses of a randomised trial. Exclude
+   observational studies, single arm studies, animal or in vitro work,
+   reviews, meta analyses, editorials, protocols, case reports, modelling.
+P  Population: adults with overweight, obesity, type 2 diabetes, MASH or
+   MASLD. Exclude children or adolescents, type 1 diabetes, post bariatric
+   surgery populations.
+I  Intervention: at least one arm receives semaglutide, liraglutide,
+   exenatide, dulaglutide, tirzepatide, survodutide, mazdutide, pemvidutide,
+   cotadutide, retatrutide, amycretin, cagrilintide or CagriSema. Any
+   comparator is acceptable. Exclude trials whose only incretin agent is
+   lixisenatide, albiglutide or a DPP-4 inhibitor.
+O  Outcome: at least one of these biomarkers is reported: C reactive
+   protein or hsCRP, interleukin 6, TNF alpha, GDF-15, YKL-40, ICAM-1,
+   leptin, adiponectin, fasting insulin, HOMA-IR, HOMA-beta, C-peptide,
+   glucagon, fasting glucose, HbA1c, liver fat by imaging, ALT, AST, GGT,
+   MASH resolution or fibrosis, triglycerides, LDL or total cholesterol,
+   lean mass, body fat, visceral adipose tissue, bone mineral density, eGFR,
+   resting heart rate, blood pressure, NT-proBNP, MR-proANP, epigenetic
+   age. Exclude only if the abstract shows none of these could have been
+   measured (for example a pure pharmacokinetic or device study).
+T  Duration: treatment for 12 weeks or longer. Exclude if the stated
+   treatment period is clearly shorter.
+
+Answer with JSON only, exactly this shape:
+{"decision": "include" or "exclude",
+ "failed_criteria": [list of letters among D P I O T that clearly fail, empty if none],
+ "reason": one sentence of at most 40 words}
+"""
+
+
+def load_cfg():
+    with open(CFG) as fh:
+        return json.load(fh)
+
+
+def parse_ris():
+    with open(RIS, "rb") as fh:
+        text = fh.read().decode("utf-8", errors="replace")
+    recs, cur = [], None
+    for line in text.splitlines():
+        m = re.match(r"^([A-Z][A-Z0-9])  - ?(.*)$", line)
+        if not m:
+            continue
+        tag, val = m.group(1), m.group(2).strip()
+        if tag == "TY":
+            cur = defaultdict(list)
+            cur["TY"].append(val)
+        elif tag == "ER":
+            recs.append(cur)
+            cur = None
+        elif cur is not None:
+            cur[tag].append(val)
+    out = []
+    for i, r in enumerate(recs, 1):
+        def first(*tags):
+            for t in tags:
+                if r.get(t):
+                    return r[t][0]
+            return ""
+        out.append(dict(n=i, accession=first("U2", "AN"), title=first("T1", "TI"),
+                        abstract=first("N2", "AB"), year=re.sub(r"[^0-9]", "", first("Y1", "PY"))[:4],
+                        rtype=first("M3", "TY"), doi=first("DO").lower()))
+    return out
+
+
+def ollama_chat(cfg, model, system, user, max_retries=3):
+    body = json.dumps({
+        "model": model,
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        "stream": False,
+        "format": "json",
+        "options": {"temperature": cfg["temperature"], "seed": cfg["seed"],
+                    "num_ctx": cfg["num_ctx"], "num_predict": cfg["num_predict"]},
+    }).encode()
+    last = None
+    for attempt in range(max_retries):
+        try:
+            req = urllib.request.Request(cfg["ollama_url"] + "/api/chat", data=body,
+                                         headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=600) as resp:
+                return json.loads(resp.read().decode())["message"]["content"]
+        except Exception as e:  # network or model error: retry, then give up loudly
+            last = e
+            time.sleep(5 * (attempt + 1))
+    raise RuntimeError(f"ollama call failed after {max_retries} attempts: {last}")
+
+
+def parse_decision(raw):
+    try:
+        d = json.loads(raw)
+    except Exception:
+        m = re.search(r"\{.*\}", raw, flags=re.S)
+        d = json.loads(m.group(0)) if m else {}
+    dec = str(d.get("decision", "")).strip().lower()
+    if dec not in ("include", "exclude"):
+        dec = "include"  # an unparseable answer is never a silent exclusion
+        d["reason"] = "UNPARSEABLE: " + raw[:200].replace("\n", " ")
+    failed = d.get("failed_criteria", [])
+    if isinstance(failed, str):
+        failed = [x for x in re.findall(r"[DPIOT]", failed.upper())]
+    failed = "".join(sorted({str(x).strip().upper()[:1] for x in failed if str(x).strip()}))
+    return dec, failed, str(d.get("reason", ""))[:400].replace("\n", " ")
+
+
+def record_text(rec):
+    return (f"Record type: {rec['rtype']}\nYear: {rec['year']}\n"
+            f"Title: {rec['title']}\nAbstract: {rec['abstract'] or '(no abstract in the record)'}")
+
+
+def decisions_path(rev):
+    return os.path.join(OUTDIR, f"decisions_{rev}.csv")
+
+
+def read_decisions(path):
+    if not os.path.exists(path):
+        return {}
+    with open(path, newline="") as fh:
+        return {int(r["n"]): r for r in csv.DictReader(fh)}
+
+
+def screen(cfg, recs, reviewer, limit=None):
+    model = cfg["screeners"][reviewer]
+    path = decisions_path(reviewer)
+    done = read_decisions(path)
+    todo = [r for r in recs if r["n"] not in done]
+    if limit:
+        todo = todo[:limit]
+    print(f"reviewer {reviewer}: {len(done)} done, {len(todo)} to screen")
+    new_file = not os.path.exists(path)
+    with open(path, "a", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=["n", "accession", "decision", "failed", "reason", "seconds"])
+        if new_file:
+            w.writeheader()
+        t_all = time.time()
+        for i, rec in enumerate(todo, 1):
+            t0 = time.time()
+            raw = ollama_chat(cfg, model, CRITERIA, record_text(rec))
+            dec, failed, reason = parse_decision(raw)
+            w.writerow(dict(n=rec["n"], accession=rec["accession"], decision=dec, failed=failed,
+                            reason=reason, seconds=f"{time.time() - t0:.1f}"))
+            fh.flush()
+            if i % 10 == 0 or i == len(todo):
+                print(f"  {reviewer}: {i}/{len(todo)} ({(time.time() - t_all) / i:.1f} s per record)", flush=True)
+
+
+def adjudicate(cfg, recs):
+    A, B = read_decisions(decisions_path("A")), read_decisions(decisions_path("B"))
+    path = os.path.join(OUTDIR, "adjudication_002.csv")
+    done = read_decisions(path)
+    disagreements = [r for r in recs if r["n"] in A and r["n"] in B
+                     and A[r["n"]]["decision"] != B[r["n"]]["decision"] and r["n"] not in done]
+    print(f"adjudicator: {len(done)} done, {len(disagreements)} disagreements to adjudicate")
+    new_file = not os.path.exists(path)
+    system = CRITERIA + ("\nTwo independent reviewers disagreed on this record. Their decisions and "
+                         "reasons follow the record. Decide independently against the criteria; do not "
+                         "defer to either reviewer by default. Use the same JSON shape.")
+    with open(path, "a", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=["n", "accession", "decision_A", "decision_B", "decision",
+                                           "failed", "reason", "seconds"])
+        if new_file:
+            w.writeheader()
+        for i, rec in enumerate(disagreements, 1):
+            a, b = A[rec["n"]], B[rec["n"]]
+            user = (record_text(rec) + f"\n\nReviewer 1: {a['decision']} ({a['failed'] or 'none'}): {a['reason']}"
+                    f"\nReviewer 2: {b['decision']} ({b['failed'] or 'none'}): {b['reason']}")
+            t0 = time.time()
+            raw = ollama_chat(cfg, cfg["adjudicator"], system, user)
+            dec, failed, reason = parse_decision(raw)
+            w.writerow(dict(n=rec["n"], accession=rec["accession"], decision_A=a["decision"],
+                            decision_B=b["decision"], decision=dec, failed=failed, reason=reason,
+                            seconds=f"{time.time() - t0:.1f}"))
+            fh.flush()
+            if i % 10 == 0 or i == len(disagreements):
+                print(f"  adjudicated {i}/{len(disagreements)}", flush=True)
+
+
+def kappa(pairs):
+    n = len(pairs)
+    if n == 0:
+        return float("nan"), float("nan")
+    po = sum(1 for a, b in pairs if a == b) / n
+    pa_inc = sum(1 for a, _ in pairs if a == "include") / n
+    pb_inc = sum(1 for _, b in pairs if b == "include") / n
+    pe = pa_inc * pb_inc + (1 - pa_inc) * (1 - pb_inc)
+    k = (po - pe) / (1 - pe) if pe < 1 else float("nan")
+    se = ((po * (1 - po)) / (n * (1 - pe) ** 2)) ** 0.5 if pe < 1 else float("nan")
+    return k, se
+
+
+def summarise(cfg, recs):
+    A, B = read_decisions(decisions_path("A")), read_decisions(decisions_path("B"))
+    ADJ = read_decisions(os.path.join(OUTDIR, "adjudication_002.csv"))
+    both = [r["n"] for r in recs if r["n"] in A and r["n"] in B]
+    pairs = [(A[n]["decision"], B[n]["decision"]) for n in both]
+    k, se = kappa(pairs)
+    agree = sum(1 for a, b in pairs if a == b)
+    final = {}
+    for n in both:
+        if A[n]["decision"] == B[n]["decision"]:
+            final[n] = A[n]["decision"]
+        elif n in ADJ:
+            final[n] = ADJ[n]["decision"]
+    known = {}
+    if os.path.exists(DEDUP):
+        with open(DEDUP, newline="") as fh:
+            for r in csv.DictReader(fh):
+                known[int(r["n"])] = r.get("matched_known") == "yes"
+    known_ns = [n for n in final if known.get(n)]
+    known_inc = sum(1 for n in known_ns if final[n] == "include")
+    failA = Counter(c for n in both for c in (A[n]["failed"] or ""))
+    failB = Counter(c for n in both for c in (B[n]["failed"] or ""))
+    lines = []
+    lines.append("# Title and abstract screening of the Embase export\n")
+    lines.append("Two independent reviewer agents (different local models, temperature 0, fixed seed, blinded to each other), "
+                 "a third agent adjudicating disagreements. Models are named only in the untracked configuration file. "
+                 "Produced by `src/screen_titles.py summarise`.\n")
+    lines.append("| Quantity | Value |\n|---|---|")
+    lines.append(f"| Records in export | {len(recs)} |")
+    lines.append(f"| Screened by both reviewers | {len(both)} |")
+    lines.append(f"| Reviewer 1 include / exclude | {sum(1 for a, _ in pairs if a == 'include')} / {sum(1 for a, _ in pairs if a == 'exclude')} |")
+    lines.append(f"| Reviewer 2 include / exclude | {sum(1 for _, b in pairs if b == 'include')} / {sum(1 for _, b in pairs if b == 'exclude')} |")
+    lines.append(f"| Agreement | {agree} of {len(pairs)} ({(agree / len(pairs) if pairs else 0):.1%}) |")
+    lines.append(f"| Cohen's kappa | {k:.3f} (SE {se:.3f}) |")
+    lines.append(f"| Disagreements adjudicated | {len(ADJ)} of {len(pairs) - agree} |")
+    lines.append(f"| Final include / exclude / pending | {sum(1 for v in final.values() if v == 'include')} / "
+                 f"{sum(1 for v in final.values() if v == 'exclude')} / {len(both) - len(final)} |")
+    lines.append(f"| Records already known relevant, included by screening | {known_inc} of {len(known_ns)} |\n")
+    lines.append("| Criterion failed | Reviewer 1 | Reviewer 2 |\n|---|---|---|")
+    for c in "DPIOT":
+        lines.append(f"| {c} | {failA.get(c, 0)} | {failB.get(c, 0)} |")
+    lines.append("\nPer record decisions and reasons stay untracked beside the export (decisions_A.csv, decisions_B.csv, "
+                 "adjudication_002.csv). A known relevant record excluded by screening is listed below for audit.\n")
+    missed = [n for n in known_ns if final[n] == "exclude"]
+    if missed:
+        lines.append("| n | Title | Reviewer 1 | Reviewer 2 | Adjudicator |\n|---|---|---|---|---|")
+        for n in missed:
+            rec = next(r for r in recs if r["n"] == n)
+            lines.append(f"| {n} | {rec['title'][:90]} | {A[n]['decision']} | {B[n]['decision']} | "
+                         f"{ADJ[n]['decision'] if n in ADJ else ''} |")
+    else:
+        lines.append("No known relevant record was excluded.")
+    with open(SUMMARY, "w") as fh:
+        fh.write("\n".join(lines) + "\n")
+    print("\n".join(lines))
+
+
+def main():
+    if len(sys.argv) < 2 or sys.argv[1] not in ("screen", "adjudicate", "summarise"):
+        print(__doc__)
+        sys.exit(2)
+    cfg = load_cfg()
+    recs = parse_ris()
+    os.makedirs(OUTDIR, exist_ok=True)
+    stage = sys.argv[1]
+    if stage == "screen":
+        limit = None
+        reviewers = ["A", "B"]
+        args = sys.argv[2:]
+        if "--limit" in args:
+            limit = int(args[args.index("--limit") + 1])
+        if "--reviewer" in args:
+            reviewers = [args[args.index("--reviewer") + 1]]
+        for rev in reviewers:
+            screen(cfg, recs, rev, limit)
+    elif stage == "adjudicate":
+        adjudicate(cfg, recs)
+    else:
+        summarise(cfg, recs)
+
+
+if __name__ == "__main__":
+    main()
