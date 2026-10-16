@@ -37,5 +37,17 @@ if man:
     md.append(f"| Stub (front matter, news or calendar items that share a supplement DOI with a conference abstract) | {stub} |")
     md.append(f"| Errors | {sum(v for k, v in st.items() if k.startswith('error'))} |")
     md.append("\nA stub is not a failure of the review record: the conference abstract itself is the full text for that record, and the DOI it carries belongs to the supplement issue.\n")
+DIRECT = "work/fulltext/direct/MANIFEST_direct_2026-10-16.csv"
+if os.path.exists(DIRECT):
+    dm = list(csv.DictReader(open(DIRECT)))
+    dc = Counter(r["status"] for r in dm)
+    md.append("## Direct fetch of the records still needing a text (no proxy, no credentials)\n")
+    md.append("Produced by `src/direct_fetch.py`: DOI resolved and the publisher page saved as text, classified by section headings, length and paywall marks; "
+              "preprints fetched as JATS XML from the bioRxiv or medRxiv API; records without a DOI looked up in PubMed by title.\n")
+    md.append("| Outcome | Records |\n|---|---|")
+    for k, v in dc.most_common():
+        md.append(f"| {k} | {v} |")
+    md.append(f"\nFull texts obtained this way: {sum(v for k, v in dc.items() if k.startswith('fulltext'))} (publisher open access pages and preprints), "
+              "screened as the `direct_fulltext` source. Everything else on this list needs the institutional route (BU EZproxy), which requires a live sign in.\n")
 open(OUT, "w").write("\n".join(md) + "\n")
 print("\n".join(md))

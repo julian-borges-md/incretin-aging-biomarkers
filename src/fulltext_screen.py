@@ -10,6 +10,10 @@ reviewer sees the best available text for the record:
 
   epmc_fulltext        open access full text harvested from Europe PMC
                        (work/fulltext/pool/, 2,000 characters or more)
+  direct_fulltext      full text fetched without authentication from the
+                       publisher page or a preprint server
+                       (work/fulltext/direct/, status fulltext or
+                       fulltext_preprint in its manifest)
   ctgov_entry          ClinicalTrials.gov entry rendered to text
                        (work/fulltext/registry/)
   conference_abstract  the record itself: a conference abstract is its own
@@ -50,11 +54,12 @@ import screen_titles as st  # noqa: E402
 POOL = os.path.join(ROOT, "search/screening/fulltext_pool_2026-10-16.csv")
 EPMC_MANIFEST = os.path.join(ROOT, "work/fulltext/pool/MANIFEST_epmc_2026-10-16.csv")
 CTGOV_MANIFEST = os.path.join(ROOT, "work/fulltext/registry/MANIFEST_ctgov_2026-10-16.csv")
+DIRECT_MANIFEST = os.path.join(ROOT, "work/fulltext/direct/MANIFEST_direct_2026-10-16.csv")
 OUTDIR = os.path.join(ROOT, "search/screening")
 SUMMARY = os.path.join(OUTDIR, "FULLTEXT_SCREENING_SUMMARY.md")
 CAP_FULLTEXT = 48000
 CAP_REGISTRY = 30000
-SOURCE_ORDER = ["conference_abstract", "registry_summary", "ctgov_entry", "epmc_fulltext"]
+SOURCE_ORDER = ["conference_abstract", "registry_summary", "ctgov_entry", "epmc_fulltext", "direct_fulltext"]
 
 FULLTEXT_ADDENDUM = """
 Full text stage. You now have the complete document (a journal article, a
@@ -104,6 +109,7 @@ def load_items():
         print(f"FAIL: pool has {len(pool)} rows, expected 547"); sys.exit(1)
     epmc = read_manifest(EPMC_MANIFEST, None)
     ctgov = read_manifest(CTGOV_MANIFEST, None)
+    direct = read_manifest(DIRECT_MANIFEST, None)
     # abstracts come from the gated exports through the screening parser
     abstracts = {}
     for pool_name in ("embase", "batch2"):
@@ -132,9 +138,14 @@ def load_items():
                 text = f"Document type: trial registry entry as indexed (register {r['registry_id'] or 'unknown'}; no further text available)\nYear: {r['year']}\nTitle: {r['title']}\nSummary: {rec.get('abstract', '')}"
         else:
             m = epmc.get(key)
+            d = direct.get(key)
             if m and m["status"] in ("ok", "exists") and int(m.get("txt_chars") or 0) >= 2000 and os.path.exists(m["file"]):
                 source = "epmc_fulltext"
                 text = f"Document type: journal article, full text\nTitle: {r['title']}\n\n" + open(m["file"]).read()[:CAP_FULLTEXT]
+            elif d and d["status"].startswith("fulltext") and d["file"] and os.path.exists(d["file"]):
+                source = "direct_fulltext"
+                kind = "preprint, full text" if d["status"].endswith("_preprint") else "journal article, full text as published on the publisher site"
+                text = f"Document type: {kind}\nTitle: {r['title']}\n\n" + open(d["file"]).read()[:CAP_FULLTEXT]
         items.append(dict(pool=r["pool"], n=int(r["n"]), key=f"{r['pool']}-{r['n']}", source=source, text=text,
                           title=r["title"], matched_known=r["matched_known"] in ("True", "yes", "1"),
                           study_group=r["study_group"], route=r["route"]))

@@ -21,3 +21,20 @@ Of the 228 journal articles to retrieve by DOI: 109 are open access, 106 are clo
 
 A stub is not a failure of the review record: the conference abstract itself is the full text for that record, and the DOI it carries belongs to the supplement issue.
 
+## Direct fetch of the records still needing a text (no proxy, no credentials)
+
+Produced by `src/direct_fetch.py`: DOI resolved and the publisher page saved as text, classified by section headings, length and paywall marks; preprints fetched as JATS XML from the bioRxiv or medRxiv API; records without a DOI looked up in PubMed by title.
+
+| Outcome | Records |
+|---|---|
+| blocked_or_empty | 49 |
+| http 403 | 48 |
+| abstract_or_partial | 8 |
+| paywalled_page | 6 |
+| fulltext | 5 |
+| no_doi | 4 |
+| fulltext_preprint | 3 |
+| http 404 | 1 |
+
+Full texts obtained this way: 8 (publisher open access pages and preprints), screened as the `direct_fulltext` source. Everything else on this list needs the institutional route (BU EZproxy), which requires a live sign in.
+
