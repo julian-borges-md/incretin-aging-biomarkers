@@ -30,3 +30,4 @@ search/screening/fulltext_decisions_*.csv
 search/screening/fulltext_adjudication_*.csv
 search/screening/fulltext_resolution_*.csv
 search/screening/fulltext_results_*.csv
+search/screening/biomarker_scan_*.csv

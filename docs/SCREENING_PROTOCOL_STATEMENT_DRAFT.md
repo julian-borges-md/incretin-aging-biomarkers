@@ -98,6 +98,7 @@ A report assessed on an abstract page because the library holds no subscription 
 | Sensitivity against a known relevant set | 35 of 37 after both title stage steps; the full text stage reports the same audit on completion | Section 5, `FULLTEXT_SCREENING_SUMMARY.md` |
 | Human screening | no; the Director reviews the stage outputs and holds decision authority but did not screen records | Section 4 |
 | Reproducibility | yes, for the same models and settings: temperature 0, fixed seed, inputs gated by count and checksum | Section 4 |
+| The biomarkers_reported field | auxiliary and contaminated by prompt echo: on the first 300 records the reviewers named markers absent from the text (22 records for hsCRP alone) and twice returned the addendum's example list verbatim; a deterministic lexicon scan over the same texts (`src/biomarker_scan.py`, `BIOMARKER_SCAN_SUMMARY.md`) is the check, and only a name that the text also mentions is used in the study level biomarker map | Section 6 |
 | Long document judgement | limited; a feasibility test on one 50,000 character text found one reviewer misreading the trial drug; the full text stage mitigates with the adjudicator, the text labels, the cap and trimming rules, and the model independent biomarker lexicon scan planned as a check on the reviewers' biomarker field | Section 6 |
 | Equivalence to human dual screening | not claimed | the AI use disclosure describes the agents as the screeners and the Director as the decision authority |
 

@@ -25,9 +25,11 @@ ROOT = os.getcwd()
 sys.path.insert(0, os.path.join(ROOT, "src"))
 sys.argv = [sys.argv[0]]
 import fulltext_screen as fs  # noqa: E402
+import biomarker_scan as bs  # noqa: E402
 
 OUT_MD = os.path.join(fs.OUTDIR, "FULLTEXT_RESULTS_SUMMARY.md")
 OUT_CSV = os.path.join(fs.OUTDIR, "fulltext_results_2026-10-16.csv")
+SCAN_CSV = os.path.join(fs.OUTDIR, "biomarker_scan_2026-10-16.csv")
 TEXT_SOURCES = {"epmc_fulltext", "direct_fulltext", "proxy_fulltext"}
 
 
@@ -48,10 +50,22 @@ def names(field):
     return {x.strip().lower() for x in (field or "").split(";") if x.strip()}
 
 
+def read_scan():
+    """Per record lexicon counts from src/biomarker_scan.py, when it has been run."""
+    if not os.path.exists(SCAN_CSV):
+        return {}
+    out = {}
+    for r in csv.DictReader(open(SCAN_CSV)):
+        counts = {k: int(v) for k, v in r.items() if k not in ("key", "source", "chars", "screened_by_both", "named", "named_without_mention", "mentioned_not_named")}
+        out[r["key"]] = dict(mentioned={k for k, v in counts.items() if v > 0}, named={x for x in r["named"].split(";") if x})
+    return out
+
+
 def record_rows():
     items = {it["key"]: it for it in fs.load_items()}
     pool = list(csv.DictReader(open(fs.POOL)))
     A, B, ADJ = fs.read_dec(fs.dec_path("A")), fs.read_dec(fs.dec_path("B")), fs.read_dec(fs.ADJ_PATH)
+    scan = read_scan()
     rows = []
     for r in pool:
         key = f"{r['pool']}-{r['n']}"
@@ -67,9 +81,13 @@ def record_rows():
         comp = {v["comparator"].strip().lower() for v in votes if v.get("comparator") and v["comparator"].strip().lower() not in ("null", "none", "")}
         bio = set()
         for v in votes:
-            bio |= names(v.get("biomarkers_reported"))
+            bio |= {bs.canon(x) for x in names(v.get("biomarkers_reported"))}
+        bio.discard("other")
+        sc = scan.get(key)
+        supported = sorted(sc["named"] & sc["mentioned"]) if sc else []
         rows.append(dict(r, key=key, text_source=it["source"], final=dec, how=how,
-                         duration_weeks=";".join(sorted(dur)), comparator=";".join(sorted(comp)), biomarkers=";".join(sorted(bio))))
+                         duration_weeks=";".join(sorted(dur)), comparator=";".join(sorted(comp)), biomarkers=";".join(sorted(bio)),
+                         biomarkers_supported=";".join(supported), inventory_mentions=len(sc["mentioned"]) if sc else ""))
     return rows
 
 
@@ -97,12 +115,13 @@ def group_rows(records):
         years = sorted({r["year"] for r in recs if r["year"]})
         title = max((r["title"] for r in recs), key=len)
         ids = sorted({r["doi"] for r in recs if r["doi"]}) + sorted({n for r in recs for n in (r["nct_ids"] or "").split(";") if n})
-        dur, comp, bio = set(), set(), set()
+        dur, comp, bio, sup = set(), set(), set(), set()
         for r in recs:
             if r["final"] == "include":
                 dur |= set(x for x in r["duration_weeks"].split(";") if x)
                 comp |= set(x for x in r["comparator"].split(";") if x)
                 bio |= set(x for x in r["biomarkers"].split(";") if x)
+                sup |= set(x for x in r["biomarkers_supported"].split(";") if x)
         out.append(dict(study_group=g, records=len(recs), status=status,
                         included=finals["include"], excluded=finals["exclude"], pending=finals["pending"],
                         no_text=finals["no_text"], already_extracted=finals["already_extracted"],
@@ -111,6 +130,8 @@ def group_rows(records):
                         years=(years[0] if len(years) == 1 else f"{years[0]} to {years[-1]}") if years else "",
                         ids=";".join(ids), matched_known="yes" if any(r["matched_known"] in ("True", "yes", "1") for r in recs) else "no",
                         duration_weeks=";".join(sorted(dur)), comparator=";".join(sorted(comp)), biomarkers=";".join(sorted(bio)),
+                        biomarkers_supported=";".join(sorted(sup)),
+                        no_inventory_mention="yes" if all(r["inventory_mentions"] == 0 for r in recs if r["final"] == "include" and r["inventory_mentions"] != "") and any(r["final"] == "include" and r["inventory_mentions"] != "" for r in recs) else "no",
                         title=title))
     out.sort(key=lambda d: (d["status"] != "included", d["has_fulltext"] != "yes", d["study_group"]))
     return out
@@ -144,12 +165,17 @@ def main():
     md.append(f"| with a full text (Europe PMC, publisher page, institutional route) | {sum(1 for g in inc if g['has_fulltext'] == 'yes')} |")
     md.append(f"| abstract, registry entry or partial page only | {sum(1 for g in inc if g['has_fulltext'] != 'yes')} |")
     md.append(f"| known relevant (adopted list) among included groups | {sum(1 for g in inc if g['matched_known'] == 'yes')} |")
-    bio = Counter()
+    bio, sup = Counter(), Counter()
     for g in inc:
         bio.update(x for x in g["biomarkers"].split(";") if x)
-    md.append("\n| Biomarker named by a reviewer in an included group | Groups |\n|---|---|")
-    for name, cnt in bio.most_common(30):
-        md.append(f"| {name} | {cnt} |")
+        sup.update(x for x in g["biomarkers_supported"].split(";") if x)
+    md.append("\n| Biomarker | Named by a reviewer in an included group | Named and mentioned in the text (lexicon scan) |\n|---|---|---|")
+    seen = set()
+    for name, cnt in sup.most_common(30):
+        md.append(f"| {name} | {bio.get(name, 0)} | {cnt} |"); seen.add(name)
+    md.append(f"\nThe second column is the one to use: the reviewers echo the example list of the prompt, so a name without a mention in the text is not evidence "
+              f"(audit in `BIOMARKER_SCAN_SUMMARY.md`). Included groups whose included records mention no inventory biomarker at all: "
+              f"{sum(1 for g in inc if g['no_inventory_mention'] == 'yes')} (flagged `no_inventory_mention` in the CSV; these rest on the rule that an unjudgeable criterion includes).")
     md.append("\n## Included study groups\n")
     md.append("| Group | Records | Years | Text | Duration (weeks, as read) | Comparator (as read) | Identifiers | Known | Title |\n|---|---|---|---|---|---|---|---|---|")
     for g in inc:

@@ -2,24 +2,24 @@
 
 Record outcomes from `fulltext_decisions_A.csv`, `fulltext_decisions_B.csv` and `fulltext_adjudication_002.csv` rolled up to the candidate study groups of `FULLTEXT_POOL_SUMMARY.md`. Produced by `src/fulltext_results.py`; the per group table is the untracked `fulltext_results_2026-10-16.csv`. A group is included when any of its records is included at full text; an exclusion settles a group only when none of its records is still without a text.
 
-Snapshot taken 2026-10-16 07:34 EDT; screening in progress, 302 records pending.
+Snapshot taken 2026-10-16 07:59 EDT; screening in progress, 303 records pending.
 
 | Record outcome | Records |
 |---|---|
 | include | 217 |
 | exclude | 10 |
-| pending | 302 |
-| no_text | 4 |
+| pending | 303 |
+| no_text | 3 |
 | already_extracted | 14 |
 | total | 547 |
 
 | Study group status | Groups |
 |---|---|
 | included | 160 |
-| pending | 257 |
+| pending | 258 |
 | excluded | 10 |
 | excluded_but_untexted_record | 0 |
-| no_text | 4 |
+| no_text | 3 |
 | already_extracted | 8 |
 | total | 439 |
 
@@ -29,38 +29,40 @@ Snapshot taken 2026-10-16 07:34 EDT; screening in progress, 302 records pending.
 | abstract, registry entry or partial page only | 151 |
 | known relevant (adopted list) among included groups | 6 |
 
-| Biomarker named by a reviewer in an included group | Groups |
-|---|---|
-| hscrp | 96 |
-| hba1c | 62 |
-| adiponectin | 41 |
-| triglycerides | 41 |
-| il-6 | 35 |
-| crp | 34 |
-| total cholesterol | 25 |
-| homa-ir | 23 |
-| alt | 21 |
-| tnf-alpha | 21 |
-| ldl | 20 |
-| nt-probnp | 19 |
-| leptin | 18 |
-| blood pressure | 17 |
-| hdl | 17 |
-| hs-crp | 15 |
-| insulin | 15 |
-| fasting glucose | 14 |
-| fasting plasma glucose | 13 |
-| hdl cholesterol | 13 |
-| c-peptide | 13 |
-| ast | 12 |
-| c-reactive protein | 11 |
-| fasting insulin | 11 |
-| waist circumference | 10 |
-| ldl cholesterol | 10 |
-| lipids | 9 |
-| liver fat | 9 |
-| glucose | 9 |
-| egfr | 8 |
+| Biomarker | Named by a reviewer in an included group | Named and mentioned in the text (lexicon scan) |
+|---|---|---|
+| crp | 129 | 121 |
+| hba1c | 63 | 63 |
+| tg | 48 | 47 |
+| adiponectin | 41 | 41 |
+| ldl | 33 | 30 |
+| glucose | 37 | 30 |
+| bp | 30 | 29 |
+| il6 | 37 | 26 |
+| tnf | 27 | 26 |
+| tc | 31 | 25 |
+| leptin | 18 | 18 |
+| insulin | 30 | 17 |
+| alt | 21 | 16 |
+| ntprobnp | 19 | 11 |
+| ast | 12 | 10 |
+| homa_ir | 26 | 10 |
+| liver_fat | 10 | 8 |
+| egfr | 8 | 7 |
+| cpeptide | 13 | 7 |
+| ggt | 7 | 6 |
+| gdf15 | 8 | 6 |
+| vat | 7 | 5 |
+| glucagon | 4 | 4 |
+| body_fat | 7 | 2 |
+| lean_mass | 6 | 2 |
+| homa_beta | 9 | 2 |
+| icam1 | 5 | 2 |
+| heart_rate | 3 | 2 |
+| ykl40 | 2 | 1 |
+| bmd | 1 | 1 |
+
+The second column is the one to use: the reviewers echo the example list of the prompt, so a name without a mention in the text is not evidence (audit in `BIOMARKER_SCAN_SUMMARY.md`). Included groups whose included records mention no inventory biomarker at all: 0 (flagged `no_inventory_mention` in the CSV; these rest on the rule that an unjudgeable criterion includes).
 
 ## Included study groups
 
