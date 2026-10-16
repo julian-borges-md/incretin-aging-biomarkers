@@ -58,6 +58,14 @@ Concretely: any signed quantity needs a counterexample in both senses. Any contr
 
 **A column typed at extraction time drifts from the assessment of record.** `rob_overall` was typed into the extraction files before the RoB-2 assessment was done; afterwards the two disagreed on 44 of 48 rows and the master carried no `high` rating while RoB-2 rated four of seven trial analyses high. Any sensitivity analysis keyed on the column would have excluded nothing. Added 2026-10-15. The master now sets the column from `risk_of_bias.csv` at build time and refuses a trial that has no RoB-2 row.
 
+**"Strings are drafted" is a claim about a file; find the file.** PRISMA_FLOW.md said the CENTRAL and Web of Science strings were drafted. Nothing in the repository or the vault contained one; the Embase lines existed only in the log written when they were run. The CENTRAL strategy therefore had to be written on the day as a translation, and is recorded as that, with every difference from the Embase string listed. A search described as prespecified that has to be written at run time is a methods statement waiting to be caught by a reviewer.
+
+**A browser download is complete when the record count says so, not when the browser says so.** Chrome on the workstation wrote both exports to its temporary download name and never finalised them. The content was complete (TY, ER and identifier counts equal to the search count; identical SHA-256 across two attempts). Taking the file from the temporary copy and gating it on counts is sound; waiting for a rename that never comes is not.
+
+**A tool's blocklist matches tokens, not intent.** Desktop Commander refused two commands with "Command not allowed" and no reason. The common element was a three letter variable name, `reg`, which sits on its blocked command list (a Windows registry tool). Name variables for what they are (`is_registry`) and treat an unexplained refusal as a string match before treating it as a policy.
+
+**Guest and authenticated views of the same database differ in what they let you do, not only in what they show.** The Cochrane Library returned the same 460 count as a guest and through the institutional proxy; only the proxied session offered selection and export. The proxied page also needs its scripts loaded before any key is sent, or Enter inserts a newline instead of running the line. Reproduce the counts in the authenticated session before exporting, so the export is provably the logged search.
+
 ---
 
 ## Verification
