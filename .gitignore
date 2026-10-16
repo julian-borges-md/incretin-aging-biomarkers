@@ -22,3 +22,5 @@ search/screening/screener_config.json
 search/screening/decisions_*.csv
 search/screening/adjudication_*.csv
 search/screening/*.log
+# Full text pool per record rows carry export titles; the summary is committed
+search/screening/fulltext_pool_*.csv

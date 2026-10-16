@@ -71,6 +71,10 @@ rescreen-excluded:
 screen-summary-v2:
 	python3 -I src/screen_titles.py summarise --criteria v2
 
+# Full text screening pool from the screening decisions (per record CSV untracked, summary committed)
+fulltext-pool:
+	python3 -I src/build_fulltext_pool.py
+
 clean:
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep
