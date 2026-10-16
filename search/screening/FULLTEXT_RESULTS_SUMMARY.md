@@ -2,65 +2,65 @@
 
 Record outcomes from `fulltext_decisions_A.csv`, `fulltext_decisions_B.csv` and `fulltext_adjudication_002.csv` rolled up to the candidate study groups of `FULLTEXT_POOL_SUMMARY.md`. Produced by `src/fulltext_results.py`; the per group table is the untracked `fulltext_results_2026-10-16.csv`. A group is included when any of its records is included at full text; an exclusion settles a group only when none of its records is still without a text.
 
-Snapshot taken 2026-10-16 09:26 EDT; screening in progress, 219 records pending.
+Snapshot taken 2026-10-16 12:43 EDT; screening in progress, 112 records pending.
 
 | Record outcome | Records |
 |---|---|
-| include | 266 |
-| exclude | 45 |
-| pending | 219 |
+| include | 363 |
+| exclude | 78 |
+| pending | 112 |
 | no_text | 3 |
-| already_extracted | 14 |
-| total | 547 |
+| already_extracted | 20 |
+| total | 576 |
 
 | Study group status | Groups |
 |---|---|
-| included | 201 |
-| pending | 185 |
-| excluded | 42 |
+| included | 276 |
+| pending | 101 |
+| excluded | 74 |
 | excluded_but_untexted_record | 0 |
 | no_text | 3 |
-| already_extracted | 8 |
-| total | 439 |
+| already_extracted | 13 |
+| total | 467 |
 
 | Included groups by best text | Groups |
 |---|---|
-| with a full text (Europe PMC, publisher page, institutional route) | 17 |
-| abstract, registry entry or partial page only | 184 |
-| known relevant (adopted list) among included groups | 7 |
+| with a full text (Europe PMC, publisher page, institutional route) | 87 |
+| abstract, registry entry or partial page only | 189 |
+| known relevant (adopted list) among included groups | 20 |
 
 | Biomarker | Named by a reviewer in an included group | Named and mentioned in the text (lexicon scan) |
 |---|---|---|
-| crp | 158 | 146 |
-| hba1c | 89 | 82 |
-| tg | 62 | 59 |
-| adiponectin | 63 | 59 |
-| ldl | 52 | 41 |
-| glucose | 51 | 37 |
-| bp | 46 | 33 |
-| tnf | 37 | 31 |
-| tc | 44 | 30 |
-| il6 | 46 | 29 |
-| leptin | 29 | 24 |
-| alt | 31 | 20 |
-| insulin | 39 | 20 |
-| homa_ir | 39 | 16 |
-| ast | 19 | 14 |
-| ntprobnp | 29 | 13 |
-| liver_fat | 20 | 11 |
-| egfr | 17 | 9 |
-| cpeptide | 19 | 9 |
-| gdf15 | 13 | 8 |
-| ggt | 11 | 7 |
-| glucagon | 9 | 7 |
-| vat | 10 | 6 |
-| homa_beta | 16 | 5 |
-| heart_rate | 9 | 4 |
-| body_fat | 16 | 3 |
-| lean_mass | 13 | 3 |
-| icam1 | 10 | 2 |
-| epigenetic_age | 1 | 1 |
-| ykl40 | 5 | 1 |
+| crp | 214 | 169 |
+| hba1c | 137 | 98 |
+| tg | 99 | 68 |
+| adiponectin | 97 | 64 |
+| ldl | 83 | 47 |
+| glucose | 86 | 44 |
+| bp | 71 | 37 |
+| il6 | 81 | 36 |
+| tc | 71 | 34 |
+| tnf | 72 | 34 |
+| alt | 73 | 29 |
+| leptin | 54 | 28 |
+| insulin | 68 | 27 |
+| homa_ir | 83 | 23 |
+| ast | 53 | 18 |
+| liver_fat | 56 | 17 |
+| ntprobnp | 49 | 16 |
+| egfr | 40 | 14 |
+| cpeptide | 46 | 13 |
+| glucagon | 32 | 12 |
+| ggt | 38 | 10 |
+| vat | 31 | 8 |
+| gdf15 | 35 | 8 |
+| body_fat | 60 | 7 |
+| homa_beta | 42 | 6 |
+| lean_mass | 52 | 5 |
+| icam1 | 31 | 4 |
+| heart_rate | 20 | 4 |
+| bmd | 20 | 2 |
+| epigenetic_age | 2 | 1 |
 
 The second column is the one to use: the reviewers echo the example list of the prompt, so a name without a mention in the text is not evidence (audit in `BIOMARKER_SCAN_SUMMARY.md`). Included groups whose included records mention no inventory biomarker at all: 1 (flagged `no_inventory_mention` in the CSV; these rest on the rule that an unjudgeable criterion includes).
 
@@ -68,35 +68,107 @@ The second column is the one to use: the reviewers echo the example list of the 
 
 | Group | Records | Years | Text | Duration (weeks, as read) | Comparator (as read) | Identifiers | Known | Title |
 |---|---|---|---|---|---|---|---|---|
-| 126 | 2 (1 inc) | 2023 | full text | 68 | placebo | 10.1002/oby.23939;10.1016/s0140-6736(23)01185-6;NCT05035095 | no | Oral semaglutide 50 mg taken once per day in adults with overweight or obesity (OASIS 1):  |
+| 10 | 1 (1 inc) | 2026 | full text | 60 | placebo | 10.1001/jama.2026.8142 | no | Treatment With 9-mg Mazdutide for Weight Reduction in Chinese Adults With Obesity |
+| 102 | 1 (1 inc) | 2024 | full text | 52 | placebo | 10.1016/j.jacc.2024.04.022 | no | Semaglutide and NT-proBNP in Obesity-Related HFpEF: Insights From the STEP-HFpEF Program |
+| 103 | 1 (1 inc) | 2024 | full text | 52 | placebo | 10.1111/apt.18042 | no | Randomised clinical trial: Design of the SYNERGY-NASH phase 2b trial to evaluate tirzepati |
+| 113 | 1 (1 inc) | 2024 | full text | 104;68 | placebo | 10.1111/dom.15386 | no | Efficacy and safety of semaglutide 2.4 mg for weight loss in overweight or obese adults wi |
+| 114 | 1 (1 inc) | 2024 | full text | 24 |  cpap plus liraglutide;cpap;cpap, placebo;liraglutide, combi | 10.1513/annalsats.202309-821oc | no | Continuous Positive Airway Pressure but Not GLP1-mediated Weight Loss Improves Early Cardi |
+| 126 | 2 (2 inc) | 2023 | full text | 68 | placebo | 10.1002/oby.23939;10.1016/s0140-6736(23)01185-6;NCT05035095 | no | Oral semaglutide 50 mg taken once per day in adults with overweight or obesity (OASIS 1):  |
+| 127 | 1 (1 inc) | 2023 | full text | 32 | semaglutide and placebo, cagrilintide and placebo;semaglutid | 10.1016/s0140-6736(23)01291-6 | no | CagriSema and the link between obesity and type 2 diabetes |
+| 13 | 1 (1 inc) | 2026 | full text |  |  | 10.1113/ep093787 | no | Effects of tumour necrosis factor and interleukin-6 inhibitor therapy on exercise-related  |
 | 132 | 1 (1 inc) | 2023 | full text | 24 |  cpap plus liraglutide;cpap;cpap or placebo;liraglutide, cpa | 10.1101/2023.05.23.23290424;NCT04186494 | no | Continuous positive airway pressure but not Liraglutide-mediated weight loss improves earl |
-| 14 | 3 (1 inc) | 2024 to 2026 | full text | 72 | placebo | 10.1007/s12072-026-11095-3;10.1111/apt.18331;10.20517/mtod.2 | no | Semaglutide demonstrates efficacy in improving liver fibrosis across diverse subpopulation |
+| 133 | 1 (1 inc) | 2023 | full text | 104;208 | placebo | 10.2337/dc22-2397 | no | Biomarker changes associated with both dulaglutide and cardiovascular events in the rewind |
+| 14 | 3 (2 inc) | 2024 to 2026 | full text | 240;72 | placebo | 10.1007/s12072-026-11095-3;10.1111/apt.18331;10.20517/mtod.2 | no | Semaglutide demonstrates efficacy in improving liver fibrosis across diverse subpopulation |
+| 147 | 1 (1 inc) | 2022 | full text |  |  | 10.1016/j.metabol.2022.155237 | no | Circulating total and intact GDF-15 levels are not altered in response to weight loss indu |
+| 149 | 1 (1 inc) | 2022 | full text | 52 | insulin aspartate 70/30 | 10.1136/jim-2021-002237 | no | Comparing the effects of twice-daily exenatide and insulin on renal function in patients w |
+| 15 | 5 (4 inc) | 2025 to 2026 | full text | 104;52 | placebo | 10.1016/j.jacc.2025.03.009;10.1016/j.jacc.2025.04.059;10.101 | no | Influence of Type 2 Diabetes on the Effects of Tirzepatide in Patients With Heart Failure  |
+| 150 | 1 (1 inc) | 2022 | full text | 16 | placebo | 10.1017/s1092852920002217 | no | Proinflammatory biomarkers are associated with prediabetes in patients with schizophrenia |
 | 156 | 1 (1 inc) | 2022 | full text | 12 | liraglutide;liraglutide and dapagliflozin | 10.36468/pharmaceutical-sciences.976 | no | Clinical Efficacy Evaluation and Long-Term Prognosis of Glucagon-Like Peptide-1 Combined w |
-| 160 | 3 (2 inc) | 2020 to 2021 | full text | 24;72 | placebo;placebo, cilofexor, firsocostat;sema alone, sema+cil | 10.1002/hep.32188;10.1016/j.cct.2020.106174;NCT02970942 | no | Combination treatments including cilofexor and/or firsocostat in addition to semaglutide l |
+| 16 | 1 (1 inc) | 2026 | full text | 24 | canagliflozin, placebo;placebo, canagliflozin, semaglutide | 10.36721/pjps.2026.39.7.204.1 | no | Short-term comparative effects of semaglutide, either alone or in conjunction with canagli |
+| 160 | 3 (3 inc) | 2020 to 2021 | full text | 24;72 | placebo;placebo, cilofexor, firsocostat;sema alone, sema+cil | 10.1002/hep.32188;10.1016/j.cct.2020.106174;NCT02970942 | no | Combination treatments including cilofexor and/or firsocostat in addition to semaglutide l |
+| 165 | 1 (1 inc) | 2021 | full text | 26 | sitagliptin | 10.1111/dom.14343 | yes | Effects of liraglutide versus sitagliptin on circulating cardiovascular biomarkers, includ |
+| 168 | 1 (1 inc) | 2021 | full text | 68 | placebo | 10.1056/nejmoa2032183 | no | Once-weekly semaglutide in adults with overweight or obesity |
+| 17 | 1 (1 inc) | 2026 | full text | 12 | standard therapy | 10.1161/strokeaha.125.056010;NCT03948347 | no | Liraglutide and Recurrent Stroke by Baseline Insulin Resistance: A Post Hoc Analysis of th |
+| 176 | 1 (1 inc) | 2020 | full text |  |  | 10.14341/omet12274 | no | Prediction of Early Response to Liraglutide Therapy in Patients with Obesity |
+| 177 | 1 (1 inc) | 2020 | full text | 16 | placebo | 10.1093/schizbullopen/sgaa044 | no | Leptin Serum Levels are Associated With GLP-1 Receptor Agonist-Mediated Effects on Glucose |
 | 18 | 5 (2 inc) | 2018 to 2026 | full text | 52 | placebo, exercise;placebo, exercise, liraglutide, liraglutid | 10.1038/s42255-026-01554-4;10.1093/humrep/deac096;10.1186/s1 | no | Combination of exercise and GLP-1 receptor agonist treatment reduces severity of metabolic |
+| 19 | 1 (1 inc) | 2026 | full text | 104 | placebo | 10.1002/dad2.70432 | no | Semaglutide attenuates a proteomics-based dementia risk signature in older adults with ove |
 | 199 | 1 (1 inc) | 2018 | full text | 48 | low dose exenatide/metformin/biphasic insulin aspart;low-dos | 10.1097/mjt.0000000000000431 | no | Phase III Study on Efficacy and Safety of Triple Combination (Exenatide/Metformin/Biphasic |
-| 2 | 2 (1 inc) | 2024 to 2026 | full text | 28 | diet and lifestyle;dietary and lifestyle modifications alone | 10.1002/ueg2.12613;10.1007/s12664-025-01856-7;NCT05442450 | no | EFFICACY and SAFETY of ORAL SEMAGLUTIDE in COMBINATION with DIETARY and LIFESTYLE MODIFICA |
+| 2 | 2 (2 inc) | 2024 to 2026 | full text | 28 | diet and lifestyle;dietary and lifestyle modifications alone | 10.1002/ueg2.12613;10.1007/s12664-025-01856-7;NCT05442450 | no | EFFICACY and SAFETY of ORAL SEMAGLUTIDE in COMBINATION with DIETARY and LIFESTYLE MODIFICA |
+| 200 | 1 (1 inc) | 2018 | full text | 26 | placebo | 10.1111/dom.13053 | no | Effect of liraglutide on ectopic fat in polycystic ovary syndrome: A randomized clinical t |
+| 202 | 1 (1 inc) | 2017 | full text | 12;24 | metformin | 10.1111/cen.13454 | yes | Efficacy of exenatide on weight loss, metabolic parameters and pregnancy in overweight/obe |
+| 203 | 1 (1 inc) | 2017 | full text | 36 | metformin and biphasic insulin aspart 30 or metformin and ex | 10.3892/etm.2017.4863 | yes | A crossover study of the combination therapy of metformin and exenatide or biphasic insuli |
+| 204 | 1 (1 inc) | 2017 | full text | 12 | acarbose | 10.1016/j.orcp.2017.01.003 | yes | Comparison of exenatide and acarbose on intra-abdominal fat content in patients with obesi |
+| 205 | 1 (1 inc) | 2017 | full text | 12 | metformin | 10.1016/j.obmed.2017.06.003 | no | Short term monotherapy with exenatide is superior to metformin in weight loss, improving i |
 | 206 | 3 (2 inc) | 2016 to 2017 | full text | 24;26 |  insulin glargine u100;insulin degludec;insulin degludec and | 10.1007/s00125-017-4350-z;10.1016/j.conctc.2016.06.007 | no | IDegLira improves cardiovascular risk markers in patients with type 2 diabetes uncontrolle |
+| 212 | 1 (1 inc) | 2017 | full text | 30 | insulin glargine | 10.1016/s2213-8587(17)30085-2;NCT02128932 | no | Efficacy and safety of once-weekly semaglutide versus once-daily insulin glargine as add-o |
+| 213 | 1 (1 inc) | 2017 | full text | 16 | diet;dietetic counselling | 10.1042/cs20160803 | yes | GLP-1 analogue-induced weight loss does not improve obesity-induced AT dysfunction |
+| 214 | 1 (1 inc) | 2017 | full text | 24 | insulin | 10.1507/endocrj.ej16-0449 | yes | Reduction of visceral fat by liraglutide is associated with ameliorations of hepatic steat |
+| 224 | 1 (1 inc) | 2016 | full text | 26 | intense insulin therapy;intense insulin therapy (active) | 10.1016/j.diabres.2015.12.003 | yes | Circulating adiponectin levels in type 2 diabetes mellitus patients with or without non-al |
 | 225 | 3 (2 inc) | 2013 to 2016 | full text | 12 | placebo | 10.1002/hep.26849;10.1016/j.jhep.2015.08.038;NCT01237119 | no | Glucagon like peptide 1 analogue, liraglutide, reduces adipose insulin resistance and hepa |
-| 23 | 3 (1 inc) | 2025 to 2026 | full text | 32 | placebo | 10.1093/cid/ciaf577;10.1093/ofid/ofaf152;10.1097/qad.0000000 | no | The Effects of Semaglutide on Inflammation and Immune Activation in HIV-associated Lipohyp |
+| 23 | 3 (3 inc) | 2025 to 2026 | full text | 32 | placebo | 10.1093/cid/ciaf577;10.1093/ofid/ofaf152;10.1097/qad.0000000 | no | The Effects of Semaglutide on Inflammation and Immune Activation in HIV-associated Lipohyp |
+| 239 | 1 (1 inc) | 2014 | full text | 26 | insulin glargine | 10.1016/j.diabres.2014.09.046 | yes | Evaluation of exenatide versus insulin glargine for the impact on endothelial functions an |
+| 24 | 1 (1 inc) | 2026 | full text | 156 | placebo | 10.1001/jamacardio.2026.0245 | no | Oral Semaglutide and Change in Cardiovascular Risk Factors in High-Risk Type 2 Diabetes: A |
+| 243 | 1 (1 inc) | 2015 | full text | 16 | glimepiride;glimepiride and metformin | 10.1016/j.diabres.2015.05.051 | no | Liraglutide treatment causes upregulation of adiponectin and downregulation of resistin in |
+| 249 | 1 (1 inc) | 2014 | full text | 24 | insulin, pioglitazone | 10.1007/s00592-014-0638-3 | yes | Effects of exenatide, insulin, and pioglitazone on liver fat content and body fat distribu |
+| 25 | 1 (1 inc) | 2026 | full text | 72 | placebo | 10.1093/eurheartjsupp/suag029 | no | Pharmacological therapy in the obese patient: is it only a matter of fat loss? |
+| 250 | 1 (1 inc) | 2014 | full text | 24 | sitagliptin |  | yes | Greater efficacy and improved endothelial dysfunction in untreated type 2 diabetes with li |
 | 253 | 1 (1 inc) | 2013 | full text | 12 | metformin |  | yes | Exenatide improves type 2 diabetes concomitant with non-alcoholic fatty liver disease |
-| 28 | 10 (8 inc) | 2025 to 2026 | full text | 36;48;68;72;76 | placebo;placebo and lifestyle modification;placebo, dulaglut | 10.1002/oby.24184;10.1002/oby.70103;10.1055/s-0046-1819895;1 | no | Survodutide for treatment of obesity: Baseline characteristics of participants in a random |
+| 256 | 1 (1 inc) | 2013 | full text | 48;52 |  the surgical arm is not used);usual care (exenatide arm vs  | 10.1016/j.diabres.2013.04.005 | no | Effect of laparoscopic Roux-en-Y gastric bypass surgery on type 2 diabetes mellitus with h |
+| 259 | 1 (1 inc) | 2012 | full text | 12 | metformin;metformin monotherapy | 10.1111/j.1464-5491.2012.03589.x | yes | Addition of liraglutide in patients with Type2 diabetes well controlled on metformin monot |
+| 262 | 1 (1 inc) | 2012 | full text | 12 | placebo | 10.1210/jc.2011-1508 | no | Exenatide exerts a potent antiinflammatory effect |
+| 264 | 1 (1 inc) | 2011 | full text | 52 | pioglitazone;pioglitazone or pioglitazone and exenatide | 10.1038/oby.2011.152 | no | Effects of combined exenatide and pioglitazone therapy on hepatic fat content in type 2 di |
+| 275 | 1 (1 inc) | 2010 | full text | 52 | glibenclamide | 10.1089/dia.2009.0141 | yes | Exenatide versus glibenclamide in patients with diabetes |
+| 28 | 10 (9 inc) | 2025 to 2026 | full text | 36;48;68;72;76 | placebo;placebo and lifestyle modification;placebo, dulaglut | 10.1002/oby.24184;10.1002/oby.70103;10.1055/s-0046-1819895;1 | no | Survodutide for treatment of obesity: Baseline characteristics of participants in a random |
 | 3 | 1 (1 inc) | 2026 | full text | 68 | placebo, semaglutide, cagrilintide;semaglutide, cagrilintide | 10.1111/dom.71134 | no | Efficacy of CagriSema for Reaching Anthropometric Treatment Targets and Cardiometabolic Ou |
+| 30 | 1 (1 inc) | 2026 | full text | 12 | empagliflozin, gliclazide;metformin plus liraglutide, empagl | 10.1016/j.jdiacomp.2026.109273 | no | Modulation of circulating extracellular vesicles by antihyperglycemic therapies: A pilot r |
+| 31 | 1 (1 inc) | 2026 | full text |  |  | 10.1038/s41591-026-04204-0;NCT05616013 | no | Bimagrumab plus semaglutide alone or in combination for the treatment of obesity: a random |
+| 312 | 1 (1 inc) | 2017 | full text | 12 | placebo, liraglutide | 10.1016/j.cmet.2017.07.011 | no | The Sustained Effects of a Dual GIP/GLP-1 Receptor Agonist, NNC0090-2746, in Patients with |
+| 313 | 1 (1 inc) | 2016 | full text | 28 | metformin | 10.1016/j.jdiacomp.2016.01.013 | no | Gender-related different effects of a combined therapy of Exenatide and Metformin on overw |
+| 339 | 1 (1 inc) | 2016 | full text | 26 | placebo | 10.4158/ep151181.or | no | EFFECTS OF LIRAGLUTIDE 3.0 MG ON WEIGHT AND RISK FACTORS IN HISPANIC VERSUS NON-HIPANIC PO |
+| 34 | 1 (1 inc) | 2026 | full text | 12 | placebo | 10.3389/fendo.2025.1629157 | no | Effect of liraglutide on depressive symptoms in overweight or obese patients with type 2 d |
 | 386 | 1 (1 inc) | 2025 | full text | 32 | placebo | 10.1101/2025.07.09.25331038 | no | Semaglutide Slows Epigenetic Aging in People with HIV-associated lipohypertrophy: evidence |
-| 4 | 4 (2 inc) | 2024 to 2026 | full text | 52 | placebo | 10.1016/j.eclinm.2026.104203;10.1038/s41591-025-04071-1;10.1 | no | Association between early body weight reduction and treatment outcomes in participants wit |
-| 8 | 17 (1 inc) | 2023 to 2026 | full text | 52 | placebo | 10.1016/j.jacc.2023.09.811;10.1016/j.jacc.2024.04.038;10.101 | yes | Proportion of patients with systemic inflammation and their characteristics for groups at  |
+| 4 | 4 (4 inc) | 2024 to 2026 | full text | 52 | placebo | 10.1016/j.eclinm.2026.104203;10.1038/s41591-025-04071-1;10.1 | no | Association between early body weight reduction and treatment outcomes in participants wit |
+| 40 | 1 (1 inc) | 2026 | full text | 20;32 | semaglutide, cagrilintide, placebo | 10.2147/dmso.s616418 | no | Efficacy and Safety of CagriSema for Metabolic Outcomes: Systematic Review and Pairwise Me |
+| 42 | 1 (1 inc) | 2026 | full text | 72 | placebo;placebo plus lifestyle modification | 10.1016/j.eprac.2026.09.006 | no | Changes in Abdominal Adiposity and Associations with Metabolic Health Markers Following Ti |
+| 43 | 1 (1 inc) | 2025 | full text |  |  | 10.1186/s12933-025-02706-8 | no | Interleukin-1β in circulating mononuclear cells predicts steatotic liver disease improveme |
+| 44 | 1 (1 inc) | 2025 | full text |  |  | 10.1186/s12958-025-01447-3 | no | Effects of combined metformin and semaglutide therapy on body weight, metabolic parameters |
+| 45 | 1 (1 inc) | 2025 | full text | 52 | placebo | 10.2337/dc25-1306;NCT04166773 | no | Relationship Between Metabolic and Histological Responses in People With Metabolic Dysfunc |
+| 48 | 1 (1 inc) | 2025 | full text | 26 | dulaglutide, placebo;placebo, dulaglutide | 10.1111/dom.70022 | no | Orforglipron, an oral non-peptide glucagon-like peptide-1 receptor agonist, improves marke |
+| 49 | 1 (1 inc) | 2025 | full text | 52 | placebo | 10.1002/ejhf.70049 | no | Effects of semaglutide in obesity-related heart failure with preserved ejection fraction a |
+| 5 | 1 (1 inc) | 2026 | full text | 104;156 | placebo | 10.1093/eurheartj/ehag524 | no | Semaglutide and cardiovascular risk reduction: a mediation analysis of the SELECT trial |
+| 50 | 1 (1 inc) | 2025 | full text |  |  | 10.1016/s2213-8587(25)00226-8;NCT05646706 | no | Once-weekly semaglutide 7·2 mg in adults with obesity (STEP UP): a randomised, controlled, |
+| 56 | 1 (1 inc) | 2025 | full text | 64;71 | placebo | 10.1056/nejmoa2500969 | no | Oral Semaglutide at a Dose of 25 mg in Adults with Overweight or Obesity |
+| 59 | 1 (1 inc) | 2025 | full text | 52;78 | placebo | 10.1016/j.numecd.2025.104036 | no | The impact of semaglutide on liver fat assessed by serial cardiac CT scans in patients wit |
+| 60 | 1 (1 inc) | 2025 | full text | 68 | placebo, semaglutide alone, cagrilintide alone;placebo, sema | 10.1056/nejmoa2502081 | no | Coadministered Cagrilintide and Semaglutide in Adults with Overweight or Obesity |
+| 61 | 1 (1 inc) | 2025 | full text |  |  | 10.1002/oby.24329 | no | Long-acting PYY3−36 analogue with semaglutide for obesity: from preclinical assessment thr |
+| 65 | 1 (1 inc) | 2025 | full text |  |  | 10.1111/dom.16366 | no | The effect of GLP-1 receptor agonists on circulating inflammatory markers in type 2 diabet |
+| 66 | 1 (1 inc) | 2025 | full text | 252;96 | tailored therapeutic prescriptions;tailored therapeutic pres | 10.1111/dom.16419 | no | Liraglutide improves peripheral perfusion and markers of angiogenesis and inflammation in  |
+| 68 | 1 (1 inc) | 2025 | full text | 72 | placebo | 10.1056/nejmoa2413258 | yes | Phase 3 Trial of Semaglutide in Metabolic Dysfunction-Associated Steatohepatitis. |
+| 69 | 1 (1 inc) | 2025 | full text |  |  | 10.1111/jebm.70021 | no | Efficacy of Hypoglycemic Agents in Metabolic Dysfunction Associated Steatotic Liver Diseas |
+| 77 | 1 (1 inc) | 2025 | full text | 104 | placebo | 10.1161/circulationaha.124.072679 | no | Effects of Tirzepatide on the Clinical Trajectory of Patients With Heart Failure, Preserve |
+| 78 | 1 (1 inc) | 2025 | full text |  |  | 10.1161/jaha.124.039129;NCT03878706 | no | Effects of Glucagon-Like Peptide-1 Receptor Agonists, Sodium-Glucose Cotransporter-2 Inhib |
+| 79 | 1 (1 inc) | 2025 | full text | 28 | placebo, metformin;semaglutide, placebo | 10.1111/dom.16159 | no | Greater improvement in insulin sensitivity per unit weight loss associated with tirzepatid |
+| 8 | 18 (11 inc) | 2023 to 2026 | full text | 156;52 | placebo | 10.1016/j.jacc.2023.09.811;10.1016/j.jacc.2024.04.038;10.101 | yes | Proportion of patients with systemic inflammation and their characteristics for groups at  |
+| 80 | 1 (1 inc) | 2025 | full text | 52 | placebo | 10.1016/j.ocarto.2024.100562;NCT02905864 | no | Effect of weight loss and liraglutide on neutrophil gelatinase-associated lipocalin levels |
+| 81 | 1 (1 inc) | 2025 | full text | 68 | placebo | 10.1016/j.orcp.2025.03.003;NCT03811574 | no | Effect of once-weekly subcutaneous semaglutide on abdominal visceral fat area in Japanese  |
+| 85 | 1 (1 inc) | 2025 | full text | 104 | placebo | 10.1056/nejmoa2410027 | no | Tirzepatide for Heart Failure with Preserved Ejection Fraction and Obesity. |
+| 9 | 2 (1 inc) | 2026 | full text | 72 | placebo | 10.1016/j.jacc.2026.04.044;10.1111/dom.71009;NCT04184622;NCT | no | Tirzepatide Efficacy and Tolerability According to Early Weight Response: a Post Hoc Analy |
+| 94 | 1 (1 inc) | 2024 | full text | 156 | placebo | 10.1016/j.jacc.2024.08.022 | no | Semaglutide Effects on Cardiovascular Outcomes in People With Overweight or Obesity (SELEC |
 | 100 | 1 (1 inc) | 2024 | conference_abstract | 104 | placebo | 10.1016/j.atherosclerosis.2024.118518 | no | Semaglutide, inflammatory markers and cardiovascular outcomes in patients with overweight  |
+| 104 | 1 (1 inc) | 2024 | proxy_partial | 12 | metformin;routine treatment (metformin, diet, exercise) |  | no | Effects of GLP-1 Receptor Agonist on Glycolipid Metabolism and Micro Inflammatory Status i |
 | 108 | 1 (1 inc) | 2024 | conference_abstract | 52 | placebo, exercise, liraglutide, combination of exercise and  | 10.1159/000538577 | no | Exercise Reduces Chronic Low-grade Inflammation in Adults with Obesity After Weight Loss:  |
+| 111 | 1 (1 inc) | 2024 | proxy_partial | 52 | placebo | 10.1093/eurheartjsupp/suae011 | no | Role of glucagon-like peptide-1 agonists in obesity and heart failure with preserved eject |
 | 118 | 1 (1 inc) | 2024 | conference_abstract | 52 | placebo | 10.1016/j.cardfail.2023.10.465 | no | Effects Of Semaglutide Across The Range Of Left Ventricular Ejection Fraction In Obesity P |
 | 121 | 9 (9 inc) | 2021 to 2023 | conference_abstract | 68 | placebo;placebo plus lifestyle intervention;placebo, semaglu | 10.1016/j.cjca.2023.06.377;10.1016/j.jcjd.2023.10.380;10.101 | no | Efficacy and safety of semaglutide 2.4 mg once- weekly in adults with overweight or obesit |
 | 122 | 1 (1 inc) | 2023 | conference_abstract | 24;26 | insulin, empagliflozin, liraglutide, combination | 10.1093/eurheartj/ehad655.2571 | no | Effect of glucagon-like peptide-1 receptor agonists, sodium-glucose cotransporter-2 inhibi |
 | 123 | 1 (1 inc) | 2023 | conference_abstract | 24;26 |  empagliflozin; liraglutide plus empagliflozin;insulin;insul | 10.1093/eurheartj/ehad655.2558 | no | Association of GDF15, NTpoBNP and PLGF with subclinical cardiac dysfunction in type 2 diab |
+| 128 | 1 (1 inc) | 2023 | proxy_partial |  | placebo, insulin glargine, semaglutide;placebo, insulin glar | 10.1016/j.ejim.2023.04.005 | no | Tirzepatide decreases systolic and diastolic blood pressure |
 | 139 | 4 (4 inc) | 2021 to 2023 | conference_abstract | 104;68 | liraglutide 3.0 mg;liraglutide 3.0 mg od plus lifestyle inte | 10.1002/oby.23328;10.1038/s41366-023-01306-4;NCT03693430;NCT | no | Semaglutide 2.4 mg vs liraglutide 3.0 mg for weight management in overweight or obesity (S |
 | 146 | 2 (2 inc) | 2022 | conference_abstract | 40;52 | insulin degludec;placebo | 10.1007/s00125-022-05755-w | no | Changes in abdominal fat and clinical/analytical parameters in tirzepatide- or insulin deg |
 | 148 | 3 (3 inc) | 2021 to 2022 | conference_abstract | 68;72 | placebo;placebo or semaglutide 1.0 mg | 10.1007/s00125-021-05519-y;10.1007/s12072-022-10337-4 | no | Treatment with once-weekly semaglutide 2.4 mg improves cardiometabolic risk factors in adu |
 | 152 | 1 (1 inc) | 2022 | conference_abstract | 12 | hypocaloric diet plus placebo;hypocaloric diet plus placebo  | 10.1016/j.eprac.2022.03.159 | no | Abstract #1183459: Effect of Exenatide versus Hypocaloric Diet on High-sensitivity C-react |
 | 153 | 1 (1 inc) | 2022 | conference_abstract | 12 | no comparator specified | 10.1016/j.eprac.2022.03.167 | no | Abstract #1184608: Exenatide Improves Cardiovascular Risk Factors in Absence of Clinically |
-| 158 | 1 (1 inc) | 2021 | conference_abstract | 19 | placebo | 10.1002/hep.32218;NCT04019561 | no | Proxymo demonstrates safety and efficacy of cotadutide, a novel incretin co-agonist in bio |
 | 161 | 1 (1 inc) | 2021 | conference_abstract | 12 | lifestyle counseling | 10.1002/rth2.12589 | no | Effects of liraglutide vs. lifestyle changes on SST2 and Galectin-3 in obese subjects with |
 | 166 | 2 (2 inc) | 2021 | conference_abstract | 68 | placebo;placebo or semaglutide 1.0 mg | 10.2337/db21-80-or | no | Treatment with once-weekly semaglutide 2.4 mg improves cardiometabolic risk factors in adu |
 | 170 | 2 (2 inc) | 2020 to 2021 | conference_abstract | 26 | dulaglutide, placebo;placebo, dulaglutide | 10.1089/dia.2021.2525.abstracts;10.1161/circ.142.suppl_3.134 | yes | The dual gip and GLP-1 receptor agonist tirzepatide improves biomarkers associated with ca |
@@ -110,6 +182,7 @@ The second column is the one to use: the reviewers echo the example list of the 
 | 193 | 2 (2 inc) | 2018 | conference_abstract | 12 | placebo/metformin | 10.1007/s00125-018-4693-0 | no | Liraglutide and metformin may rock and roll the most atherogenic LDL fraction in patients  |
 | 194 | 1 (1 inc) | 2018 | conference_abstract | 52 | placebo;placebo, liraglutide 3.0 mg/day | 10.1002/hep.30257;NCT02453711 | no | High-sensitivity C-reactive protein reductions in subjects with elevated alanine aminotran |
 | 197 | 1 (1 inc) | 2018 | conference_abstract | 26 |  insulin glargine u100;ideg, iglar u100;insulin degludec | 10.4081/itjm.2018.s2 | no | IDegLira improves cardiovascular risk markers in patients with type 2 diabetes uncontrolle |
+| 20 | 1 (1 inc) | 2026 | proxy_partial | 12;13 | metformin | 10.13429/j.cnki.cjcr.2026.06.008 | no | Effect of Semaglutide Combined with Metformin on Type 2 Diabetes Mellitus and its Regulati |
 | 201 | 1 (1 inc) | 2018 | conference_abstract | 12 | placebo | 10.1080/13625187.2018.1442911 | no | PCOS: Intervention possibilities |
 | 209 | 1 (1 inc) | 2017 | conference_abstract | 24 | insulin;insulin treatment |  | yes | Reduction of visceral fat by liraglutide is associated with ameliorations of hepatic steat |
 | 21 | 1 (1 inc) | 2026 | conference_abstract | 24 | placebo | 10.2337/db26-2869-lb;NCT05822544 | no | Increasing Energy Expenditure with the Liver-Targeted Mitochondrial Protonophore TLC-6740  |
@@ -244,10 +317,10 @@ The second column is the one to use: the reviewers echo the example list of the 
 | 426 | 1 (1 inc) | 2020 | registry_summary | 52 |  empagliflozin;sleeve gastrectomy;sleeve gastrectomy, empagl |  | no | Sleeve Procedure vs Liraglutide vs Empagliflozin in NASH Disease and Obesity RCT (SPLENDOR |
 | 427 | 1 (1 inc) | 2018 | registry_summary |  | insulin;insulin aspart |  | no | Effect of Exenatide on Carotid Intima-media Thickness and the Biomarkers of Atherosclerosi |
 | 428 | 1 (1 inc) | 2012 | registry_summary | 52 | glimepiride;glimepiride and metformin |  | no | Clinical trial to compare the effect of liraglutide and glimepiride, both in combination w |
-| 429 | 1 (1 inc) | 2011 | conference_abstract | 56 | placebo | 10.1038/oby.2011.225;NCT00781937 | no | Effect of liraglutide on cardiovascular (CV) risk factors in adults without diabetes after |
 | 430 | 1 (1 inc) | 2018 | registry_summary |  | metformin |  | no | The effects of liraglutide on beta-cell function and its mechanisms in young patients with |
 | 431 | 1 (1 inc) | 2023 | registry_summary | 52 | calorie restricted diet |  | no | FIT-HF - Effect of weight loss on physical and cardiac performance in patients with heart  |
 | 432 | 1 (1 inc) | 2016 | registry_summary | 26 | usual care;usual care versus intensive lifestyle with liragl |  | no | A pre-pregnancy study examining the effects of an intensive lifestyle package supported wi |
+| 433 | 1 (1 inc) | 2019 | proxy_partial | 160 | placebo | 10.1016/j.orcp.2016.10.079 | no | Liraglutide 3.0 mg reduces body weight and improves cardiometabolic risk factors in adults |
 | 434 | 1 (1 inc) | 2011 | registry_summary |  | placebo |  | no | Safety and effect of treatment with the antidiabetic drug liraglutide in patients with typ |
 | 435 | 1 (1 inc) | 2017 | registry_summary | 40 | placebo |  | no | Effects of Saxenda (R) on respiratory function in obese patients with chronic obstructive  |
 | 436 | 1 (1 inc) | 2015 | registry_summary | 12;13 | insulin + metformin;nph insulin plus metformin |  | no | Effects on re-endothelialisation in type 2 diabetic subjects on Bydureon treatment add on  |
@@ -256,12 +329,14 @@ The second column is the one to use: the reviewers echo the example list of the 
 | 52 | 1 (1 inc) | 2025 | conference_abstract | 228;237 | placebo | 10.1093/eurheartj/ehaf784.4317 | no | Effects of oral semaglutide on heart failure outcomes in people with type 2 diabetes and a |
 | 53 | 1 (1 inc) | 2025 | conference_abstract | 156;179.4 | placebo | 10.1093/eurheartj/ehaf784.4244 | no | Relationship between baseline LDL cholesterol levels and cardiovascular outcomes in adults |
 | 54 | 2 (2 inc) | 2025 | conference_abstract | 64;68 | placebo;semaglutide;semaglutide 2.4 mg | 10.1002/oby.70102;NCT05564117;NCT05813925 | no | Improvements in Glycemic Parameters and Cardiovascular Risk Factors with Oral Semaglutide  |
+| 57 | 1 (1 inc) | 2025 | proxy_partial | 12 | dulaglutide + placebo;placebo | 10.1007/s42000-025-00649-z | no | Comparative evaluation of dulaglutide alone vs. dulaglutide combined with probiotics on ca |
 | 6 | 4 (2 inc) | 2025 to 2026 | already_extracted;conference_abstract | 46 | placebo | 10.1080/00325481.2025.2604924;10.1111/dom.70861;10.1159/0005 | yes | Dual Glucagon and GLP-1 Receptor Agonist Survodutide Improves Biomarkers of Beta-Cell Func |
 | 70 | 1 (1 inc) | 2025 | conference_abstract |  | placebo | 10.1093/eurjpc/zwaf236.265 | no | Efficacy and safety of semaglutide in patients with obesity-related heart failure: A meta- |
 | 72 | 1 (1 inc) | 2025 | conference_abstract | 36;48 | placebo | 10.1055/s00451807451 | no | Retatrutide, an Agonist of GIP, GLP-1, and Glucagon Receptors, Improved Markers of Pancrea |
 | 74 | 1 (1 inc) | 2025 | conference_abstract | 52 | placebo | 10.1016/s0735-1097(25)00865-4 | no | CARDIOMETABOLIC EFFECTS OF SEMAGLUTIDE IN OBESE AND OVERWEIGHT PATIENTS WITH PREEXISTING C |
 | 75 | 1 (1 inc) | 2025 | conference_abstract | 52 | placebo | 10.1016/j.joca.2025.02.024 | no | Effect of weight loss and liraglutide on neutrophil gelatinase-associated lipocalin levels |
 | 76 | 1 (1 inc) | 2025 | conference_abstract | 32 | placebo |  | no | Semaglutide Improves Cognitive Function in HIV, Effect Mediated by Decrease in Inflammatio |
+| 82 | 1 (1 inc) | 2025 | proxy_partial | 18;26 | basal insulin | 10.3760/cma.j.cn115791-20240318-00120 | no | Effect of liraglutide on anxiety and depression in patients with type 2 diabetes mellitus |
 | 84 | 1 (1 inc) | 2025 | conference_abstract | 39.8 | placebo;placebo with standard of care | 10.1089/dia.2024.78502.abstracts | no | LESSONS FROM THE SELECT TRIAL: RETHINKING THE CLINICAL APPLICATIONS FOR THE GLP-1RA SEMAGL |
 | 91 | 1 (1 inc) | 2024 | conference_abstract | 64 | placebo;placebo, non-prescribers | 10.1016/j.ihj.2024.11.290 | no | The Correlation of oral Semaglutide and NT-proBNP in Obesity-Related HFpEF in India |
 | 92 | 1 (1 inc) | 2024 | conference_abstract | 72 | placebo | 10.1161/circ.150.suppl_1.4139912 | no | Inflammatory biomarkers in people treated with tirzepatide living with overweight or obesi |

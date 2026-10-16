@@ -59,12 +59,24 @@ def fetch(url, timeout=40):
         return resp.geturl(), resp.read()
 
 rows = list(csv.DictReader(open(TODO)))
+# A rerun keeps every manifest row whose text is already on disk as a full text (including rows
+# added by hand for records found by title, such as pool1_n605, Fan 2013 on SciELO): the first
+# rerun (2026-10-16 12:35, pool 3 joining) rewrote that row as no_doi and the screen lost the text.
+kept = {}
+if os.path.exists(MANIFEST):
+    for r in csv.DictReader(open(MANIFEST)):
+        if r["status"].startswith("fulltext") and r["file"] and os.path.exists(r["file"]):
+            kept[(r["pool"], r["n"])] = r
 with open(MANIFEST, "w", newline="") as mf:
     w = csv.DictWriter(mf, fieldnames=["pool", "n", "doi", "final_url", "status", "chars", "file"]); w.writeheader()
     for r in rows:
         key = f"pool{r['pool']}_n{r['n']}"
         doi = r["doi"]
         status, final, chars, path = "", "", 0, ""
+        if (r["pool"], r["n"]) in kept:
+            k = kept[(r["pool"], r["n"])]
+            w.writerow(k); mf.flush(); print(key, "kept", k["status"], k["chars"], flush=True)
+            continue
         if not doi:
             status = "no_doi"
         elif doi.startswith("10.1101/"):

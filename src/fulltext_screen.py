@@ -70,7 +70,7 @@ SOURCE_ORDER = ["conference_abstract", "registry_summary", "ctgov_entry", "epmc_
 # reviews without methods sections); the label tells the reviewers so. The capture is the
 # page's visible text, so the site navigation before the abstract heading, the reference list
 # and publisher boilerplate lines are removed before the text is capped (patterns below).
-PROXY_KEY = re.compile(r"^pool([12])_n(\d+)$")
+PROXY_KEY = re.compile(r"^pool([123])_n(\d+)$")
 PROXY_ABSTRACT = re.compile(r"^\s*(Abstract|Summary|ABSTRACT)\s*$", re.M)
 PROXY_REFERENCES = re.compile(r"^\s*(References|REFERENCES|Bibliography)\s*$", re.M)
 PROXY_NOISE = re.compile(r"^(Download: Download (full-size|high-res) image.*|Opens in a new window|Show more|Share|Cite"

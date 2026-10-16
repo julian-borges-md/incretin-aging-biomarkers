@@ -37,7 +37,13 @@ with open(MANIFEST, "w", newline="") as mf:
         base = f"{OUTDIR}/pool{r['pool']}_n{r['n']}_{pmc}"
         status, xb, tc = "", 0, 0
         if os.path.exists(base + ".txt") and os.path.getsize(base + ".txt") > 500:
+            # A rerun must carry the sizes of the files it keeps: the screen admits a text only when
+            # txt_chars is at least 2000, and the first rerun (2026-10-16 12:40, pool 3 joining)
+            # wrote 0 for every kept file and silently demoted 108 full texts to the proxy or to
+            # awaiting_fulltext. Sizes are read from the files, never assumed.
             status = "exists"
+            tc = len(open(base + ".txt", errors="replace").read())
+            xb = os.path.getsize(base + ".xml") if os.path.exists(base + ".xml") else 0
         else:
             url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/{pmc}/fullTextXML"
             req = urllib.request.Request(url, headers={"User-Agent": "incretin-aging-biomarkers-review/1.0 (systematic review full text pool)"})
