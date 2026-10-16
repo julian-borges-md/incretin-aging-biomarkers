@@ -24,6 +24,43 @@ dat <- readr::read_csv("analysis/data/extraction_master_harmonised.csv",
   slice_max(order_by = dose_mg, n = 1, with_ties = FALSE) |>
   ungroup()
 
+## ---------------------------------------------------------------------------
+## 0. Comparator restriction, protocol amendment of 2026-10-15
+## ---------------------------------------------------------------------------
+# Class contrasts are computed within placebo controlled trials only
+# (docs/COMPARATOR_PROBLEM.md). Glimepiride causes weight gain, so an active
+# controlled contrast is larger than a placebo controlled one for any marker
+# that tracks adiposity, and the mono class is mostly active controlled while
+# every dual and triple row is placebo controlled. Pooling across comparator
+# types would measure comparator choice, not receptor pharmacology.
+#
+# The amendment was written on 2026-10-15 and, until this block, had no code
+# behind it: EUREXA (exenatide vs glimepiride) was being counted toward mono
+# class coverage. Declarative rules do not restrict anything. This does.
+is_placebo_controlled <- function(comparator) {
+  !is.na(comparator) & tolower(trimws(comparator)) == "placebo"
+}
+# Counterexample in both senses, run every time.
+stopifnot(identical(is_placebo_controlled(c("placebo", "glimepiride", NA, "Placebo ")),
+                    c(TRUE, FALSE, FALSE, TRUE)))
+
+excluded <- filter(dat, !is_placebo_controlled(comparator))
+if (nrow(excluded) > 0) {
+  message("EXCLUDED FROM CLASS CONTRASTS, active or unstated comparator (amendment 2026-10-15):")
+  ex <- excluded |> count(trial_id, receptor_class, comparator, name = "rows")
+  for (i in seq_len(nrow(ex))) {
+    message(sprintf("  %-20s %-14s vs %-14s %3d row(s)",
+                    ex$trial_id[i], ex$receptor_class[i],
+                    ifelse(is.na(ex$comparator[i]), "NA", ex$comparator[i]),
+                    ex$rows[i]))
+  }
+  message("")
+} else {
+  message("Comparator restriction: every row is placebo controlled; nothing excluded.\n")
+}
+dat <- filter(dat, is_placebo_controlled(comparator))
+stopifnot(all(is_placebo_controlled(dat$comparator)))
+
 CLASSES <- c("GLP1_mono","GLP1_GIP","GLP1_GCGR","GLP1_GIP_GCGR")
 
 ## ---------------------------------------------------------------------------

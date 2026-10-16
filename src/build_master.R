@@ -124,12 +124,65 @@ dat <- bind_cols(raw, resolved) |>
   mutate(vi = se^2)
 
 ## ---------------------------------------------------------------------------
+## Risk of bias: the RoB-2 file is the assessment of record
+## ---------------------------------------------------------------------------
+# rob_overall was typed into each extraction file at extraction time. The
+# domain level RoB-2 assessment with its justifications lives in
+# analysis/data/risk_of_bias.csv and was completed afterwards. Checked on
+# 2026-10-15, the two disagreed on every trial: the four post hoc and open
+# label analyses rated high overall in RoB-2 carried some_concerns in the
+# extraction files, SELECT carried low against some_concerns, and Sanyal 2024
+# carried both low and some_concerns within a single trial. A sensitivity
+# analysis keyed on rob_overall would have selected rows RoB-2 does not rate
+# low, and would have excluded nothing as high.
+#
+# The master therefore takes rob_overall from the RoB-2 file, keeps the typed
+# value as rob_overall_extraction for provenance, and reports every override.
+# This is a set from a canonical map, idempotent by construction. A trial
+# without a RoB-2 row is an error: nothing enters the master unappraised.
+ROB_FILE <- file.path(IN_DIR, "risk_of_bias.csv")
+if (!file.exists(ROB_FILE)) fail("risk of bias file not found: ", ROB_FILE)
+rob <- readr::read_csv(ROB_FILE, show_col_types = FALSE, progress = FALSE,
+                       col_types = readr::cols(.default = readr::col_character())) |>
+  select(trial_id, rob2_overall = overall)
+ROB_LEVELS <- c("low", "some_concerns", "high")
+if (any(duplicated(rob$trial_id))) fail("duplicated trial_id in ", ROB_FILE)
+if (any(!rob$rob2_overall %in% ROB_LEVELS))
+  fail("RoB-2 overall must be one of ", paste(ROB_LEVELS, collapse = ", "))
+unappraised <- setdiff(unique(dat$trial_id), rob$trial_id)
+if (length(unappraised) > 0)
+  fail("trial(s) in the extraction with no RoB-2 row: ",
+       paste(unappraised, collapse = ", "))
+if (!"rob_overall" %in% names(dat)) dat$rob_overall <- NA_character_
+dat <- dat |>
+  left_join(rob, by = "trial_id") |>
+  mutate(rob_overall_extraction = rob_overall,
+         rob_overall = rob2_overall) |>
+  select(-rob2_overall)
+
+## ---------------------------------------------------------------------------
 ## Validate
 ## ---------------------------------------------------------------------------
 
 message("\nValidation")
 
 errs <- character(0)
+
+rob_diff <- dat |>
+  filter(is.na(rob_overall_extraction) | rob_overall_extraction != rob_overall) |>
+  count(trial_id, rob_overall_extraction, rob_overall, name = "rows")
+if (nrow(rob_diff) > 0) {
+  message(sprintf("  NOTE  rob_overall set from RoB-2 on %d row(s) where the",
+                  sum(rob_diff$rows)))
+  message("        extraction file disagreed (typed value -> RoB-2 overall):")
+  for (i in seq_len(nrow(rob_diff))) {
+    message(sprintf("          %-24s %-14s -> %-14s %3d rows",
+                    rob_diff$trial_id[i],
+                    ifelse(is.na(rob_diff$rob_overall_extraction[i]), "NA",
+                           rob_diff$rob_overall_extraction[i]),
+                    rob_diff$rob_overall[i], rob_diff$rows[i]))
+  }
+}
 
 unresolved <- filter(dat, se_route == "unresolvable")
 if (nrow(unresolved) > 0) {
@@ -225,6 +278,9 @@ message("  ok   every row resolved to an effect size")
 message("  ok   aging_direction consistent within each biomarker")
 message("  ok   no duplicated trial, dose, biomarker and timepoint rows")
 message("  ok   receptor classes recognised")
+message(sprintf("  ok   rob_overall taken from RoB-2 for every row (%s)",
+                paste(sprintf("%s %d", names(table(dat$rob_overall)),
+                              as.integer(table(dat$rob_overall))), collapse = ", ")))
 
 ## ---------------------------------------------------------------------------
 ## Write

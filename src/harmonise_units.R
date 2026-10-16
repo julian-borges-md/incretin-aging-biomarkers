@@ -98,16 +98,65 @@ LOG_RATIO_ROUTES <- c("log_RR_ci", "log_OR_ci")
 PCT_BIOMARKERS   <- c("hsCRP", "IL6", "GDF15", "YKL40", "ICAM1", "leptin",
                       "NTproBNP", "liver_fat_pdff")
 
+# UNIT FAMILY IS A PROPERTY OF THE ROW, NOT OF THE BIOMARKER.
+#
+# The first version assigned percent_change to every row of a biomarker named
+# in PCT_BIOMARKERS. That encoded a convention, "hsCRP is reported as percent
+# change", which held for the first two hsCRP sources and failed on the third.
+# Simo 2015 (EUREXA) reports hsCRP as an absolute change in mg/L: measure MD,
+# arm means with SDs, and the row's own notes say the percentage conversion is
+# unavailable. The row was carried through as -1.5 per cent with a standard
+# error of 0.34, took 89 per cent of the fixed effect weight for hsCRP, moved
+# Table 2's hsCRP from -37.8 (k=2, I2 0) to -23.2 (k=3, I2 99.8) and the
+# primary composite from +29.3 to +25.7 per cent. All eight gates passed,
+# because no gate compared a row's measure with the unit family it received.
+#
+# A row whose measure is MD is an absolute difference in the biomarker's own
+# units and converts only through a reported baseline mean. The biomarker
+# name decides nothing on its own. The counterexample is tested on every run
+# so the convention cannot be re-encoded silently.
+classify_unit <- function(se_route, measure, biomarker, baseline_mean) {
+  dplyr::case_when(
+    se_route %in% LOG_RATIO_ROUTES                             ~ "log_ratio",
+    !is.na(measure) & measure == "MD" & !is.na(baseline_mean)  ~ "absolute",
+    !is.na(measure) & measure == "MD"                          ~ "unknown",
+    biomarker %in% PCT_BIOMARKERS                              ~ "percent_change",
+    !is.na(baseline_mean)                                      ~ "absolute",
+    TRUE                                                       ~ "unknown"
+  )
+}
+
+# Counterexample tests, run every time. Each case is the shape of a real row.
+# The first case is the one that got through.
+unit_tests <- tibble::tribble(
+  ~case,                                   ~se_route,   ~measure, ~biomarker, ~baseline_mean, ~expect,
+  "EUREXA hsCRP, MD in mg/L, no baseline", "arm_sds",   "MD",     "hsCRP",    NA_real_,       "unknown",
+  "Wilson hsCRP, percent change, SEMs",    "arm_sems",  NA,       "hsCRP",    NA_real_,       "percent_change",
+  "SELECT hsCRP, percent change, CI",      "ci_95",     NA,       "hsCRP",    NA_real_,       "percent_change",
+  "SELECT ALT, MD in U/L, no baseline",    "ci_95",     "MD",     "ALT",      NA_real_,       "unknown",
+  "ALT, MD in U/L, baseline supplied",     "ci_95",     "MD",     "ALT",      28,             "absolute",
+  "survodutide HOMA_IR, log ratio",        "log_RR_ci", "RR",     "HOMA_IR",  NA_real_,       "log_ratio"
+)
+unit_tests$got <- classify_unit(unit_tests$se_route, unit_tests$measure,
+                                unit_tests$biomarker, unit_tests$baseline_mean)
+bad <- unit_tests[unit_tests$got != unit_tests$expect, ]
+if (nrow(bad) > 0) {
+  for (i in seq_len(nrow(bad))) {
+    message(sprintf("  FAIL  %s: expected %s, got %s",
+                    bad$case[i], bad$expect[i], bad$got[i]))
+  }
+  stop("unit family classification failed its counterexample tests")
+}
+message(sprintf("UNIT FAMILY SELF TEST: %d of %d row shapes classified as expected",
+                nrow(unit_tests), nrow(unit_tests)))
+
+if (!"measure" %in% names(dat)) dat$measure <- NA_character_
+
 dat <- dat |>
   left_join(BASELINE, by = "biomarker") |>
   mutate(
     se_native = sqrt(vi),
-    unit_family = case_when(
-      se_route %in% LOG_RATIO_ROUTES        ~ "log_ratio",
-      biomarker %in% PCT_BIOMARKERS         ~ "percent_change",
-      !is.na(baseline_mean)                 ~ "absolute",
-      TRUE                                  ~ "unknown"
-    ),
+    unit_family = classify_unit(se_route, measure, biomarker, baseline_mean),
     yi_pct = case_when(
       unit_family == "log_ratio"      ~ (exp(yi) - 1) * 100,
       unit_family == "percent_change" ~ yi,
@@ -123,14 +172,29 @@ dat <- dat |>
     vi_pct = se_pct^2
   )
 
+# A percent_change row must not carry an MD or RR measure: MD is an absolute
+# difference and RR a ratio, and either reaching the percent scale unchanged
+# is the EUREXA defect recurring. Fails the run rather than the row.
+mislabelled <- filter(dat, unit_family == "percent_change",
+                      !is.na(measure), measure %in% c("MD", "RR"))
+if (nrow(mislabelled) > 0) {
+  for (i in seq_len(nrow(mislabelled))) {
+    message(sprintf("  FAIL  %s / %s: measure %s assigned percent_change",
+                    mislabelled$trial_id[i], mislabelled$biomarker[i],
+                    mislabelled$measure[i]))
+  }
+  stop("a row with an absolute or ratio measure was assigned the percent scale")
+}
+
 unconvertible <- filter(dat, is.na(yi_pct))
 if (nrow(unconvertible) > 0) {
   message("\nUNCONVERTIBLE ROWS, excluded from cross biomarker pooling:")
   unconvertible |>
-    count(biomarker, unit_family, name = "rows") |>
+    count(trial_id, biomarker, measure, unit_family, name = "rows") |>
     as.data.frame() |>
     print(row.names = FALSE)
-  message("  Reason: absolute units with no reported baseline mean.")
+  message("  Reason: absolute units (measure MD) with no reported baseline mean.")
+  message("  These rows keep their native yi and se for within biomarker use.")
 }
 
 message("\nHARMONISED EFFECTS, one row per biomarker shown")

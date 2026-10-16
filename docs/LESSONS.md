@@ -52,6 +52,20 @@ Concretely: any signed quantity needs a counterexample in both senses. Any contr
 
 **An unquoted comma in a free text field makes a row ragged.** It was silently absorbed by the CSV reader and crashed a downstream script. Ragged rows are now rejected by file and line number before parsing.
 
+**A unit is a property of the row, never of the biomarker.** The harmoniser assigned percent change to every hsCRP row because the first two hsCRP sources reported percent change. The third reported an absolute change in mg/L, and its own notes said so. The row passed through as −1.5 per cent with a standard error of 0.34, took 89 per cent of the fixed effect weight for hsCRP, and moved Table 2, the composite and its core sensitivity analysis, with all eight gates passing. Added 2026-10-15. The classification now reads each row's measure, and the EUREXA row shape is one of six counterexamples run on every execution. The general form: any rule written as "marker X is reported as Y" is the uniform error pattern waiting for its third source.
+
+**A documented amendment with no code behind it restricts nothing.** The placebo only rule for class contrasts was written into `docs/COMPARATOR_PROBLEM.md` and the contrast script went on counting the active controlled trial toward mono class coverage. Added 2026-10-15. The rule now lives in `receptor_class_contrast.R` with an excluded rows report.
+
+**A column typed at extraction time drifts from the assessment of record.** `rob_overall` was typed into the extraction files before the RoB-2 assessment was done; afterwards the two disagreed on 44 of 48 rows and the master carried no `high` rating while RoB-2 rated four of seven trial analyses high. Any sensitivity analysis keyed on the column would have excluded nothing. Added 2026-10-15. The master now sets the column from `risk_of_bias.csv` at build time and refuses a trial that has no RoB-2 row.
+
+---
+
+## Verification
+
+**"Repository not found" is an identity result before it is an existence result.** A private repository answers "not found" to any identity without access. On a workstation holding two GitHub identities, the keychain helper serves whichever account the CLI last made active, so `git ls-remote` from an interactive session can fail against a repository that an unattended job pushes to successfully every few hours. Two repositories were recorded as non-existent on this basis on 2026-10-15; both exist. Added 2026-10-15. The test that settles existence runs with the helper chain reset to the credential that the job itself uses, and a successful push in the job's own log outranks a failed lookup from elsewhere.
+
+**Run the gates, then read the gate output before writing the summary.** The session close record stated that every claim had been checked by running the command, and its results table still carried figures from the corpus of an hour earlier, because the gates were run and the summary was written from memory. Added 2026-10-15. The numbers in a summary are copied from the log of the run that produced them, never typed.
+
 ---
 
 ## Analysis design

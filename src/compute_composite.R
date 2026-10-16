@@ -117,6 +117,39 @@ for (i in seq_len(nrow(per))) {
                   r$biomarker, r$yi, r$signed, r$share_eq, r$share_iv))
 }
 
+# ESTIMATOR CONSISTENCY WITH TABLE 2.
+#
+# The per marker input to the composite is a fixed effect inverse variance
+# mean across trials. Table 2 (pool_biomarkers.R) reports a REML random
+# effects estimate with the Hartung Knapp adjustment. The two coincide when a
+# marker has one trial or I2 is zero, and diverge otherwise. Found on
+# 2026-10-15 when a mis-harmonised hsCRP row gave -5.5 here against -23.2 in
+# Table 2 with nothing in the output to show the two disagreed. The divergence
+# is now printed on every run so it can never be silent again. It is a NOTE,
+# not a failure: which estimator should feed the composite is a protocol
+# decision, recorded in prespecification/, not something this script decides.
+t2_path <- "analysis/output/table2_pooled_by_biomarker.csv"
+if (file.exists(t2_path)) {
+  t2 <- readr::read_csv(t2_path, show_col_types = FALSE, progress = FALSE) |>
+    select(biomarker, k_t2 = k, est_t2 = est)
+  cmp <- per |>
+    inner_join(t2, by = "biomarker") |>
+    mutate(diff = yi - est_t2) |>
+    filter(k_t2 >= 2)
+  message("\nCOMPOSITE INPUT vs TABLE 2, markers pooled from two or more trials")
+  message(sprintf("%-18s %3s %12s %12s %10s", "biomarker", "k", "FE input", "T2 REML/HK", "diff"))
+  message(strrep("-", 60))
+  for (i in seq_len(nrow(cmp))) {
+    r <- cmp[i,]
+    flag <- if (abs(r$diff) > 1) "  NOTE divergent, I2 > 0" else ""
+    message(sprintf("%-18s %3d %11.1f%% %11.1f%% %9.1f%%%s",
+                    r$biomarker, r$k_t2, r$yi, r$est_t2, r$diff, flag))
+  }
+  if (nrow(cmp) == 0) message("  none")
+} else {
+  message("\nNOTE Table 2 not found; run pool_biomarkers.R first for the estimator check.")
+}
+
 readr::write_csv(results, "analysis/output/table5_composite.csv")
 readr::write_csv(per, "analysis/output/table5b_composite_contributions.csv")
 message("\nWrote table5_composite.csv and table5b_composite_contributions.csv")
