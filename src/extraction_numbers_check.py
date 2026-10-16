@@ -75,6 +75,9 @@ def main(argv):
     if extra:
         print("texts searched: " + ", ".join(files))
     text = text.replace("−", "-").replace("–", "-")
+    # thousands separators (17,947 mm2; 5,771 ng/L) are removed so that the extraction's plain
+    # integers match; a decimal comma (27,32) survives because it never sits before three digits
+    text = re.sub(r"(?<=\d),(?=\d{3}\b)", "", text)
     rows = list(csv.DictReader(open(os.path.join(d, f"{ext}.csv"), newline="")))
     missing = 0
     for r in rows:

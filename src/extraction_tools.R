@@ -244,6 +244,31 @@ resolve_effect <- function(row) {
     return(list(yi = yi, se = NA_real_, route = "p_bound_unusable"))
   }
 
+  # Route 6b (2026-10-16, systematic corpus): baseline and final arm means printed with
+  # standard errors of the mean rather than SDs (Bi 2014, Acta Diabetol, Table 1: "Data are
+  # mean ± SE", n 11 per arm). The extractor records the printed SEs in the base_sd and
+  # final_sd columns exactly as printed, so the provenance check still finds them, and
+  # declares the row with se_source "arm_change_imputed_r_sem". The SD is recovered here,
+  # once and in code, as SE * sqrt(n) before the imputed change contrast. Without the
+  # declaration the printed SEs would be read as SDs by Route 6 and the contrast would be
+  # sqrt(n) times too precise; the counterexample below asserts the difference.
+  if (has(row$se_source) && row$se_source == "arm_change_imputed_r_sem" &&
+      has(row$base_mean_tx) && has(row$base_sd_tx) && has(row$final_mean_tx) &&
+      has(row$final_sd_tx) && has(row$n_tx) &&
+      has(row$base_mean_ctrl) && has(row$base_sd_ctrl) && has(row$final_mean_ctrl) &&
+      has(row$final_sd_ctrl) && has(row$n_ctrl)) {
+    if (!has(row$corr_assumed)) {
+      stop("corr_assumed must be recorded on every row that uses the change score ",
+           "imputation route: ", row$trial_id, " / ", row$biomarker)
+    }
+    cc <- change_contrast_imputed(row$base_mean_tx, row$base_sd_tx * sqrt(row$n_tx),
+                                  row$final_mean_tx, row$final_sd_tx * sqrt(row$n_tx), row$n_tx,
+                                  row$base_mean_ctrl, row$base_sd_ctrl * sqrt(row$n_ctrl),
+                                  row$final_mean_ctrl, row$final_sd_ctrl * sqrt(row$n_ctrl),
+                                  row$n_ctrl, row$corr_assumed)
+    return(list(yi = cc$yi, se = cc$se, route = "arm_change_imputed_r_sem"))
+  }
+
   # Route 6: baseline and final arm means with SDs, change score SD imputed
   # through the recorded pre post correlation (amendment R1). The correlation
   # is mandatory on the row; a row that reaches this route without it stops
@@ -275,3 +300,25 @@ resolve_effect <- function(row) {
 
   list(yi = NA_real_, se = NA_real_, route = "unresolvable")
 }
+
+# Counterexample for Route 6b, run at source time. The same printed numbers with and
+# without the declaration must resolve to the same contrast, and the declared row must
+# carry a standard error exactly sqrt(n) times the undeclared one (equal n per arm), which
+# is the error the declaration prevents. A declared row with no correlation must stop.
+local({
+  printed <- list(trial_id = "route 6b test", biomarker = "x",
+                  base_mean_tx = 7.6, base_sd_tx = 1.9, final_mean_tx = 1.2, final_sd_tx = 0.5, n_tx = 11,
+                  base_mean_ctrl = 8.6, base_sd_ctrl = 1.7, final_mean_ctrl = 2.2, final_sd_ctrl = 0.8,
+                  n_ctrl = 11, corr_assumed = 0.5)
+  as_sd  <- resolve_effect(c(printed, list(se_source = "arm_change_imputed_r")))
+  as_sem <- resolve_effect(c(printed, list(se_source = "arm_change_imputed_r_sem")))
+  stopifnot(
+    as_sd$route == "arm_change_imputed_r",
+    as_sem$route == "arm_change_imputed_r_sem",
+    abs(as_sd$yi - as_sem$yi) < 1e-12,
+    abs(as_sem$se / as_sd$se - sqrt(11)) < 1e-9,
+    inherits(try(resolve_effect(c(printed[names(printed) != "corr_assumed"],
+                                  list(se_source = "arm_change_imputed_r_sem"))), silent = TRUE),
+             "try-error")
+  )
+})

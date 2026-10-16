@@ -1,0 +1,119 @@
+{
+ "group": "214",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Bouchi 2017",
+  "pmid": "",
+  "doi": "10.1507/endocrj.ej16-0449",
+  "first_author": "Bouchi",
+  "year": "2017",
+  "journal": "Endocr J",
+  "phase": "4",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "0.9",
+  "comparator": "insulin alone (background insulin continued, no add on)",
+  "comparator_type": "active",
+  "duration_weeks": "36",
+  "population": "T2D",
+  "n_tx": "8",
+  "n_ctrl": "9",
+  "assessment_timepoint_weeks": "36",
+  "pct_weight_change": "-3.4",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "FALSE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: randomised open label comparative trial (UMIN000015867) of liraglutide added to insulin vs insulin alone in insulin treated Japanese adults with type 2 diabetes, BMI 25 or more and HbA1c 7 to 10 percent; 1:1 dynamic allocation on insulin dose and HbA1c (Soiken Inc); liraglutide 0.3 mg daily, 0.6 mg after one week, 0.9 mg after a further week (dose_mg 0.9, the Japanese maximum), maintained to study end; 19 randomised (9 liraglutide, 10 control), one excluded per group after randomisation by withdrawal criteria, 8 and 9 analysed (Table 1 and Table 3 N); primary endpoint change in visceral fat area at 24 weeks, secondary endpoints HbA1c, blood pressure, lipids, albuminuria and CRP at 12, 24 and 36 weeks (prespecified TRUE); rows taken at 36 weeks, the longest on treatment timepoint (brief rule 1), the 24 week primary endpoint values are written in the row notes (amendment A10); Table 3 reports mean plus or minus SD per arm at baseline and 12, 24 and 36 weeks (route arm_change_imputed_r, correlation 0.5; the Table 3 p values are within arm repeated measures tests, not used); Fig. 3 gives estimated between group changes plus or minus SE as a figure only, not captured; pct_weight_change from the Table 3 means in the liraglutide arm, 76.3 to 73.7 kg at 36 weeks (and at 24 weeks), minus 2.6 kg equals minus 3.4 percent (control 71.7 to 71.7 kg at 36 weeks, 0.0 percent; no contrast printed); funded by Grants in Aid for Scientific Research (MEXT, Japan), authors declare no duality of interest (industry_funded FALSE); rob_overall some_concerns"
+ },
+ "rows": [
+  {
+   "biomarker": "HbA1c",
+   "measure": "MD",
+   "unit": "%",
+   "base_mean_tx": "8.2",
+   "base_sd_tx": "0.5",
+   "final_mean_tx": "7.5",
+   "final_sd_tx": "1.6",
+   "base_mean_ctrl": "7.9",
+   "base_sd_ctrl": "0.7",
+   "final_mean_ctrl": "7.9",
+   "final_sd_ctrl": "0.6",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 3: HbA1c percent, baseline and 36 weeks per arm (24 weeks 7.5 plus or minus 1.4 vs 8.1 plus or minus 0.6); within arm p 0.024 liraglutide, 0.822 control"
+  },
+  {
+   "biomarker": "SBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "base_mean_tx": "143",
+   "base_sd_tx": "8",
+   "final_mean_tx": "126",
+   "final_sd_tx": "14",
+   "base_mean_ctrl": "135",
+   "base_sd_ctrl": "22",
+   "final_mean_ctrl": "143",
+   "final_sd_ctrl": "14",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 3: SBP mmHg, baseline and 36 weeks per arm (24 weeks 131 plus or minus 11 vs 144 plus or minus 21); within arm p 0.015 liraglutide, 0.435 control"
+  },
+  {
+   "biomarker": "DBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "base_mean_tx": "84",
+   "base_sd_tx": "13",
+   "final_mean_tx": "76",
+   "final_sd_tx": "12",
+   "base_mean_ctrl": "81",
+   "base_sd_ctrl": "10",
+   "final_mean_ctrl": "86",
+   "final_sd_ctrl": "8",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 3: DBP mmHg, baseline and 36 weeks per arm (24 weeks 79 plus or minus 10 vs 85 plus or minus 12); within arm p 0.017 liraglutide, 0.297 control"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "liraglutide",
+  "trial_id": "Bouchi 2017",
+  "design": "randomised open label trial, liraglutide added to insulin vs insulin alone, insulin treated type 2 diabetes, 19 randomised, 8 and 9 analysed, primary endpoint visceral fat area at 24 weeks, follow up 36 weeks",
+  "reason": "full text group (institutional route); three inventory markers with mean and SD per arm (HbA1c, SBP, DBP) from Table 3 at 36 weeks by the imputed change route; the remaining inventory markers are tabulated as medians with interquartile ranges only",
+  "biomarkers_reported_no_variance": [
+   "VAT (VFA cm2, Table 3 median with IQR only: liraglutide 195 to 178 at 24 and 36 weeks, control 154 to 153 and 149; the primary endpoint, Fig. 3A estimated changes plus or minus SE not captured)",
+   "hsCRP (CRP mg/L, Table 3 median with IQR only: liraglutide 3.2 to 1.0 at 24 and 36 weeks, control 0.9 to 2.2 and 1.7; Fig. 3B log CRP estimated changes not captured)",
+   "TG (Table 3 median with IQR only: liraglutide 2.12 to 1.23 and 1.20 mmol/L, control 1.68 to 2.20 and 1.82)",
+   "LDL (Table 3 median with IQR only: liraglutide 2.43 to 2.53 and 2.56 mmol/L, control 3.34 to 3.30 and 3.06)"
+  ],
+  "other_markers": [
+   "subcutaneous fat area (median with IQR)",
+   "urinary albumin to creatinine ratio (median with IQR)",
+   "liver attenuation index by CT (mean with SD, hepatic fat accumulation)",
+   "skeletal muscle index (median with IQR)",
+   "HDL cholesterol (mean with SD)",
+   "insulin dose",
+   "DTR-QOL scores"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 3"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "some_concerns",
+   "d5_selection": "low",
+   "overall": "some_concerns",
+   "justification": "central dynamic allocation by a contract organisation (D1 low); open label add on with insulin titration in both arms (D2 some concerns); one of 9 and one of 10 excluded after randomisation by withdrawal criteria, completers analysed (D3 some concerns); HbA1c by laboratory assay, blood pressure measured without blinding (D4 some concerns for the pressure rows); registered trial with named secondary endpoints (D5 low)"
+  },
+  "doubts": [
+   "very small arms (8 and 9); the imputed change SDs rest on a correlation of 0.5",
+   "the primary endpoint (visceral fat area) and CRP are reported as medians with interquartile ranges and are not entered",
+   "insulin dose was reduced in the liraglutide arm during the first 12 weeks, so the HbA1c contrast is net of insulin titration",
+   "the first read took the 24 week primary endpoint timepoint; replaced by the 36 week values under brief rule 1 (amendment A10)"
+  ]
+ }
+}

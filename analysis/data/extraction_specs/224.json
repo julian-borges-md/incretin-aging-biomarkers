@@ -1,0 +1,147 @@
+{
+ "group": "224",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Savvidou 2016",
+  "pmid": "",
+  "doi": "10.1016/j.diabres.2015.12.003",
+  "first_author": "Savvidou",
+  "year": "2016",
+  "journal": "Diabetes Res Clin Pract",
+  "phase": "4",
+  "drug": "exenatide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "0.01",
+  "comparator": "intensified insulin (short acting insulin three times daily plus glargine and metformin)",
+  "comparator_type": "active",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "55",
+  "n_ctrl": "48",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "-2.6",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "FALSE",
+  "rob_overall": "high",
+  "notes": "STUDY: open label randomised intervention trial (Thessaloniki, second part of a two part study) in insulin treated type 2 diabetes with normal aminotransferases: exenatide 5 ug twice daily for 4 weeks then 10 ug twice daily (dose_mg 0.01 per injection) added to glargine and metformin (group B) vs intensified insulin, short acting insulin three times daily plus glargine and metformin (group C), after a 5 week run in; 110 randomised, allocation by the patients name initials, 7 dropped out all from group C, 55 and 48 analysed (Table 2 n); 6 months (26 weeks entered; median treatment duration 6.7 and 6.65 months); Table 2 gives baseline and final mean plus or minus SD per arm for HbA1c, lipids and adiponectin (route arm_change_imputed_r, correlation 0.5) and deltas as medians with IQR (not used); weight, ALT, AST and CRP are medians or deltas only for the markers; the adiponectin change is the stated aim of the intervention part (prespecified TRUE on that row, FALSE for the others); pct_weight_change from the Table 2 means in the exenatide arm, 84.6 to 82.4 kg, minus 2.2 kg equals minus 2.6 percent (insulin arm 90.4 to 91.7 kg, plus 1.4 percent; Table 2 delta medians minus 2.0 vs plus 3.5 kg, between group p below 0.001); no funding source, no conflicts declared (industry_funded FALSE); rob_overall high"
+ },
+ "rows": [
+  {
+   "biomarker": "HbA1c",
+   "measure": "MD",
+   "unit": "%",
+   "base_mean_tx": "8.3",
+   "base_sd_tx": "1.5",
+   "final_mean_tx": "7.1",
+   "final_sd_tx": "0.8",
+   "base_mean_ctrl": "8.0",
+   "base_sd_ctrl": "0.9",
+   "final_mean_ctrl": "6.7",
+   "final_sd_ctrl": "0.3",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: HbA1c percent baseline and final per arm; delta medians minus 0.8 vs minus 1.0, between group p 0.690"
+  },
+  {
+   "biomarker": "TC",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "base_mean_tx": "4.6",
+   "base_sd_tx": "1.3",
+   "final_mean_tx": "4.5",
+   "final_sd_tx": "1.0",
+   "base_mean_ctrl": "4.3",
+   "base_sd_ctrl": "1.3",
+   "final_mean_ctrl": "4.8",
+   "final_sd_ctrl": "1.0",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: total cholesterol mmol/L baseline and final per arm; delta medians 0.2 vs 0.6, between group p below 0.001"
+  },
+  {
+   "biomarker": "LDL",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "base_mean_tx": "2.5",
+   "base_sd_tx": "1.0",
+   "final_mean_tx": "2.4",
+   "final_sd_tx": "0.9",
+   "base_mean_ctrl": "2.5",
+   "base_sd_ctrl": "1.6",
+   "final_mean_ctrl": "2.7",
+   "final_sd_ctrl": "0.9",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: LDL mmol/L baseline and final per arm; delta medians 0 vs 0.2, between group p 0.085"
+  },
+  {
+   "biomarker": "TG",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "base_mean_tx": "1.9",
+   "base_sd_tx": "1.8",
+   "final_mean_tx": "1.7",
+   "final_sd_tx": "1.0",
+   "base_mean_ctrl": "1.6",
+   "base_sd_ctrl": "0.7",
+   "final_mean_ctrl": "2.0",
+   "final_sd_ctrl": "1.2",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: triglycerides mmol/L baseline and final per arm; delta medians 0 vs 0.4, between group p 0.004"
+  },
+  {
+   "biomarker": "adiponectin",
+   "measure": "MD",
+   "unit": "ug/mL",
+   "prespecified_endpoint": "TRUE",
+   "base_mean_tx": "6.2",
+   "base_sd_tx": "2.2",
+   "final_mean_tx": "8.2",
+   "final_sd_tx": "2.8",
+   "base_mean_ctrl": "6.2",
+   "base_sd_ctrl": "2.6",
+   "final_mean_ctrl": "8.2",
+   "final_sd_ctrl": "3.6",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: adiponectin ug/mL by ELISA baseline and final per arm; delta medians 1.5 vs 1.1 ug/mL (24.2 vs 23.6 percent), between group p 0.965"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "exenatide",
+  "trial_id": "Savvidou 2016",
+  "design": "open label randomised intervention trial, exenatide twice daily added to glargine and metformin vs intensified insulin, insulin treated type 2 diabetes with normal aminotransferases, 110 randomised by name initials, 55 and 48 analysed, 6 months",
+  "reason": "full text group (institutional route); five inventory markers with baseline and final mean and SD per arm in Table 2 by the imputed change route; CRP, ALT and AST are medians with IQR only",
+  "biomarkers_reported_no_variance": [
+   "hsCRP (CRP printed in mg/dL, Table 2 medians with IQR only: exenatide 3.3 to 1.3, insulin 1.7 to 1.1; delta medians 0 vs minus 0.5, between group p 0.001)",
+   "ALT (Table 2 medians with IQR only: 18 to 17 vs 24.5 to 25.5 U/L)",
+   "AST (Table 2 medians with IQR only: 16 to 20 vs 21 to 23.5 U/L)"
+  ],
+  "other_markers": [
+   "weight, BMI, waist and hip circumference, WHR",
+   "HDL cholesterol (mean with SD)",
+   "metformin dosage",
+   "adiponectin determinants (ANCOVA)",
+   "liver biopsy findings in the separate NAFLD cohort (group A, not randomised)"
+  ],
+  "tables_used": [
+   "Table 2"
+  ],
+  "rob": {
+   "d1_randomisation": "high",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "high",
+   "justification": "allocation by the patients name initials, not a random sequence and not concealed, with heavier patients in the insulin arm at baseline (D1 high); open label with self titrated prandial insulin in the comparator (D2 some concerns); 7 of 110 dropped out, all from the insulin arm, completers analysed (D3 some concerns); laboratory assays (D4 low); no registration or protocol cited, outcomes listed in the aims (D5 some concerns)"
+  },
+  "doubts": [
+   "CRP is printed in mg/dL with values typical of mg/L; recorded as printed and not entered",
+   "the between group p values of Table 2 compare delta medians by Mann Whitney and are not used; the imputed change route rests on a correlation of 0.5",
+   "the intensified insulin comparator gained weight, so the lipid and adiponectin contrasts are net of opposite weight trajectories"
+  ]
+ }
+}

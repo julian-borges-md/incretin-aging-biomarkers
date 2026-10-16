@@ -28,11 +28,14 @@ t2_primary <- read_csv(t2_primary_path, show_col_types = FALSE, progress = FALSE
 
 master <- read_csv(file.path(root, "analysis/data/extraction_master.csv"),
                    show_col_types = FALSE, progress = FALSE)
+# Both imputed routes depend on the correlation: Route 6 (SDs as printed) and Route 6b
+# (SEs as printed, converted with sqrt(n) in extraction_tools.R, brief amendment A8).
+IMPUTED_ROUTES <- c("arm_change_imputed_r", "arm_change_imputed_r_sem")
 imputed_markers <- master |>
-  filter(se_route == "arm_change_imputed_r") |>
+  filter(se_route %in% IMPUTED_ROUTES) |>
   distinct(biomarker) |> pull(biomarker)
 imputed_trials <- master |>
-  filter(se_route == "arm_change_imputed_r") |>
+  filter(se_route %in% IMPUTED_ROUTES) |>
   distinct(trial_id) |> pull(trial_id)
 message(sprintf("Imputed route in use on %d trial(s): %s",
                 length(imputed_trials), paste(imputed_trials, collapse = ", ")))

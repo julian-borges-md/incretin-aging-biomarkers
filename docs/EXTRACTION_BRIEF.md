@@ -1,4 +1,4 @@
-# Extraction brief, systematic corpus, version 1.0 (16 October 2026)
+# Extraction brief, systematic corpus, version 1.3 (16 October 2026; 1.0 of the morning with amendments A1 to A10)
 
 Instructions followed by every extractor (a session agent reading one study packet) and by the
 reconciler. The brief is versioned; a change is a new version with its date, never an edit in place.
@@ -110,3 +110,11 @@ biomarker's direction or weight. Does not write to analysis/data directly.
 | Amendment | Rule | Why |
 |---|---|---|
 | A7 measure vocabulary | measure takes the pipeline's values only: PCT, MD, RR, OR, HR, SMD. MD rows carry base_mean_tx and base_mean_ctrl when the paper gives them; src/harmonise_units.R now reads a row's baseline means (n weighted) as the denominator when the hand keyed BASELINE table has no entry for the trial and biomarker, with the source recorded | the brief's first vocabulary (pct_change, abs_change) did not resolve in build_master; eighteen rows of four trials were remapped on 16 October |
+
+## Version 1.3 amendments, 16 October 2026, 13:20
+
+| Amendment | Rule | Why |
+|---|---|---|
+| A8 baseline and final per arm printed with SE | When a table prints baseline and final per arm as mean plus or minus SE (not SD) and no change SD exists, record the printed SE values in base_sd_tx, final_sd_tx, base_sd_ctrl and final_sd_ctrl exactly as printed, record n per arm and corr_assumed 0.5, and declare se_source arm_change_imputed_r_sem; the row notes state "SE as printed". src/extraction_tools.R Route 6b recovers the SD as SE times the square root of n before the imputed change contrast, once and in code, and records se_route arm_change_imputed_r_sem; the sensitivity analysis on the correlation includes these rows. Without the declaration Route 6 reads the printed SE as an SD and the contrast is the square root of n times too precise (counterexample asserted at source time) | Bi 2014 (Acta Diabetol, group 249) prints Table 1 as "Data are mean plus or minus SE" with n 11 per arm; the schema has no base_sem columns and the extractor does no arithmetic (section 7), so the conversion belongs to the pipeline |
+| A9 per patient percent change with SD | When a table gives the percent change from baseline per patient as mean plus or minus SD per arm, enter the row as measure PCT with mean_tx, sd_tx, mean_ctrl, sd_ctrl and n (route arm_sds), and write the pre and post arm means in the row notes; the contrast is a difference of mean per patient percent changes, not a percent change of arm means, and the notes let a verifier substitute the imputed MD route | Gurkan 2014 (group 239) reports Tables 1 and 5 in this shape with between group tests on the percent changes |
+| A10 timepoint, restated | Rule 1 of section 3 stands: the longest on treatment timepoint of 12 weeks or more is the row; the earlier primary endpoint timepoint is written in the notes, not added as a second row, until the Director decides how two timepoints of one trial enter the pool (decision D-X3) | Bouchi 2017 (group 214) tabulates 12, 24 and 36 weeks with the primary endpoint at 24 weeks; the first read of 16 October took the 24 week values and was corrected to 36 weeks |
