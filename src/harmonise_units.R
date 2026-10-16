@@ -135,7 +135,11 @@ BASELINE <- tibble::tribble(
 )
 stopifnot(!any(duplicated(BASELINE[c("trial_id", "biomarker")])))
 
-LOG_RATIO_ROUTES <- c("log_RR_ci", "log_OR_ci")
+# events_log_RR (2026-10-16): a binary histology outcome from events per arm. Its percent value is
+# the relative change in the proportion responding, not a change in a marker's level; the two
+# binary inventory keys (MASH_resolution, fibrosis_improvement) are outside the composite set and
+# their Table 2 presentation on the ratio scale is decision D-X6 for the Director.
+LOG_RATIO_ROUTES <- c("log_RR_ci", "log_OR_ci", "events_log_RR")
 PCT_BIOMARKERS   <- c("hsCRP", "IL6", "GDF15", "YKL40", "ICAM1", "leptin",
                       "NTproBNP", "liver_fat_pdff")
 

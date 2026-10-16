@@ -1,0 +1,161 @@
+{
+ "group": "68",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT04822181",
+  "pmid": "",
+  "doi": "10.1056/NEJMoa2413258",
+  "first_author": "Sanyal",
+  "year": "2025",
+  "journal": "N Engl J Med",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "2.4",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "72",
+  "population": "MASH",
+  "n_tx": "534",
+  "n_ctrl": "266",
+  "assessment_timepoint_weeks": "72",
+  "pct_weight_change": "-8.5",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: ESSENCE (NCT04822181), Sanyal 2025 NEJM, part 1 interim analysis of the first 800 of 1197 patients randomised 2:1 (534 semaglutide, 266 placebo), biopsy defined MASH with fibrosis stage 2 or 3, once weekly semaglutide 2.4 mg vs placebo, 72 weeks, multicentre double blind; the group's packet text (proxy capture of the NEJM page) carries the article body without the table bodies, so Table 2 (cardiometabolic features at week 72) and Table 1 were copied from the page through the institutional route into work/fulltext/companion/sanyal2025_essence_tables.txt; the two primary end points are histological (events per arm derived from the printed percentages of the full analysis set, see the row notes); Table 2 gives estimated between group differences in units (dagger rows) and estimated treatment ratios expressed as percentages (double dagger rows, PCT); pct_weight_change -8.5 is the estimated difference in percent body weight change (semaglutide -10.5, placebo -2.0); all end points prespecified (confirmatory secondary end points tested hierarchically); funded by Novo Nordisk (industry_funded TRUE); ALT, AST, GGT, HOMA-IR, PRO-C3, ELF and liver stiffness are reported in the supplement (Tables S6 and S7) and figures, not captured"
+ },
+ "rows": [
+  {
+   "biomarker": "MASH_resolution",
+   "measure": "RR",
+   "unit": "events",
+   "events_tx": "336",
+   "events_ctrl": "91",
+   "se_source": "events_log_RR",
+   "notes": "first primary end point: resolution of steatohepatitis with no worsening of fibrosis at week 72 in 62.9 percent of 534 vs 34.3 percent of 266 (estimated difference 28.7 percentage points, 95% CI 21.1 to 36.2, P < 0.001); events computed by the session from the printed percentages of the full analysis set (0.629*534 = 335.9, 0.343*266 = 91.2; missing histology for 65 and 42 patients handled by the trial's imputation, so the percentages are model based); route events_log_RR gives the log risk ratio"
+  },
+  {
+   "biomarker": "fibrosis_improvement",
+   "measure": "RR",
+   "unit": "events",
+   "events_tx": "197",
+   "events_ctrl": "60",
+   "se_source": "events_log_RR",
+   "notes": "second primary end point: reduction in liver fibrosis with no worsening of steatohepatitis at week 72 in 36.8 percent vs 22.4 percent (estimated difference 14.4 percentage points, 95% CI 7.5 to 21.3, P < 0.001); events computed by the session from the printed percentages (0.368*534 = 196.5, 0.224*266 = 59.6)"
+  },
+  {
+   "biomarker": "SBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "yi_reported": "-4.00",
+   "ci_lb_reported": "-5.93",
+   "ci_ub_reported": "-2.07",
+   "se_source": "ci_95",
+   "mean_tx": "-5.39",
+   "mean_ctrl": "-1.39",
+   "notes": "Table 2: systolic blood pressure, estimated difference -4.00 (-5.93 to -2.07) mm Hg at week 72; arm changes -5.39 vs -1.39; baseline not in Table 1 (Table S2)"
+  },
+  {
+   "biomarker": "DBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "yi_reported": "-2.14",
+   "ci_lb_reported": "-3.43",
+   "ci_ub_reported": "-0.85",
+   "se_source": "ci_95",
+   "mean_tx": "-1.90",
+   "mean_ctrl": "0.24",
+   "notes": "Table 2: diastolic blood pressure, estimated difference -2.14 (-3.43 to -0.85) mm Hg at week 72; arm changes -1.90 vs 0.24"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "PCT",
+   "unit": "percent",
+   "yi_reported": "-42.41",
+   "ci_lb_reported": "-49.75",
+   "ci_ub_reported": "-33.98",
+   "se_source": "ci_95",
+   "mean_tx": "-53.83",
+   "mean_ctrl": "-19.83",
+   "notes": "Table 2: high sensitivity C-reactive protein, estimated treatment ratio expressed as a percentage, -42.41 (-49.75 to -33.98) at week 72; arm relative changes -53.83 vs -19.83 percent"
+  },
+  {
+   "biomarker": "TG",
+   "measure": "PCT",
+   "unit": "percent",
+   "yi_reported": "-16.54",
+   "ci_lb_reported": "-21.02",
+   "ci_ub_reported": "-11.81",
+   "se_source": "ci_95",
+   "mean_tx": "-16.77",
+   "mean_ctrl": "-0.27",
+   "notes": "Table 2: triglycerides, estimated treatment ratio as a percentage, -16.54 (-21.02 to -11.81); arm relative changes -16.77 vs -0.27 percent"
+  },
+  {
+   "biomarker": "TC",
+   "measure": "PCT",
+   "unit": "percent",
+   "yi_reported": "-2.93",
+   "ci_lb_reported": "-5.60",
+   "ci_ub_reported": "-0.19",
+   "se_source": "ci_95",
+   "mean_tx": "-6.03",
+   "mean_ctrl": "-3.19",
+   "notes": "Table 2: total cholesterol, estimated treatment ratio as a percentage, -2.93 (-5.60 to -0.19); arm relative changes -6.03 vs -3.19 percent"
+  },
+  {
+   "biomarker": "LDL",
+   "measure": "PCT",
+   "unit": "percent",
+   "yi_reported": "-2.04",
+   "ci_lb_reported": "-6.35",
+   "ci_ub_reported": "2.46",
+   "se_source": "ci_95",
+   "mean_tx": "-6.07",
+   "mean_ctrl": "-4.11",
+   "notes": "Table 2: LDL cholesterol, estimated treatment ratio as a percentage, -2.04 (-6.35 to 2.46); arm relative changes -6.07 vs -4.11 percent"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "NCT04822181",
+  "design": "phase 3 multicentre randomised double blind placebo controlled trial, 2:1, 72 week part 1 interim analysis of the first 800 patients, biopsy defined MASH with fibrosis stage 2 or 3",
+  "reason": "full text group (proxy capture); the table bodies were copied from the NEJM page through the institutional route",
+  "biomarkers_reported_no_variance": [
+   "ALT and AST (supplement Table S6, Fig. S9)",
+   "GGT (Fig. S8, Table S6)",
+   "HOMA_IR (Table S7)"
+  ],
+  "other_markers": [
+   "HDL cholesterol (+4.66 percent, 2.12 to 7.26)",
+   "HbA1c reported only by diabetes status subgroup: without type 2 diabetes -0.53 (-0.61 to -0.44), with type 2 diabetes -1.08 (-1.27 to -0.89) percentage points",
+   "ELF score",
+   "liver stiffness",
+   "FAST",
+   "PRO-C3",
+   "body weight (-8.5 percentage points)",
+   "SF-36 bodily pain"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 2",
+   "Results text"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "some_concerns",
+   "justification": "S: randomised double blind (D1, D2 low); primary histology missing for 12.2 and 15.8 percent, handled by prespecified imputation (D3 some concerns); central pathology reading and laboratory outcomes (D4 low); prespecified hierarchical testing, registered (D5 low)"
+  },
+  "doubts": [
+   "HbA1c is given only by diabetes status (without type 2 diabetes -0.53 (-0.61 to -0.44); with type 2 diabetes -1.08 (-1.27 to -0.89) percentage points) and no overall row; neither subgroup is extracted because the subgroup n are not given",
+   "binary end point events are derived from printed percentages of the full analysis set, not from counts",
+   "baselines for blood pressure and lipids are in Table S2, not captured"
+  ]
+ }
+}

@@ -154,7 +154,7 @@ else:
 st.POOL, st.CRITERIA_VERSION = "embase", "v1"
 
 EXPECTED = dict(v1_include=338, v2_rescued=24, pool2_include=185)
-EXPECTED_POOL3 = None  # set from SCREENING_SUMMARY_batch3_v2.md once chain4 has run, then gated like the others
+EXPECTED_POOL3 = 29  # SCREENING_SUMMARY_batch3_v2.md, chain4 complete 2026-10-16 12:14: 29 of 99 included, then gated like the others
 got = dict(v1_include=n_v1_inc, v2_rescued=n_v2_resc, pool2_include=n_p2_inc)
 if got != EXPECTED:
     print(f"FAIL: stage counts {got} differ from the committed summaries {EXPECTED}")

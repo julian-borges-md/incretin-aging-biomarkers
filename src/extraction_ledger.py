@@ -143,7 +143,10 @@ def main():
             g = r["study_group"]
             ids = [i.strip() for i in (r.get("ids") or "").split(";") if i.strip()]
             st = staging_state(g)
-            if r["status"] != "included":
+            # A group extracted in this process enters the master, and the next pool build then flags
+            # its records as already_extracted (identifier in an extraction file); the staging record
+            # keeps precedence so the group stays in the ledger under its own status.
+            if r["status"] != "included" and not (r["status"] == "already_extracted" and st["status"]):
                 status = "not_included"
             elif st["status"]:
                 status = st["status"]

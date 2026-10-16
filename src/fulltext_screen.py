@@ -148,18 +148,20 @@ def load_items():
     if not os.path.exists(POOL):
         print("FAIL: pool file missing; run src/build_fulltext_pool.py"); sys.exit(1)
     pool = list(csv.DictReader(open(POOL)))
-    if len(pool) != 547:
-        print(f"FAIL: pool has {len(pool)} rows, expected 547"); sys.exit(1)
+    # 547 records from pools 1 and 2 (16 October, 08:00); 576 once the 29 pool 3 includes (Web of
+    # Science only records, chain4 complete 12:14) joined through src/build_fulltext_pool.py.
+    if len(pool) != 576:
+        print(f"FAIL: pool has {len(pool)} rows, expected 576"); sys.exit(1)
     epmc = read_manifest(EPMC_MANIFEST, None)
     ctgov = read_manifest(CTGOV_MANIFEST, None)
     direct = read_manifest(DIRECT_MANIFEST, None)
     proxy = read_proxy_manifest()
     # abstracts come from the gated exports through the screening parser
     abstracts = {}
-    for pool_name in ("embase", "batch2"):
+    for pool_name, pool_code in (("embase", "1"), ("batch2", "2"), ("batch3", "3")):
         st.POOL = pool_name
         for r in st.parse_ris():
-            abstracts[("1" if pool_name == "embase" else "2", r["n"])] = r
+            abstracts[(pool_code, r["n"])] = r
     st.POOL = "embase"
     items = []
     for r in pool:

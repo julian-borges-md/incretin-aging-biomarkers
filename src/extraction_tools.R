@@ -194,6 +194,22 @@ resolve_effect <- function(row) {
     return(list(yi = lr$yi, se = lr$se, route = paste0("log_", row$measure, "_ci")))
   }
 
+  # Route 2b (2026-10-16, systematic corpus): a binary outcome reported as events per arm
+  # (MASH resolution, fibrosis improvement). The log risk ratio and its standard error come from
+  # the two by two table (Woolf): se = sqrt(1/a - 1/n1 + 1/c - 1/n2). A zero cell would need a
+  # continuity correction, so the route refuses it and the row stays unresolved rather than taking
+  # a silent 0.5. Only taken when the paper gives no ratio with an interval (Route 2 first).
+  if (has(row$events_tx) && has(row$events_ctrl) && has(row$n_tx) && has(row$n_ctrl) &&
+      has(row$measure) && row$measure == "RR" && !has(row$yi_reported)) {
+    a <- row$events_tx; n1 <- row$n_tx; c <- row$events_ctrl; n2 <- row$n_ctrl
+    if (a <= 0 || c <= 0 || a >= n1 || c >= n2) {
+      return(list(yi = NA_real_, se = NA_real_, route = "events_zero_cell"))
+    }
+    yi <- log((a / n1) / (c / n2))
+    se <- sqrt(1 / a - 1 / n1 + 1 / c - 1 / n2)
+    return(list(yi = yi, se = se, route = "events_log_RR"))
+  }
+
   # Route 3: estimate with a standard error given directly.
   if (has(row$yi_reported) && has(row$se_reported)) {
     return(list(yi = row$yi_reported, se = row$se_reported, route = "se_reported"))
