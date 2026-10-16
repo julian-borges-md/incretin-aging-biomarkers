@@ -143,9 +143,10 @@ if got != EXPECTED:
 # ---------------------------------------------------------------------------
 # Identifiers the screening parser does not carry: PMID (CENTRAL C3), raw abstracts for NCT scan
 # ---------------------------------------------------------------------------
-c3 = {}
-for i, rec in enumerate(raw_fields("central", {"C3"}), 1):
+c3, ja = {}, {}
+for i, rec in enumerate(raw_fields("central", {"C3", "JA"}), 1):
     c3[i] = pmid_from_c3(rec.get("C3", []))
+    ja[i] = " ".join(rec.get("JA", []))  # registry derived records carry the registry URL here
 known = []
 with open(MASTER, newline="") as fh:
     for r in csv.DictReader(fh):
@@ -158,8 +159,10 @@ known_ncts = {m for k in known for m in NCT.findall(k["trial_id"] or "")}
 for r in rows:
     r["doi"] = norm_doi(r.get("doi"))
     r["pmid"] = c3.get(r["source_n"], "") if r["source"] == "central" else ""
-    text = f"{r['accession']} {r['title']} {r.get('abstract', '')}"
+    text = f"{r['accession']} {r['title']} {r.get('abstract', '')} {ja.get(r['source_n'], '') if r['source'] == 'central' else ''}"
     r["nct_ids"] = ";".join(sorted(set(NCT.findall(text))))
+    m = re.search(r"TrialID=([A-Za-z0-9\-]+)", ja.get(r["source_n"], "")) if r["source"] == "central" else None
+    r["registry_id"] = (r["accession"] if r["accession"].startswith("NCT") else (r["nct_ids"].split(";")[0] if r["nct_ids"] and "registry" in (r.get("rtype") or "").lower() else (m.group(1) if m else "")))
     r["already_extracted"] = "yes" if (r["doi"] and r["doi"] in known_dois) or (r["pmid"] and r["pmid"] in known_pmids) \
         or (set(r["nct_ids"].split(";")) & known_ncts) else "no"
     rt = (r.get("rtype") or "").lower()
@@ -216,7 +219,7 @@ for gid, (root, idx) in enumerate(sorted(groups.items(), key=lambda kv: min(kv[1
         rows[i]["group_size"] = len(idx)
 
 fields = ["pool", "stage", "n", "source", "source_n", "accession", "year", "publication_type", "doi", "pmid",
-          "nct_ids", "matched_known", "already_extracted", "route", "study_group", "group_size", "title"]
+          "nct_ids", "registry_id", "matched_known", "already_extracted", "route", "study_group", "group_size", "title"]
 with open(OUT_CSV, "w", newline="") as fh:
     w = csv.DictWriter(fh, fieldnames=fields, extrasaction="ignore")
     w.writeheader()
@@ -234,6 +237,8 @@ by_type = Counter(r["publication_type"] for r in rows)
 n_groups = len(groups)
 multi = [idx for idx in groups.values() if len(idx) > 1]
 reg_linked = sum(1 for r in rows if r["route"] == "registry_record" and r["group_size"] > 1)
+reg_nct = sum(1 for r in rows if r["route"] == "registry_record" and r["registry_id"].startswith("NCT"))
+reg_other = sum(1 for r in rows if r["route"] == "registry_record" and r["registry_id"] and not r["registry_id"].startswith("NCT"))
 with_doi = sum(1 for r in rows if r["doi"])
 with_pmid = sum(1 for r in rows if r["pmid"])
 with_nct = sum(1 for r in rows if r["nct_ids"])
@@ -253,7 +258,8 @@ md = ["# Full text screening pool, assembled 16 October 2026\n",
       f"| Already extracted (DOI, PMID or NCT in the extraction master) | {n_extracted} |",
       f"| Candidate studies after grouping (shared DOI, title or NCT) | {n_groups} |",
       f"| Groups with more than one record | {len(multi)} (records in them {sum(len(g) for g in multi)}) |",
-      f"| Registry records grouped with another record in the pool | {reg_linked} of {by_route['registry_record']} |\n",
+      f"| Registry records grouped with another record in the pool | {reg_linked} of {by_route['registry_record']} |",
+      f"| Registry records by register | ClinicalTrials.gov {reg_nct}; other registers via ICTRP {reg_other}; no identifier {by_route['registry_record'] - reg_nct - reg_other} |\n",
       "| Retrieval route | Records | What retrieval means |\n|---|---|---|",
       f"| doi | {by_route['doi']} | journal article, fetch by DOI through the institutional route |",
       f"| pmid | {by_route['pmid']} | journal article without DOI in the record, fetch by PMID |",

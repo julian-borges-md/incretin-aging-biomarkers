@@ -7,12 +7,13 @@ Produced by `src/build_fulltext_pool.py` from the screening decision files and t
 | Records in the pool | 547 |
 | By stage | v1 include 338; v2 rescued 24; pool 2 include 185 |
 | By source | embase 362; central 159; embase_registry 26 |
-| With DOI / with PMID / with an NCT identifier in the record | 381 / 29 / 142 |
+| With DOI / with PMID / with an NCT identifier in the record | 381 / 29 / 172 |
 | Linked to a known relevant trial at screening | 38 |
 | Already extracted (DOI, PMID or NCT in the extraction master) | 14 |
-| Candidate studies after grouping (shared DOI, title or NCT) | 452 |
-| Groups with more than one record | 42 (records in them 137) |
-| Registry records grouped with another record in the pool | 15 of 140 |
+| Candidate studies after grouping (shared DOI, title or NCT) | 439 |
+| Groups with more than one record | 54 (records in them 162) |
+| Registry records grouped with another record in the pool | 40 of 140 |
+| Registry records by register | ClinicalTrials.gov 56; other registers via ICTRP 84; no identifier 0 |
 
 | Retrieval route | Records | What retrieval means |
 |---|---|---|

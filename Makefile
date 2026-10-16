@@ -81,6 +81,10 @@ fulltext-access:
 	python3 -I src/epmc_harvest.py
 	python3 -I src/fulltext_access_summary.py
 
+# ClinicalTrials.gov entries for the pool's registry records with an NCT identifier (public API v2, no key)
+registry-harvest:
+	python3 -I src/ctgov_harvest.py
+
 clean:
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep
