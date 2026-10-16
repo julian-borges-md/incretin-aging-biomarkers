@@ -179,8 +179,39 @@ message(sprintf("UNIT FAMILY SELF TEST: %d of %d row shapes classified as expect
 
 if (!"measure" %in% names(dat)) dat$measure <- NA_character_
 
+# Second source of a denominator (2026-10-16, systematic corpus): the row's own baseline means,
+# base_mean_tx and base_mean_ctrl, copied by the extractor from the paper's baseline table (the
+# extraction brief requires them for every absolute difference row). The pooled baseline is the
+# n weighted mean of the two arms when both means and both n are present, the simple mean when the
+# n are missing, and the one arm's mean when only one is reported. The hand keyed BASELINE table
+# above keeps precedence, so every entry made under amendment R1 is unchanged; the source of each
+# denominator is recorded in baseline_source either way.
+num <- function(x) suppressWarnings(as.numeric(x))
+for (cl in c("base_mean_tx", "base_mean_ctrl", "n_tx", "n_ctrl")) {
+  if (!cl %in% names(dat)) dat[[cl]] <- NA_real_
+}
 dat <- dat |>
+  mutate(
+    .btx = num(base_mean_tx), .bct = num(base_mean_ctrl), .ntx = num(n_tx), .nct = num(n_ctrl),
+    row_baseline = case_when(
+      !is.na(.btx) & !is.na(.bct) & !is.na(.ntx) & !is.na(.nct) & (.ntx + .nct) > 0 ~
+        (.btx * .ntx + .bct * .nct) / (.ntx + .nct),
+      !is.na(.btx) & !is.na(.bct) ~ (.btx + .bct) / 2,
+      !is.na(.btx) ~ .btx,
+      !is.na(.bct) ~ .bct,
+      TRUE ~ NA_real_
+    )
+  ) |>
   left_join(BASELINE, by = c("trial_id", "biomarker")) |>
+  mutate(
+    baseline_source = case_when(
+      !is.na(baseline_mean) ~ baseline_source,
+      !is.na(row_baseline) ~ "row base_mean_tx and base_mean_ctrl from the extraction (n weighted when n given)",
+      TRUE ~ NA_character_
+    ),
+    baseline_mean = coalesce(baseline_mean, row_baseline)
+  ) |>
+  select(-.btx, -.bct, -.ntx, -.nct, -row_baseline) |>
   mutate(
     se_native = sqrt(vi),
     unit_family = classify_unit(se_route, measure, biomarker, baseline_mean),

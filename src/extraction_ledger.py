@@ -18,6 +18,9 @@ Status per group (first that applies)
               | held_pending_decision                (from reconciled.json)
   in_extraction        at least one extractor file exists, no reconciliation yet
   already_extracted    an identifier of the group is in an extraction file in analysis/data
+  no_usable_contrast_scan  no full text and no dispersion, interval or exact p in any text of the
+                       group (work/extraction/abstract_scan.csv, src/abstract_scan.py): closed without a read
+  waiting_screen       a full text of the group still awaits its second reviewer or adjudication
   queued               included, packet present, nothing started
   not_included         screening status is not included (pending, excluded, no_text)
 
@@ -80,6 +83,17 @@ def known_identifiers():
     return ids
 
 
+def pending_fulltext(group):
+    """True when a full text in the packet has no final screening decision yet."""
+    p = os.path.join(ROOT, "work", "extraction", "packets", str(group), "packet.json")
+    if not os.path.exists(p):
+        return False
+    with open(p) as fh:
+        d = json.load(fh)
+    return any(t.get("final") == "pending" and t.get("source") in ("epmc_fulltext", "direct_fulltext", "proxy_fulltext")
+               for t in d.get("texts", []))
+
+
 def staging_state(group):
     d = os.path.join(STAGING, str(group))
     rec = os.path.join(d, "reconciled.json")
@@ -94,7 +108,7 @@ def staging_state(group):
                    biomarkers_reported_no_variance=";".join(j.get("biomarkers_reported_no_variance", [])),
                    other_markers=";".join(j.get("other_markers", [])))
         return out
-    ex = [x for x in ("A", "B", "V") if os.path.exists(os.path.join(d, f"{x}.csv")) or os.path.exists(os.path.join(d, f"{x}.json"))]
+    ex = [x for x in ("A", "B", "V", "S") if os.path.exists(os.path.join(d, f"{x}.csv")) or os.path.exists(os.path.join(d, f"{x}.json"))]
     if ex:
         out.update(status="in_extraction", extractors="".join(ex))
         for x in ex:
@@ -118,6 +132,11 @@ def main():
             for r in csv.DictReader(fh):
                 packets[r["study_group"]] = r
     known = known_identifiers()
+    scan = {}
+    scan_path = os.path.join(ROOT, "work", "extraction", "abstract_scan.csv")
+    if os.path.exists(scan_path):
+        with open(scan_path, newline="") as fh:
+            scan = {r["study_group"]: r for r in csv.DictReader(fh)}
     rows = []
     with open(results_csv(), newline="") as fh:
         for r in csv.DictReader(fh):
@@ -130,6 +149,13 @@ def main():
                 status = st["status"]
             elif any((norm_doi(i) in known) or (i in known) for i in ids):
                 status = "already_extracted"
+            elif g in scan and scan[g]["verdict"] == "no_variance_marks":
+                status = "no_usable_contrast_scan"
+                st["reason"] = (f"deterministic scan (src/abstract_scan.py): no dispersion, interval or exact p in "
+                                f"{scan[g]['chars']} characters across {scan[g]['texts']} text(s) ({scan[g]['sources']})")
+            elif g in packets and pending_fulltext(g):
+                status = "waiting_screen"
+                st["reason"] = "a full text of the group is still pending its second reviewer or adjudication"
             elif g in packets:
                 status = "queued"
             else:

@@ -21,7 +21,9 @@ Commands
       {status extracted, file, rows, extractors, note, resolution, disagreements_at_write}.
   close GROUP --status STATUS --reason TEXT [--molecule M]
       no rows for this group: STATUS is excluded_at_extraction, molecule_not_admitted,
-      no_usable_contrast or held_pending_decision; the extractor JSON notes are folded in.
+      no_usable_contrast, held_pending_decision, already_extracted (the trial is in the master
+      under another record) or ongoing_no_results (a registered trial without results);
+      the extractor JSON notes are folded in.
 
 Usage
   python3 -I src/reconcile_extraction.py compare 18
@@ -111,13 +113,15 @@ def append_rob(group, rows, notes, pair, resolve):
     if not robs:
         print(f"  no rob object in the JSON notes of {pair}: add the RoB-2 row to {os.path.relpath(ROB_FILE, ROOT)} by hand")
         return
-    trial_id = rows[0]["trial_id"] if rows else notes[pair[0]].get("trial_id", "")
+    trial_ids = []
+    for r in rows:
+        if r["trial_id"] not in trial_ids:
+            trial_ids.append(r["trial_id"])
+    if not trial_ids:
+        trial_ids = [notes[pair[0]].get("trial_id", "")]
     with open(ROB_FILE, newline="") as fh:
         existing = list(csv.DictReader(fh))
         hdr = list(existing[0].keys())
-    if any(r["trial_id"] == trial_id for r in existing):
-        print(f"  RoB-2 row for {trial_id} already present")
-        return
     vals = list(robs.values())
     diff = [dom for dom in ROB_DOMAINS if len({norm(v.get(dom)) for v in vals}) > 1]
     if diff and not resolve:
@@ -125,15 +129,21 @@ def append_rob(group, rows, notes, pair, resolve):
         sys.exit(1)
     src = robs[pair[0]] if pair[0] in robs else vals[0]
     just = " | ".join(f"{x}: {v.get('justification', '')}" for x, v in robs.items())
-    row = dict(trial_id=trial_id, first_author=rows[0]["first_author"] if rows else "", year=rows[0]["year"] if rows else "",
-               pmid=rows[0]["pmid"] if rows else "", design=notes[pair[0]].get("design", "")[:200],
-               justification=just + (f" | resolution: {resolve}" if diff else ""))
-    for dom in ROB_DOMAINS:
-        row[dom] = src.get(dom, "")
-    with open(ROB_FILE, "a", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=hdr, extrasaction="ignore")
-        w.writerow(row)
-    print(f"  RoB-2 row appended for {trial_id}: {row['overall']}")
+    for trial_id in trial_ids:
+        if any(r["trial_id"] == trial_id for r in existing):
+            print(f"  RoB-2 row for {trial_id} already present")
+            continue
+        first = next((r for r in rows if r["trial_id"] == trial_id), None) or {}
+        row = dict(trial_id=trial_id, first_author=first.get("first_author", ""), year=first.get("year", ""),
+                   pmid=first.get("pmid", ""), design=notes[pair[0]].get("design", "")[:200],
+                   justification=just + (f" | resolution: {resolve}" if diff else "")
+                   + (" | one rob object covers the trials of this group" if len(trial_ids) > 1 else ""))
+        for dom in ROB_DOMAINS:
+            row[dom] = src.get(dom, "")
+        with open(ROB_FILE, "a", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=hdr, extrasaction="ignore")
+            w.writerow(row)
+        print(f"  RoB-2 row appended for {trial_id}: {row['overall']}")
 
 
 def write(group, src, name, single=False, note="", resolve="", pair=("A", "B")):
@@ -158,7 +168,7 @@ def write(group, src, name, single=False, note="", resolve="", pair=("A", "B")):
         sys.exit(f"{out} exists: choose another name or remove it deliberately")
     rows = read(p)
     notes = {}
-    for x in ("A", "B", "V"):
+    for x in ("A", "B", "V", "S"):
         jp = os.path.join(d, f"{x}.json")
         if os.path.exists(jp):
             with open(jp) as fh:
@@ -225,7 +235,8 @@ def main(argv):
     elif cmd == "close":
         if "status" not in opts or "reason" not in opts:
             sys.exit("close needs --status and --reason")
-        if opts["status"] not in ("excluded_at_extraction", "molecule_not_admitted", "no_usable_contrast", "held_pending_decision"):
+        if opts["status"] not in ("excluded_at_extraction", "molecule_not_admitted", "no_usable_contrast",
+                                  "held_pending_decision", "already_extracted", "ongoing_no_results"):
             sys.exit("unknown status")
         close(group, opts["status"], opts["reason"], opts.get("molecule", ""))
 
