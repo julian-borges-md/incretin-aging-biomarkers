@@ -36,3 +36,14 @@ Each was read and each extraction is correct: `Gamma- GT` for GGT (EudraCT 2013-
 `FINS` for fasting insulin (Derosa 2010, Quan 2017), `TG,` for triglycerides (Suzuki 2014), `THC` for
 total cholesterol (Zhu 2017) and `HbA1 c` for HbA1c (PROXYMO, two rows). The vocabulary now holds
 them, which is the fix: a label the check cannot read is a check defect, not an extraction defect.
+
+## A capture practice the gate taught, same day
+
+The six SURPASS-3 MRI rows extracted on 16 October were WEAK on their first pass, because the
+companion capture kept each marker's label at the head of a fourteen line block while the gate looks
+eight lines either side. The fix was not to widen the window. The capture was rewritten so that every
+value line names its own marker, in the form `LFC percentage, relative ETD, tirzepatide 10 mg vs
+insulin degludec: -35.94 (-51.62 to -20.27)`, and all six rows then verified line by line rather than
+by proximity; the vocabulary also gained the `LFC` abbreviation the source uses. Captures written from
+now on should label each value line, because a line that states its own marker is verifiable on its
+own and a block header is not.

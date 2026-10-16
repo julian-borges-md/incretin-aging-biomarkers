@@ -73,7 +73,7 @@ SYNONYMS = {
     "VAT": ["visceral", "vat"],
     "lean_mass": ["lean"],
     "body_fat_pct": ["body fat", "fat mass", "fat percentage", "fat, %"],
-    "liver_fat_pdff": ["liver fat", "pdff", "intrahepatic", "hepatic fat", "steatosis", "ihl"],
+    "liver_fat_pdff": ["liver fat", "pdff", "lfc", "intrahepatic", "hepatic fat", "steatosis", "ihl"],
     "NTproBNP": ["probnp", "natriuretic"],
     "MR_proANP": ["proanp", "natriuretic"],
     "glucagon": ["glucagon"],

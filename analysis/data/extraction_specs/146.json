@@ -16,31 +16,105 @@
   "comparator_type": "active",
   "duration_weeks": "52",
   "population": "T2D",
-  "n_tx": "151",
+  "n_tx": "",
   "n_ctrl": "74",
   "assessment_timepoint_weeks": "52",
   "pct_weight_change": "",
   "prespecified_endpoint": "TRUE",
   "industry_funded": "TRUE",
   "rob_overall": "some_concerns",
-  "notes": "STUDY: SURPASS-3 MRI, the prespecified MRI substudy of the randomised open label parallel group phase 3 SURPASS-3 trial (NCT03882970) at 45 centres in eight countries; adults with type 2 diabetes, HbA1c 7.0 to 10.5 per cent, BMI 25 or more, insulin naive, on metformin with or without an SGLT2 inhibitor, and for the substudy a fatty liver index of 60 or more; randomised 1:1:1:1 to once weekly tirzepatide 5, 10 or 15 mg or once daily titrated insulin degludec; 296 of 502 assessed formed the enrolled MRI population (71, 79, 72 and 74). HOW THIS ROW CAME TO BE EXTRACTED: study group 146 holds the 2022 conference abstract of this substudy and had been closed as no_usable_contrast, correctly for that record, which keeps every number in a table it does not carry. The group was reopened on 16 October after src/packet_grouping_check.py showed that group 146 bundles two unrelated studies and that the SURPASS-3 record had never been assessed on its own (docs/PACKET_GROUPING_TRIAGE.md). The indexed abstract of the full article, retrieved through the PubMed connector and written to work/fulltext/companion/surpass3_mri_gastaldelli2022_abstract.txt, carries the substudy's primary endpoint in full, so that one row is extracted here. SURPASS-3 is not otherwise in the corpus and this is the first liver fat contrast of the GLP-1 and GIP class. DOSE: the primary endpoint pools the tirzepatide 10 mg and 15 mg groups, so n_tx is 151 and dose_mg is left EMPTY rather than invented as a mean of two doses; the dose blank duplicate gate added to build_master.R on the same day exists to catch a later dosed row of the same contrast. NOT EXTRACTED, because they are in the article's tables and not in the indexed abstract: the visceral and abdominal subcutaneous adipose tissue volumes with their intervals, the adiponectin and leptin contrasts that the conference abstract of the same substudy describes in words, the weight change of the MRI subpopulation, and the per arm baseline table. Those are the first item of the supplement queue. pct_weight_change is left empty for the same reason: the abstract gives a correlation between liver fat and weight change (rho 0.34) and no weight figure. industry_funded TRUE: Eli Lilly and Company. The second study in this packet, a liraglutide muscle fat infiltration trial, remains no_usable_contrast and is recorded in the triage document"
+  "notes": "STUDY: SURPASS-3 MRI, the prespecified MRI substudy of the randomised open label parallel group phase 3 SURPASS-3 trial (NCT03882970) at 45 centres in eight countries; adults with type 2 diabetes, HbA1c 7.0 to 10.5 per cent, BMI 25 or more, insulin naive, on metformin with or without an SGLT2 inhibitor, and for the substudy a fatty liver index of 60 or more; randomised 1:1:1:1 to once weekly tirzepatide 5, 10 or 15 mg or once daily titrated insulin degludec; 296 of 502 assessed formed the enrolled MRI population (71, 79, 72 and 74). HOW THIS CAME TO BE EXTRACTED: group 146 had been closed as no_usable_contrast, correctly for the conference abstract it holds, which keeps every number in a table it does not carry. It was reopened on 16 October after src/packet_grouping_check.py showed that the packet bundles two unrelated studies and that the SURPASS-3 record had never been assessed on its own (docs/PACKET_GROUPING_TRIAGE.md). A first pass took the pooled 10 and 15 mg liver fat contrast from the indexed abstract; this extraction REPLACES that single row with the six dose specific contrasts of the article's Table 2, read through the institutional route on ScienceDirect and captured to work/fulltext/companion/surpass3_mri_gastaldelli2022_table2.txt. SURPASS-3 was not otherwise in the corpus and these are the first liver fat and visceral fat contrasts of the GLP-1 and GIP class. SCALE: Table 2 prints, for each marker, the absolute change with its estimated treatment difference AND the relative change from baseline with its own estimated treatment difference. The relative rows are already the comparator corrected percent change the pipeline pools, so every row here is measure PCT on the relative estimated treatment difference and needs no baseline denominator; the absolute differences are in the capture for the audit and are not entered, because entering both would double count the arm. NOT EXTRACTED: neither adiponectin nor leptin appears anywhere in the article's main text or tables, although the substudy's own conference abstract states that all tirzepatide doses increased adiponectin and decreased leptin against insulin degludec; those two belong to the appendix of clinical and laboratory parameters and stay in the supplement queue. Table 2 carries no body weight row, so pct_weight_change is empty on all six rows and they are outside the weight adjusted meta-regression; the abstract gives only a correlation of the liver fat change with the weight change (rho 0.34). Abdominal subcutaneous fat, visceral fat as a percentage of total abdominal fat, the visceral to subcutaneous ratio and the proportions reaching liver fat targets are reported and are not inventory keys. industry_funded TRUE: Eli Lilly and Company. The second study in this packet, a liraglutide muscle fat infiltration trial, remains no_usable_contrast"
  },
  "rows": [
   {
    "biomarker": "liver_fat_pdff",
-   "measure": "MD",
-   "unit": "percentage points of liver fat",
-   "yi_reported": "-4.71",
-   "ci_lb_reported": "-6.72",
-   "ci_ub_reported": "-2.70",
-   "p_is_bound": "TRUE",
-   "p_reported": "0.0001",
+   "measure": "PCT",
+   "unit": "percent relative change",
+   "yi_reported": "-18.61",
+   "ci_lb_reported": "-34.17",
+   "ci_ub_reported": "-3.04",
+   "p_reported": "0.019",
+   "p_is_bound": "FALSE",
    "se_source": "ci_95",
-   "base_mean_tx": "15.71",
-   "base_sd_tx": "8.93",
-   "base_mean_ctrl": "15.71",
-   "base_sd_ctrl": "8.93",
-   "notes": "Primary endpoint of the substudy, change from baseline in liver fat content by MRI proton density fat fraction at week 52: pooled tirzepatide 10 and 15 mg minus 8.09 per cent (SE 0.57) against insulin degludec minus 3.38 per cent (SE 0.83), estimated treatment difference minus 4.71 percentage points of liver fat (95 per cent CI minus 6.72 to minus 2.70), p < 0.0001 (recorded as a bound). The denominator is the overall mean baseline liver fat content of 15.71 per cent (SD 8.93), which the abstract reports once for the whole MRI population rather than per arm, so the same value is entered for both arms and the relative reduction is 4.71 over 15.71, that is 30.0 per cent. n_tx 151 is the sum of the two pooled arms printed in the abstract, 79 on tirzepatide 10 mg and 72 on 15 mg, and is the one number of this row that the provenance check reports as not printed, by construction"
+   "n_tx": "71",
+   "n_ctrl": "74",
+   "dose_mg": "5",
+   "notes": "Table 2, liver fat content by MRI proton density fat fraction, RELATIVE change from baseline at week 52: estimated treatment difference for tirzepatide 5 mg against insulin degludec -18.61 per cent (95 per cent CI -34.17 to -3.04), p 0.019; arm relative change minus 29.78 (SE 5.61) against minus 11.17 (5.58) in the degludec arm"
+  },
+  {
+   "biomarker": "liver_fat_pdff",
+   "measure": "PCT",
+   "unit": "percent relative change",
+   "yi_reported": "-35.94",
+   "ci_lb_reported": "-51.62",
+   "ci_ub_reported": "-20.27",
+   "p_reported": "0.0001",
+   "p_is_bound": "TRUE",
+   "se_source": "ci_95",
+   "n_tx": "79",
+   "n_ctrl": "74",
+   "dose_mg": "10",
+   "notes": "Table 2, liver fat content by MRI proton density fat fraction, RELATIVE change from baseline at week 52: estimated treatment difference for tirzepatide 10 mg against insulin degludec -35.94 per cent (95 per cent CI -51.62 to -20.27), p <0.0001, recorded as a bound; arm relative change minus 47.11 (SE 5.58) against minus 11.17 (5.58)"
+  },
+  {
+   "biomarker": "liver_fat_pdff",
+   "measure": "PCT",
+   "unit": "percent relative change",
+   "yi_reported": "-28.42",
+   "ci_lb_reported": "-43.85",
+   "ci_ub_reported": "-13.00",
+   "p_reported": "0.0004",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "n_tx": "72",
+   "n_ctrl": "74",
+   "dose_mg": "15",
+   "notes": "Table 2, liver fat content by MRI proton density fat fraction, RELATIVE change from baseline at week 52: estimated treatment difference for tirzepatide 15 mg against insulin degludec -28.42 per cent (95 per cent CI -43.85 to -13.00), p 0.0004; arm relative change minus 39.59 (SE 5.42) against minus 11.17 (5.58)"
+  },
+  {
+   "biomarker": "VAT",
+   "measure": "PCT",
+   "unit": "percent relative change",
+   "yi_reported": "-24.45",
+   "ci_lb_reported": "-32.17",
+   "ci_ub_reported": "-16.73",
+   "p_reported": "0.0001",
+   "p_is_bound": "TRUE",
+   "se_source": "ci_95",
+   "n_tx": "71",
+   "n_ctrl": "74",
+   "dose_mg": "5",
+   "notes": "Table 2, visceral adipose tissue volume, RELATIVE change from baseline at week 52: estimated treatment difference for tirzepatide 5 mg against insulin degludec -24.45 per cent (95 per cent CI -32.17 to -16.73), p <0.0001, recorded as a bound; arm relative change minus 16.33 (SE 2.80) against plus 8.12 (2.72) in the degludec arm"
+  },
+  {
+   "biomarker": "VAT",
+   "measure": "PCT",
+   "unit": "percent relative change",
+   "yi_reported": "-33.20",
+   "ci_lb_reported": "-40.77",
+   "ci_ub_reported": "-25.63",
+   "p_reported": "0.0001",
+   "p_is_bound": "TRUE",
+   "se_source": "ci_95",
+   "n_tx": "79",
+   "n_ctrl": "74",
+   "dose_mg": "10",
+   "notes": "Table 2, visceral adipose tissue volume, RELATIVE change from baseline at week 52: estimated treatment difference for tirzepatide 10 mg against insulin degludec -33.20 per cent (95 per cent CI -40.77 to -25.63), p <0.0001, recorded as a bound; arm relative change minus 25.08 (SE 2.66) against plus 8.12 (2.72)"
+  },
+  {
+   "biomarker": "VAT",
+   "measure": "PCT",
+   "unit": "percent relative change",
+   "yi_reported": "-32.07",
+   "ci_lb_reported": "-39.69",
+   "ci_ub_reported": "-24.45",
+   "p_reported": "0.0001",
+   "p_is_bound": "TRUE",
+   "se_source": "ci_95",
+   "n_tx": "72",
+   "n_ctrl": "74",
+   "dose_mg": "15",
+   "notes": "Table 2, visceral adipose tissue volume, RELATIVE change from baseline at week 52: estimated treatment difference for tirzepatide 15 mg against insulin degludec -32.07 per cent (95 per cent CI -39.69 to -24.45), p <0.0001, recorded as a bound; arm relative change minus 23.95 (SE 2.70) against plus 8.12 (2.72)"
   }
  ],
  "json": {
@@ -49,7 +123,6 @@
   "design": "prespecified MRI substudy of a randomised open label parallel group phase 3 trial, 52 weeks",
   "reason": "",
   "biomarkers_reported_no_variance": [
-   "VAT",
    "adiponectin",
    "leptin"
   ],
@@ -59,7 +132,7 @@
    "HbA1c and body weight of the main trial"
   ],
   "tables_used": [
-   "indexed abstract of Gastaldelli 2022 (companion capture)"
+   "Table 2 of Gastaldelli 2022 (companion capture, institutional route)"
   ],
   "rob": {
    "d1_randomisation": "low",
@@ -71,9 +144,10 @@
    "justification": "d1 low: randomised 1:1:1:1 centrally by an interactive web response system and stratified by country, HbA1c and concomitant oral agent. d2 some_concerns: the trial is open label, a weekly injection against a titrated daily insulin, although the endpoint here is an imaging measure rather than a behavioural or reported one. d3 some_concerns: 296 of the 502 assessed entered the enrolled MRI population, which is the modified intention to treat set with a valid MRI at baseline or after, and the abstract gives no attrition by arm. d4 low: MRI proton density fat fraction, a quantitative imaging measure read centrally. d5 low: this is the substudy's prespecified primary endpoint, reported with its interval."
   },
   "doubts": [
-   "the row pools the tirzepatide 10 mg and 15 mg groups, as the prespecified endpoint does, so dose_mg is empty",
-   "the baseline denominator is the whole MRI population's mean liver fat content, not an arm specific value, because the abstract reports one figure",
-   "visceral fat, adiponectin and leptin are described as improved against the comparator in the substudy's own conference abstract but their numbers are in the article's tables, so three markers of this trial are listed as reported without usable variance rather than extracted"
+   "the six rows are the relative change estimated treatment differences; the absolute differences of the same table are deliberately not entered, because both would double count the arm",
+   "adiponectin and leptin are described as improved against the comparator in the substudy's own conference abstract and appear nowhere in the article, so they stay in the supplement queue",
+   "Table 2 has no body weight row, so these rows carry no pct_weight_change and are outside the weight adjusted meta-regression",
+   "the trial is open label, although the extracted endpoints are quantitative imaging measures"
   ]
  }
 }
