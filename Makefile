@@ -42,6 +42,10 @@ sensitivity:
 dedup:
 	python3 -I src/dedup_embase.py
 
+# Same gates and linkage for the CENTRAL export, plus overlap with Embase
+dedup-central:
+	python3 -I src/dedup_embase.py central
+
 # Title and abstract screening by two blinded local reviewer agents, a third
 # adjudicating; models named only in the untracked search/screening/screener_config.json.
 screen:

@@ -27,7 +27,7 @@ PubMed searched for tirzepatide, retatrutide, survodutide, pemvidutide, mazdutid
 | Hepatic anchor | 95 PMIDs |
 | GDF-15 anchor | 13 PMIDs |
 
-Embase, CENTRAL and Web of Science searches are specified in the protocol and **have not yet been executed**. Strings are drafted and institutional access is available; this is outstanding work, not a decision to omit them.
+Embase and CENTRAL were executed on 15 October 2026 (`search/embase_2026-10-15/SEARCH_LOG.md`, `search/central_2026-10-15/SEARCH_LOG.md`). Web of Science has not been run. The statement that stood here until 15 October, that strings for all three were drafted, was not true for CENTRAL or Web of Science: no string for either existed anywhere in the repository or the vault, and the CENTRAL strategy is a dated translation of the Embase lines, recorded as such.
 
 ### Stream B: adopted from published reviews, mono-agonists
 
@@ -80,7 +80,7 @@ Neither stratifies by receptor class, and neither includes tirzepatide, retatrut
 
 The first category is the current bottleneck for Q2 and is a retrieval problem, not an eligibility one.
 
-**Update 2026-10-15, 21:10.** All five trials in the first category were retrieved in full through the BU EZproxy route (none is in PMC). Their status moves from "not accessible" to "retrieved, extraction pending three analysis rule decisions" (final value versus change score for parallel trials without change SDs, inventory reconciliation, crossover handling); details and the per trial extractable quantities are in `docs/MONO_TRIALS_RETRIEVAL_2026-10-15.md`. The Embase search has since been executed (710 hits, 659 article records, `search/embase_2026-10-15/SEARCH_LOG.md`); CENTRAL and Web of Science remain unrun, and the 514 record Web of Science export once attributed to this review belongs to another workstream (`docs/LICENSED_DATABASE_ACCESS.md`). The included set is now 7 trial analyses, 48 rows, 19 biomarkers, 43 rows convertible to the common scale.
+**Update 2026-10-15, 21:10.** All five trials in the first category were retrieved in full through the BU EZproxy route (none is in PMC). Their status moves from "not accessible" to "retrieved, extraction pending three analysis rule decisions" (final value versus change score for parallel trials without change SDs, inventory reconciliation, crossover handling); details and the per trial extractable quantities are in `docs/MONO_TRIALS_RETRIEVAL_2026-10-15.md`. The Embase search has since been executed (710 hits, 659 article records, `search/embase_2026-10-15/SEARCH_LOG.md`; the 51 registry records followed at 22:00), and CENTRAL at 22:10 (460 trial records, `search/central_2026-10-15/SEARCH_LOG.md`); Web of Science remains unrun, and the 514 record Web of Science export once attributed to this review belongs to another workstream (`docs/LICENSED_DATABASE_ACCESS.md`). The included set is now 7 trial analyses, 48 rows, 19 biomarkers, 43 rows convertible to the common scale.
 
 ## What a PRISMA diagram cannot yet show
 
@@ -92,8 +92,10 @@ The diagram will therefore be drawn for Stream A only, with Stream B shown as a 
 
 | Item | Status |
 |---|---|
-| Embase, CENTRAL, Web of Science searches | Strings drafted, access available, not run |
-| Second independent screener, blinded | Not implemented |
-| Kappa per screening stage | Cannot be computed until the above |
-| Full-text retrieval of the five paywalled placebo-controlled trials | Blocked on institutional access |
+| Embase search | Run 15 October 2026: 710 hits, 659 article records exported and screened, 51 registry records exported (22:00) |
+| CENTRAL search | Run 15 October 2026: 460 trial records exported; 260 overlap the Embase articles, 200 do not (143 registry derived, 57 journal articles) |
+| Web of Science search | Not run; no string exists |
+| Second independent screener, blinded | Implemented 15 October 2026 as two local reviewer agents with a third adjudicating (`src/screen_titles.py`); running on the 659 Embase articles |
+| Kappa per screening stage | Computed by `src/screen_titles.py summarise` once both reviewers finish (`search/screening/SCREENING_SUMMARY.md`) |
+| Full-text retrieval of the five paywalled placebo-controlled trials | Done 15 October 2026 through BU EZproxy; all five extracted under amendment R1 to R4 |
 | Record counts at each PRISMA step for Stream A | Partially available, needs reconstruction from search logs |
