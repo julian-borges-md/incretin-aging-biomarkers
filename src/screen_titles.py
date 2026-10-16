@@ -30,8 +30,11 @@ without a suffix). The pool "batch2" is the 51 Embase clinical trial registry
 records plus the 200 CENTRAL records that are not in the Embase article
 export (selected by the in_embase_export flag that src/dedup_embase.py
 central writes); its decision, adjudication and summary files carry the
-suffix _batch2 so the first pool is never touched. Both pools pass the same
-count and SHA-256 gates on their exports before a record is read.
+suffix _batch2 so the first pool is never touched. The pool "batch3" is the 99
+Web of Science records that are in neither the Embase nor the CENTRAL export
+(flag in_any_earlier_export written by src/dedup_embase.py wos); suffix
+_batch3. All pools pass the same count and SHA-256 gates on their exports
+before a record is read.
 
 Criteria versions. v1 is the prompt used for the first full run on the
 Embase pool. An audit of that run found the criteria misapplied in two
@@ -45,10 +48,10 @@ includes under v2. Includes are not revisited: an inclusion error is caught at
 full text, an exclusion error is not.
 
 Usage, from the repository root:
-  python3 -I src/screen_titles.py screen [--limit N] [--reviewer A|B] [--pool embase|batch2] [--criteria v1|v2]
-  python3 -I src/screen_titles.py rescreen-excluded --criteria v2 [--pool embase|batch2]
-  python3 -I src/screen_titles.py adjudicate [--pool embase|batch2] [--criteria v1|v2]
-  python3 -I src/screen_titles.py summarise [--pool embase|batch2] [--criteria v1|v2]
+  python3 -I src/screen_titles.py screen [--limit N] [--reviewer A|B] [--pool embase|batch2|batch3] [--criteria v1|v2]
+  python3 -I src/screen_titles.py rescreen-excluded --criteria v2 [--pool embase|batch2|batch3]
+  python3 -I src/screen_titles.py adjudicate [--pool embase|batch2|batch3] [--criteria v1|v2]
+  python3 -I src/screen_titles.py summarise [--pool embase|batch2|batch3] [--criteria v1|v2]
 """
 import hashlib
 import csv
@@ -74,6 +77,9 @@ EXPORTS = {
     "central": dict(ris="search/central_2026-10-15/central_460.ris", expected=460,
                     sha256="7c12c88115631e45195e82641d2b0a6f9c5bd0835d48f7972c5b08372c0547f3",
                     dedup="search/central_2026-10-15/central_460_dedup.csv"),
+    "wos": dict(ris="search/wos_2026-10-16/wos_317.ris", expected=317,
+                sha256="844f31118a3495a63892f8562f49ec8d52ab1f93cbade3b9a9051da3b12fa259",
+                dedup="search/wos_2026-10-16/wos_317_dedup.csv"),
 }
 POOLS = {
     "embase": dict(suffix="", title="the Embase export",
@@ -81,6 +87,9 @@ POOLS = {
     "batch2": dict(suffix="_batch2",
                    title="the Embase clinical trial registry records and the CENTRAL records not in the Embase export",
                    members=[("embase_registry", "all"), ("central", "not_in_embase")]),
+    "batch3": dict(suffix="_batch3",
+                   title="the Web of Science records not in the Embase or CENTRAL exports",
+                   members=[("wos", "not_in_earlier")], expected=99),
 }
 POOL = "embase"  # set by main() from --pool
 CRITERIA_VERSION = "v1"  # set by main() from --criteria
@@ -177,7 +186,7 @@ def parse_ris_file(name):
     if hashlib.sha256(raw).hexdigest() != ex["sha256"]:
         print(f"FAIL: {name}: SHA-256 differs from the logged value")
         sys.exit(1)
-    text = raw.decode("utf-8", errors="replace")
+    text = raw.decode("utf-8", errors="replace").lstrip("\ufeff")  # Web of Science writes a byte order mark
     recs, cur = [], None
     for line in text.splitlines():
         m = re.match(r"^([A-Z][A-Z0-9])  - ?(.*)$", line)
@@ -233,6 +242,11 @@ def parse_ris():
                 print(f"FAIL: {name}: in_embase_export flag missing; run src/dedup_embase.py central")
                 sys.exit(1)
             recs = [r for r in recs if flags[r["n"]]["in_embase_export"] == "no"]
+        elif rule == "not_in_earlier":
+            if not flags or "in_any_earlier_export" not in next(iter(flags.values())):
+                print(f"FAIL: {name}: in_any_earlier_export flag missing; run src/dedup_embase.py {name}")
+                sys.exit(1)
+            recs = [r for r in recs if flags[r["n"]]["in_any_earlier_export"] == "no"]
         for r in recs:
             r["matched_known"] = flags.get(r["n"], {}).get("matched_known") == "yes"
             r["source_n"] = r["n"]
@@ -241,6 +255,9 @@ def parse_ris():
         r["n"] = i
     if POOL == "batch2" and len(out) != 251:
         print(f"FAIL: batch2 pool has {len(out)} records, expected 251 (51 registry plus 200 CENTRAL only)")
+        sys.exit(1)
+    if pool().get("expected") and len(out) != pool()["expected"]:
+        print(f"FAIL: {POOL} pool has {len(out)} records, expected {pool()['expected']}")
         sys.exit(1)
     return out
 

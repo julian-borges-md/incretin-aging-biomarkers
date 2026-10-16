@@ -64,6 +64,16 @@ SOURCES = {
         out_csv="search/central_2026-10-15/central_460_dedup.csv",
         expected=460,
         sha256="7c12c88115631e45195e82641d2b0a6f9c5bd0835d48f7972c5b08372c0547f3",
+        overlap_with=("embase",),
+    ),
+    "wos": dict(
+        label="Web of Science",
+        ris="search/wos_2026-10-16/wos_317.ris",
+        out_md="search/wos_2026-10-16/RECALL_AND_DEDUP.md",
+        out_csv="search/wos_2026-10-16/wos_317_dedup.csv",
+        expected=317,
+        sha256="844f31118a3495a63892f8562f49ec8d52ab1f93cbade3b9a9051da3b12fa259",
+        overlap_with=("embase", "central"),
     ),
 }
 SOURCE = sys.argv[1] if len(sys.argv) > 1 else "embase"
@@ -77,9 +87,10 @@ OUT_MD = os.path.join(ROOT, SRC["out_md"])
 OUT_CSV = os.path.join(ROOT, SRC["out_csv"])
 EXPECTED_RECORDS = SRC["expected"]
 EXPECTED_SHA256 = SRC["sha256"]
-# The Embase export is the reference set for cross database overlap; the
-# same count and hash gates apply to it when it is read for that purpose.
-OVERLAP_REF = SOURCES["embase"] if SOURCE != "embase" else None
+# Cross database overlap: each later export is compared with the earlier ones
+# (CENTRAL with Embase; Web of Science with Embase and CENTRAL). The reference
+# exports pass the same count and hash gates when they are read for that purpose.
+OVERLAP_REFS = [(k, SOURCES[k]) for k in SRC.get("overlap_with", ())]
 
 
 def fail(msg):
@@ -120,9 +131,9 @@ if not os.path.exists(RIS):
 with open(RIS, "rb") as fh:
     raw = fh.read()
 sha = hashlib.sha256(raw).hexdigest()
-text = raw.decode("utf-8", errors="replace")
+text = raw.decode("utf-8", errors="replace").lstrip("\ufeff")  # Web of Science writes a byte order mark before the first TY
 n_ty = len(re.findall(r"^TY  - ", text, flags=re.M))
-n_er = len(re.findall(r"^ER  - ", text, flags=re.M))
+n_er = len(re.findall(r"^ER  -", text, flags=re.M))  # Web of Science writes ER without the trailing space
 if n_ty != EXPECTED_RECORDS or n_er != EXPECTED_RECORDS:
     fail(f"count gate: TY {n_ty}, ER {n_er}, expected {EXPECTED_RECORDS}")
 if sha != EXPECTED_SHA256:
@@ -184,18 +195,18 @@ dup_title = {t for t, c in title_counts.items() if c > 1}
 
 # Overlap with the Embase export (cross database deduplication), DOI first,
 # normalised title for the rest. The reference export passes the same gates.
-overlap = None
-if OVERLAP_REF is not None:
-    ref_path = os.path.join(ROOT, OVERLAP_REF["ris"])
+overlaps = []
+for ref_key, ref in OVERLAP_REFS:
+    ref_path = os.path.join(ROOT, ref["ris"])
     if not os.path.exists(ref_path):
         fail(f"overlap reference not found at {ref_path}")
     with open(ref_path, "rb") as fh:
         ref_raw = fh.read()
-    if hashlib.sha256(ref_raw).hexdigest() != OVERLAP_REF["sha256"]:
-        fail("overlap reference: SHA-256 differs from the logged value")
-    ref_records = parse_ris(ref_raw.decode("utf-8", errors="replace"))
-    if len(ref_records) != OVERLAP_REF["expected"]:
-        fail(f"overlap reference: parsed {len(ref_records)} records")
+    if hashlib.sha256(ref_raw).hexdigest() != ref["sha256"]:
+        fail(f"overlap reference {ref_key}: SHA-256 differs from the logged value")
+    ref_records = parse_ris(ref_raw.decode("utf-8", errors="replace").lstrip("\ufeff"))
+    if len(ref_records) != ref["expected"]:
+        fail(f"overlap reference {ref_key}: parsed {len(ref_records)} records")
     ref_dois = {norm_doi(first(r, "DO")) for r in ref_records if first(r, "DO")}
     ref_titles = {norm_title(first(r, "TI", "T1")) for r in ref_records if first(r, "TI", "T1")}
     n_by_doi = n_by_title = 0
@@ -207,9 +218,11 @@ if OVERLAP_REF is not None:
         elif x["title"] and norm_title(x["title"]) in ref_titles:
             how = "title"
             n_by_title += 1
-        x["in_embase_export"] = how or "no"
-    overlap = dict(label=OVERLAP_REF["label"], n=OVERLAP_REF["expected"],
-                   by_doi=n_by_doi, by_title=n_by_title)
+        x[f"in_{ref_key}_export"] = how or "no"
+    overlaps.append(dict(key=ref_key, label=ref["label"], n=ref["expected"], by_doi=n_by_doi, by_title=n_by_title))
+if overlaps:
+    for x in rows:
+        x["in_any_earlier_export"] = "yes" if any(x[f"in_{o['key']}_export"] != "no" for o in overlaps) else "no"
 
 # ---------------------------------------------------------------------------
 # Known corpus
@@ -327,7 +340,7 @@ md.append("\nAn item counts as retrieved when a record shares its DOI, or its fi
 md.append("| Set | Item | Matched by | Matched record title |\n|---|---|---|---|")
 for src, label, how, titles in recall_lines:
     md.append(f"| {src} | {label} | {how or 'NOT RETRIEVED'} | {titles} |")
-if overlap is not None:
+for overlap in overlaps:
     n_over = overlap["by_doi"] + overlap["by_title"]
     md.append(f"\n## Overlap with the {overlap['label']} export\n")
     md.append("| Quantity | Value |\n|---|---|")
@@ -336,8 +349,14 @@ if overlap is not None:
     md.append(f"| {LABEL} records also in {overlap['label']}, matched by normalised title only | {overlap['by_title']} |")
     md.append(f"| {LABEL} records not in the {overlap['label']} export | {EXPECTED_RECORDS - n_over} |")
     md.append("\nA title match without a DOI match is a candidate duplicate, not a confirmed one; the per record flag names the route.\n")
-md.append(f"\nPer record flags (matched_known, duplicate DOI, duplicate title"
-          f"{', in_embase_export' if overlap is not None else ''}) are in `{os.path.basename(OUT_CSV)}`, "
+if len(overlaps) > 1:
+    n_any = sum(1 for x in rows if x["in_any_earlier_export"] == "yes")
+    md.append(f"\n## Records not in any earlier export\n")
+    md.append("| Quantity | Value |\n|---|---|")
+    md.append(f"| {LABEL} records in at least one earlier export ({', '.join(o['label'] for o in overlaps)}) | {n_any} |")
+    md.append(f"| {LABEL} records in none of them (new to screening from this database) | {EXPECTED_RECORDS - n_any} |")
+flag_names = "".join(f", in_{o['key']}_export" for o in overlaps) + (", in_any_earlier_export" if len(overlaps) > 1 else "")
+md.append(f"\nPer record flags (matched_known, duplicate DOI, duplicate title{flag_names}) are in `{os.path.basename(OUT_CSV)}`, "
           "which stays untracked beside the export.\n")
 # A manual reading appended below the generated tables survives regeneration:
 # the generated part is replaced, the hand written part is kept verbatim.
@@ -351,8 +370,10 @@ with open(OUT_MD, "w") as fh:
     fh.write("\n".join(md) + "\n" + manual_tail)
 
 print(f"{LABEL}: records {EXPECTED_RECORDS}, with DOI {n_with_doi}, matched known {n_matched}, new to screening {n_new}")
-if overlap is not None:
+for overlap in overlaps:
     print(f"overlap with {overlap['label']}: {overlap['by_doi']} by DOI, {overlap['by_title']} by title only")
+if len(overlaps) > 1:
+    print(f"in none of the earlier exports: {sum(1 for x in rows if x['in_any_earlier_export'] == 'no')}")
 for src, (n, hit) in by_source.items():
     print(f"recall {src}: {hit}/{n}")
 print("wrote", os.path.relpath(OUT_MD, ROOT), "and", os.path.relpath(OUT_CSV, ROOT))

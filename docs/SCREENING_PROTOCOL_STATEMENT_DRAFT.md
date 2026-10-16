@@ -13,8 +13,8 @@ To state, in one place and before the full text decisions are used for anything,
 | Embase, journal articles | 659 | `search/embase_2026-10-15/embase_659.ris` (gitignored), SHA-256 recorded in `SEARCH_LOG.md`; count and checksum are asserted by every script that reads the file |
 | Embase, clinical trial registry records | 51 | `search/embase_2026-10-15/embase_registry_51.ris`, same gate |
 | CENTRAL | 460 trial records, of which 200 not in the Embase export by DOI or title | `search/central_2026-10-15/central_460.ris`, same gate; strategy is a dated translation of the Embase lines with every difference tabled in `SEARCH_LOG.md` |
-| Screened in total | 910 unique records in two pools | pool 1: the 659 Embase articles; pool 2: the 51 registry records plus the 200 CENTRAL only records |
-| Web of Science | not run | string drafted (`search/wos_DRAFT/WOS_STRATEGY_DRAFT.md`); the PRISMA flow must say so until it is run |
+| Web of Science Core Collection | 317 records, of which 99 in neither the Embase nor the CENTRAL export | `search/wos_2026-10-16/wos_317.ris`, same gate; strategy is the dated translation drafted in `search/wos_DRAFT/WOS_STRATEGY_DRAFT.md`, run 16 October (`search/wos_2026-10-16/SEARCH_LOG.md`) |
+| Screened in total | 910 unique records in two pools, plus pool 3 | pool 1: the 659 Embase articles; pool 2: the 51 registry records plus the 200 CENTRAL only records; pool 3: the 99 Web of Science only records (title and abstract screen under version 2 queued behind the full text chains; its includes then join the full text stage) |
 
 ## 3. Eligibility criteria
 
@@ -111,7 +111,7 @@ A report assessed on an abstract page because the library holds no subscription 
 | D-S3 Rescue rule for the rescreen ("either reviewer includes") stated as such in the methods | state it; silently fold into the adjudicated counts | state it |
 | D-S4 Records assessed on an abstract page for lack of a subscription | interlibrary request for the eligible ones after the full text decisions; author contact; record as assessed with limitation | interlibrary request for the ones the screen includes, limitation stated for the rest |
 | D-S5 The 3 reports not retrieved | record as not retrieved; further search by hand | record as not retrieved, retry 1-443 once more when the site answers |
-| D-S6 Web of Science | run the drafted string before the full text stage closes; run later; omit with justification | the Director's call, outside this statement |
+| D-S6 Web of Science | run on 16 October on the Director's instruction (317 records, 99 new); the 99 are screened as pool 3 and the includes go through the full text stage before the stage closes | done; remaining decision is whether the full text stage waits for pool 3 (proposed: yes) |
 | D-S7 The two residual known misses entering through the adopted list | state in methods as a documented second source; treat as a screening failure to be reported | state as a documented second source, with the sensitivity figure reported |
 
 ## 10. Reproduction
