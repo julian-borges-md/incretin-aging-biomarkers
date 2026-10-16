@@ -1,0 +1,525 @@
+trial_id,biomarker,located_in
+LYDIA,hsCRP,publisher full text
+LYDIA,TNF_alpha,publisher full text
+LYDIA,IL6,publisher full text
+NCT01595789,hsCRP,numbers not located in any retained source
+NCT01595789,TNF_alpha,numbers not located in any retained source
+SUSTAIN 4,HbA1c,publisher full text
+SUSTAIN 4,fasting_glucose,publisher full text
+SUSTAIN 4,DBP,publisher full text
+SUSTAIN 4,SBP,publisher full text
+SUSTAIN 4,resting_heart_rate,publisher full text
+SUSTAIN 4,HbA1c,publisher full text
+SUSTAIN 4,fasting_glucose,publisher full text
+SUSTAIN 4,DBP,publisher full text
+SUSTAIN 4,SBP,publisher full text
+SUSTAIN 4,resting_heart_rate,publisher full text
+EudraCT 2013-004947-22,HbA1c,publisher full text
+EudraCT 2013-004947-22,fasting_glucose,publisher full text
+EudraCT 2013-004947-22,SBP,publisher full text
+EudraCT 2013-004947-22,DBP,publisher full text
+EudraCT 2013-004947-22,resting_heart_rate,publisher full text
+EudraCT 2013-004947-22,TC,publisher full text
+EudraCT 2013-004947-22,TG,publisher full text
+EudraCT 2013-004947-22,eGFR,publisher full text
+EudraCT 2013-004947-22,AST,publisher full text
+EudraCT 2013-004947-22,ALT,publisher full text
+EudraCT 2013-004947-22,GGT,publisher full text
+EudraCT 2013-004947-22,hsCRP,publisher full text
+NCT01147627 Drum Tower MRS substudy,HbA1c,publisher full text
+NCT01147627 Drum Tower MRS substudy,fasting_glucose,numbers not located in any retained source
+NCT01147627 Drum Tower MRS substudy,fasting_insulin,numbers not located in any retained source
+NCT01147627 Drum Tower MRS substudy,TG,numbers not located in any retained source
+NCT01147627 Drum Tower MRS substudy,TC,publisher full text
+NCT01147627 Drum Tower MRS substudy,LDL,numbers not located in any retained source
+NCT01147627 Drum Tower MRS substudy,ALT,numbers not located in any retained source
+NCT01147627 Drum Tower MRS substudy,AST,numbers not located in any retained source
+NCT01147627 Drum Tower MRS substudy,TNF_alpha,publisher full text
+NCT01147627 Drum Tower MRS substudy,adiponectin,numbers not located in any retained source
+NCT01147627 Drum Tower MRS substudy,liver_fat_pdff,publisher full text
+NCT01761318,liver_fat_pdff,"mixed, capture and publisher"
+NCT01761318,VAT,"mixed, capture and publisher"
+NCT01761318,HbA1c,"mixed, capture and publisher"
+NCT01761318,TC,"mixed, capture and publisher"
+NCT01761318,LDL,"mixed, capture and publisher"
+NCT01761318,TG,"mixed, capture and publisher"
+NCT01761318,adiponectin,"mixed, capture and publisher"
+NCT01761318,GGT,session capture only
+Bouchi 2017,HbA1c,publisher full text
+Bouchi 2017,SBP,publisher full text
+Bouchi 2017,DBP,publisher full text
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",lean_mass,publisher full text
+STARDUST,hsCRP,publisher full text
+STARDUST,IL6,publisher full text
+STARDUST,TNF_alpha,publisher full text
+Chaudhuri 2012,HbA1c,publisher full text
+Chaudhuri 2012,fasting_glucose,publisher full text
+Chaudhuri 2012,fasting_insulin,publisher full text
+Chaudhuri 2012,SBP,publisher full text
+Chaudhuri 2012,DBP,publisher full text
+Davies 2013 EQW vs detemir (NCT01003184),HbA1c,session capture only
+Davies 2013 EQW vs detemir (NCT01003184),fasting_glucose,session capture only
+Davies 2013 EQW vs detemir (NCT01003184),SBP,session capture only
+Davies 2013 EQW vs detemir (NCT01003184),DBP,session capture only
+Davies 2013 EQW vs detemir (NCT01003184),TC,session capture only
+Davies 2013 EQW vs detemir (NCT01003184),TG,session capture only
+Derosa 2010 exenatide vs glibenclamide,HbA1c,publisher full text
+Derosa 2010 exenatide vs glibenclamide,fasting_glucose,publisher full text
+Derosa 2010 exenatide vs glibenclamide,fasting_insulin,publisher full text
+Derosa 2010 exenatide vs glibenclamide,HOMA_IR,publisher full text
+Derosa 2010 exenatide vs glibenclamide,HOMA_beta,publisher full text
+Derosa 2010 exenatide vs glibenclamide,hsCRP,publisher full text
+Derosa 2011 exenatide vs glimepiride,HbA1c,session capture only
+Derosa 2011 exenatide vs glimepiride,fasting_glucose,session capture only
+Derosa 2011 exenatide vs glimepiride,fasting_insulin,session capture only
+Derosa 2011 exenatide vs glimepiride,HOMA_IR,session capture only
+Derosa 2011 exenatide vs glimepiride,adiponectin,session capture only
+Derosa 2011 exenatide vs glimepiride,TNF_alpha,session capture only
+DURATION-3,HbA1c,session capture only
+DURATION-3,TC,session capture only
+DURATION-3,LDL,session capture only
+DURATION-3,SBP,session capture only
+DURATION-3,DBP,session capture only
+DURATION-3,resting_heart_rate,session capture only
+DURATION-3,hsCRP,session capture only
+DURATION-3,ALT,session capture only
+DURATION-3,TG,session capture only
+DURATION-3,HOMA_beta,session capture only
+Derosa-2012,hsCRP,numbers not located in any retained source
+Derosa-2012,TNF_alpha,numbers not located in any retained source
+Derosa-2012,HOMA_IR,numbers not located in any retained source
+Derosa-2012,HOMA_beta,numbers not located in any retained source
+Derosa-2012,C_peptide,numbers not located in any retained source
+Derosa-2012,glucagon,numbers not located in any retained source
+Derosa-2012,adiponectin,numbers not located in any retained source
+Derosa-2012,fasting_glucose,numbers not located in any retained source
+Derosa-2012,fasting_insulin,numbers not located in any retained source
+4B trial,SBP,session capture only
+4B trial,DBP,session capture only
+4B trial,resting_heart_rate,session capture only
+4B trial,HbA1c,session capture only
+4B trial,fasting_glucose,session capture only
+4B trial,glucagon,session capture only
+4B trial,TC,session capture only
+4B trial,LDL,session capture only
+4B trial,TG,session capture only
+4B trial,adiponectin,session capture only
+4B trial,hsCRP,session capture only
+DUAL II,hsCRP,abstract or registry only
+DUAL II,HbA1c,session capture only
+DUAL II,fasting_glucose,session capture only
+Dutour 2016,liver_fat_pdff,session capture only
+Dutour 2016,HbA1c,session capture only
+Dutour 2016,TC,session capture only
+Dutour 2016,LDL,session capture only
+Dutour 2016,TG,session capture only
+Dutour 2016,hsCRP,session capture only
+Dutour 2016,adiponectin,session capture only
+Dutour 2016,leptin,session capture only
+Dutour 2016,AST,session capture only
+Dutour 2016,ALT,session capture only
+Dutour 2016,GGT,session capture only
+Dutour 2016,VAT,session capture only
+1404-0002,HOMA_IR,numbers not located in any retained source
+1404-0002,HOMA_beta,numbers not located in any retained source
+1404-0002,glucagon,numbers not located in any retained source
+1404-0002,fasting_glucose,numbers not located in any retained source
+1404-0002,adiponectin,numbers not located in any retained source
+1404-0002,fasting_insulin,numbers not located in any retained source
+1404-0002,C_peptide,numbers not located in any retained source
+1404-0036,HOMA_IR,numbers not located in any retained source
+1404-0036,HOMA_beta,numbers not located in any retained source
+1404-0036,glucagon,numbers not located in any retained source
+1404-0036,adiponectin,numbers not located in any retained source
+1404-0036,adiponectin,numbers not located in any retained source
+1404-0036,fasting_insulin,numbers not located in any retained source
+1404-0036,fasting_glucose,numbers not located in any retained source
+1404-0036,C_peptide,numbers not located in any retained source
+EUREXA adipokine addendum,HbA1c,abstract or registry only
+EUREXA adipokine addendum,TNF_alpha,abstract or registry only
+EUREXA,SBP,session capture only
+EUREXA,DBP,session capture only
+EUREXA,resting_heart_rate,session capture only
+EUREXA,TC,session capture only
+EUREXA,LDL,session capture only
+EUREXA,TG,session capture only
+Fan 2013,ALT,publisher full text
+Fan 2013,GGT,publisher full text
+Fan 2013,hsCRP,publisher full text
+Fan 2013,adiponectin,publisher full text
+NCT01208012,fasting_glucose,publisher full text
+NCT01208012,HbA1c,publisher full text
+NCT01208012,hsCRP,publisher full text
+NCT01208012,SBP,publisher full text
+NCT01208012,DBP,publisher full text
+NCT06164873,SBP,publisher full text
+NCT06164873,TG,publisher full text
+NCT06164873,LDL,publisher full text
+STOP,ALT,numbers not located in any retained source
+STOP,AST,numbers not located in any retained source
+Gurkan 2014,hsCRP,publisher full text
+Gurkan 2014,IL6,publisher full text
+Gurkan 2014,leptin,publisher full text
+Gurkan 2014,adiponectin,publisher full text
+Gurkan 2014,TNF_alpha,publisher full text
+Gurkan 2014,HbA1c,publisher full text
+Gurkan 2014,fasting_glucose,publisher full text
+Gurkan 2014,TG,publisher full text
+Gurkan 2014,LDL,publisher full text
+NCT03131687-BIO,adiponectin,publisher full text
+NCT03131687-BIO,adiponectin,publisher full text
+BELIEVE,HbA1c,publisher full text
+BELIEVE,SBP,publisher full text
+BELIEVE,DBP,publisher full text
+BELIEVE,resting_heart_rate,publisher full text
+BELIEVE,TC,publisher full text
+BELIEVE,LDL,publisher full text
+BELIEVE,TG,publisher full text
+BELIEVE,fasting_insulin,publisher full text
+BELIEVE,VAT,publisher full text
+BELIEVE,lean_mass,publisher full text
+BELIEVE,BMD,publisher full text
+BELIEVE,HbA1c,publisher full text
+BELIEVE,SBP,publisher full text
+BELIEVE,DBP,publisher full text
+BELIEVE,resting_heart_rate,publisher full text
+BELIEVE,TC,publisher full text
+BELIEVE,LDL,publisher full text
+BELIEVE,TG,publisher full text
+BELIEVE,fasting_insulin,publisher full text
+BELIEVE,VAT,publisher full text
+BELIEVE,lean_mass,publisher full text
+BELIEVE,BMD,publisher full text
+NCT01761318,GDF15,numbers not located in any retained source
+NCT02660047,GDF15,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),hsCRP,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),HbA1c,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),fasting_glucose,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),SBP,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),DBP,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),TC,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),TG,publisher full text
+Jin 2020 exenatide vs insulin CIMT (Harbin),LDL,publisher full text
+NCT05442450,HbA1c,numbers not located in any retained source
+NCT05442450,fasting_glucose,numbers not located in any retained source
+NCT05442450,fasting_insulin,numbers not located in any retained source
+NCT05442450,SBP,numbers not located in any retained source
+NCT05442450,DBP,numbers not located in any retained source
+NCT05442450,TC,numbers not located in any retained source
+NCT05442450,LDL,numbers not located in any retained source
+NCT05442450,TG,numbers not located in any retained source
+NCT05442450,hsCRP,numbers not located in any retained source
+NCT05442450,ALT,publisher full text
+Kelly 2012,hsCRP,publisher full text
+Kelly 2012,TG,publisher full text
+Kelly 2012,SBP,publisher full text
+Kelly 2012,DBP,publisher full text
+Kelly 2012,TC,publisher full text
+Kelly 2012,LDL,publisher full text
+Kelly 2012,fasting_glucose,publisher full text
+Kelly 2012,fasting_insulin,publisher full text
+Kelly 2012,HOMA_IR,publisher full text
+Kelly 2012,body_fat_pct,publisher full text
+OASIS 1,HbA1c,publisher full text
+OASIS 1,fasting_glucose,publisher full text
+OASIS 1,fasting_insulin,publisher full text
+OASIS 1,SBP,publisher full text
+OASIS 1,DBP,publisher full text
+OASIS 1,TC,publisher full text
+OASIS 1,LDL,publisher full text
+OASIS 1,TG,publisher full text
+OASIS 1,hsCRP,publisher full text
+SCALE Obesity and Prediabetes 3 year,SBP,session capture only
+SCALE Obesity and Prediabetes 3 year,DBP,session capture only
+SCALE Obesity and Prediabetes 3 year,resting_heart_rate,session capture only
+SCALE Obesity and Prediabetes 3 year,HbA1c,session capture only
+SCALE Obesity and Prediabetes 3 year,fasting_glucose,session capture only
+SCALE Obesity and Prediabetes 3 year,fasting_insulin,session capture only
+SCALE Obesity and Prediabetes 3 year,C_peptide,session capture only
+SCALE Obesity and Prediabetes 3 year,TC,session capture only
+SCALE Obesity and Prediabetes 3 year,TG,session capture only
+SCALE Obesity and Prediabetes 3 year,hsCRP,session capture only
+NCT03987451,liver_fat_pdff,publisher full text
+NCT03987451,ALT,publisher full text
+NCT03987451,AST,publisher full text
+NCT03987451,GGT,publisher full text
+NCT03987451,hsCRP,publisher full text
+NCT03987451,TG,publisher full text
+NCT03987451,fibrosis_improvement,numbers not located in any retained source
+NCT03951753,HbA1c,publisher full text
+NCT03951753,TG,publisher full text
+NCT03951753,leptin,publisher full text
+NCT03951753,adiponectin,publisher full text
+NCT03951753,HbA1c,publisher full text
+NCT03951753,TG,publisher full text
+NCT03951753,leptin,publisher full text
+NCT03951753,adiponectin,publisher full text
+NCT04904913 mazdutide phase 2,SBP,publisher full text
+NCT04904913 mazdutide phase 2,SBP,publisher full text
+NCT04904913 mazdutide phase 2,SBP,publisher full text
+NCT04904913 mazdutide phase 2,DBP,publisher full text
+NCT04904913 mazdutide phase 2,DBP,publisher full text
+NCT04904913 mazdutide phase 2,DBP,publisher full text
+NCT04904913 mazdutide phase 2,HbA1c,publisher full text
+NCT04904913 mazdutide phase 2,HbA1c,publisher full text
+NCT04904913 mazdutide phase 2,HbA1c,publisher full text
+NCT04904913 mazdutide phase 2,fasting_glucose,publisher full text
+NCT04904913 mazdutide phase 2,fasting_glucose,publisher full text
+NCT04904913 mazdutide phase 2,fasting_glucose,publisher full text
+NCT04904913 mazdutide phase 2,fasting_insulin,publisher full text
+NCT04904913 mazdutide phase 2,fasting_insulin,publisher full text
+NCT04904913 mazdutide phase 2,fasting_insulin,publisher full text
+NCT04904913 mazdutide phase 2,TC,publisher full text
+NCT04904913 mazdutide phase 2,TC,publisher full text
+NCT04904913 mazdutide phase 2,TC,publisher full text
+NCT04904913 mazdutide phase 2,LDL,publisher full text
+NCT04904913 mazdutide phase 2,LDL,publisher full text
+NCT04904913 mazdutide phase 2,LDL,publisher full text
+NCT04904913 mazdutide phase 2,TG,publisher full text
+NCT04904913 mazdutide phase 2,TG,publisher full text
+NCT04904913 mazdutide phase 2,TG,publisher full text
+NCT04904913 mazdutide phase 2,ALT,publisher full text
+NCT04904913 mazdutide phase 2,ALT,publisher full text
+NCT04904913 mazdutide phase 2,ALT,publisher full text
+MDI-liraglutide study (Sweden),adiponectin,publisher full text
+NCT03574597-LIVER,ALT,numbers not located in any retained source
+NCT03574597-LIVER,AST,numbers not located in any retained source
+NCT03574597-LIVER,GGT,numbers not located in any retained source
+NCT03574597-LIVER,fatty_liver_index,numbers not located in any retained source
+PIONEER 1,hsCRP,publisher full text
+PIONEER 1,hsCRP,publisher full text
+PIONEER 2,hsCRP,numbers not located in any retained source
+PIONEER 5,hsCRP,publisher full text
+STEP 2,hsCRP,publisher full text
+STEP 3,hsCRP,publisher full text
+SOUL,SBP,publisher full text
+SOUL,DBP,publisher full text
+SOUL,HbA1c,publisher full text
+SOUL,TC,publisher full text
+SOUL,TG,publisher full text
+SOUL,LDL,publisher full text
+SOUL,hsCRP,publisher full text
+SUMMIT,hsCRP,publisher full text
+SUMMIT,NTproBNP,numbers not located in any retained source
+SUMMIT,SBP,numbers not located in any retained source
+SUMMIT,resting_heart_rate,numbers not located in any retained source
+NCT01740921,HbA1c,publisher full text
+NCT01740921,fasting_glucose,publisher full text
+NCT01740921,fasting_insulin,publisher full text
+NCT01740921,hsCRP,publisher full text
+NCT01740921,SBP,publisher full text
+NCT01740921,DBP,publisher full text
+NCT01740921,resting_heart_rate,publisher full text
+NCT01740921,body_fat_pct,publisher full text
+NCT01740921,VAT,publisher full text
+STEP-HFpEF program pooled,NTproBNP,publisher full text
+NCT03574597-hsCRP,hsCRP,numbers not located in any retained source
+Quan 2017,fasting_glucose,publisher full text
+Quan 2017,HbA1c,publisher full text
+Quan 2017,TG,publisher full text
+Quan 2017,TC,publisher full text
+Quan 2017,LDL,publisher full text
+Quan 2017,fasting_insulin,publisher full text
+Quan 2017,HOMA_IR,publisher full text
+Quan 2017,C_peptide,publisher full text
+Quan 2017,adiponectin,publisher full text
+Quan 2017,TNF_alpha,publisher full text
+Quan 2017,hsCRP,publisher full text
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04881760-MASLD,liver_fat_pdff,numbers not located in any retained source
+NCT04822181,MASH_resolution,numbers not located in any retained source
+NCT04822181,fibrosis_improvement,numbers not located in any retained source
+NCT04822181,SBP,session capture only
+NCT04822181,DBP,session capture only
+NCT04822181,hsCRP,session capture only
+NCT04822181,TG,session capture only
+NCT04822181,TC,session capture only
+NCT04822181,LDL,session capture only
+Sathyanarayana 2011,adiponectin,publisher full text
+Sathyanarayana 2011,liver_fat_pdff,publisher full text
+Savvidou 2016,HbA1c,publisher full text
+Savvidou 2016,TC,publisher full text
+Savvidou 2016,LDL,publisher full text
+Savvidou 2016,TG,publisher full text
+Savvidou 2016,adiponectin,numbers not located in any retained source
+NCT00781937,hsCRP,abstract or registry only
+semaglutide psoriasis T2D open label (Biomolecules 2025),TC,publisher full text
+semaglutide psoriasis T2D open label (Biomolecules 2025),LDL,publisher full text
+NCT04019561,liver_fat_pdff,session capture only
+NCT04019561,ALT,session capture only
+NCT04019561,AST,session capture only
+NCT04019561,GGT,session capture only
+NCT04019561,TC,session capture only
+NCT04019561,LDL,session capture only
+NCT04019561,TG,session capture only
+NCT04019561,adiponectin,session capture only
+NCT04019561,HbA1c,session capture only
+NCT04019561,SBP,session capture only
+NCT04019561,DBP,session capture only
+NCT04019561,resting_heart_rate,session capture only
+NCT04019561,ALT,session capture only
+NCT04019561,AST,session capture only
+NCT04019561,GGT,session capture only
+NCT04019561,TC,session capture only
+NCT04019561,LDL,session capture only
+NCT04019561,TG,session capture only
+NCT04019561,adiponectin,session capture only
+NCT04019561,HbA1c,session capture only
+NCT04019561,SBP,session capture only
+NCT04019561,DBP,session capture only
+NCT04019561,resting_heart_rate,session capture only
+NCT01648582 dulaglutide vs glargine (Nanjing First),HbA1c,publisher full text
+NCT01648582 dulaglutide vs glargine (Nanjing First),fasting_glucose,publisher full text
+NCT01648582 dulaglutide vs glargine (Nanjing First),TC,publisher full text
+NCT01648582 dulaglutide vs glargine (Nanjing First),LDL,publisher full text
+NCT01648582 dulaglutide vs glargine (Nanjing First),SBP,publisher full text
+NCT01648582 dulaglutide vs glargine (Nanjing First),DBP,publisher full text
+NCT01648582 dulaglutide vs glargine (Nanjing First),resting_heart_rate,publisher full text
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),HbA1c,publisher full text
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),fasting_glucose,publisher full text
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),TNF_alpha,publisher full text
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),IL6,publisher full text
+EUREXA,hsCRP,session capture only
+SURMOUNT-1,hsCRP,publisher full text
+SURMOUNT-1,hsCRP,publisher full text
+SURMOUNT-1,hsCRP,publisher full text
+SURMOUNT-1,leptin,publisher full text
+SURMOUNT-1,leptin,publisher full text
+SURMOUNT-1,leptin,publisher full text
+SURPASS-1,fasting_glucose,publisher full text
+SURPASS-1,fasting_glucose,publisher full text
+SURPASS-1,fasting_glucose,publisher full text
+SURPASS-1,fasting_insulin,publisher full text
+SURPASS-1,fasting_insulin,publisher full text
+SURPASS-1,fasting_insulin,publisher full text
+SURPASS-1,glucagon,publisher full text
+SURPASS-1,glucagon,publisher full text
+SURPASS-1,glucagon,publisher full text
+SURPASS-1,HOMA_beta,publisher full text
+SURPASS-1,HOMA_beta,publisher full text
+SURPASS-1,HOMA_beta,publisher full text
+SURPASS-1,HOMA_IR,publisher full text
+SURPASS-1,HOMA_IR,publisher full text
+SURPASS-1,HOMA_IR,publisher full text
+SURPASS-1,C_peptide,publisher full text
+SURPASS-1,C_peptide,publisher full text
+SURPASS-1,C_peptide,publisher full text
+SURPASS-1,adiponectin,publisher full text
+SURPASS-1,adiponectin,publisher full text
+SURPASS-1,adiponectin,publisher full text
+SURPASS-3 MRI (NCT03882970),liver_fat_pdff,session capture only
+SURPASS-3 MRI (NCT03882970),liver_fat_pdff,session capture only
+SURPASS-3 MRI (NCT03882970),liver_fat_pdff,session capture only
+SURPASS-3 MRI (NCT03882970),VAT,session capture only
+SURPASS-3 MRI (NCT03882970),VAT,session capture only
+SURPASS-3 MRI (NCT03882970),VAT,session capture only
+Suzuki 2014 Dokkyo,HbA1c,publisher full text
+Suzuki 2014 Dokkyo,fasting_glucose,publisher full text
+Suzuki 2014 Dokkyo,SBP,publisher full text
+Suzuki 2014 Dokkyo,DBP,publisher full text
+Suzuki 2014 Dokkyo,LDL,publisher full text
+Suzuki 2014 Dokkyo,TG,publisher full text
+Suzuki 2014 Dokkyo,eGFR,publisher full text
+NCT02545738,TNF_alpha,numbers not located in any retained source
+NCT02545738,MR_proANP,numbers not located in any retained source
+LIPER2,hsCRP,numbers not located in any retained source
+LIPER2,NTproBNP,numbers not located in any retained source
+LIPER2,fasting_glucose,numbers not located in any retained source
+NCT04844918,adiponectin,publisher full text
+NCT04844918,leptin,publisher full text
+NCT04844918,TNF_alpha,publisher full text
+NCT04844918,hsCRP,publisher full text
+NCT04844918,adiponectin,publisher full text
+NCT04844918,leptin,publisher full text
+NCT04844918,TNF_alpha,publisher full text
+NCT04844918,hsCRP,publisher full text
+Wang 2026 Xi'an DKD,eGFR,publisher full text
+NCT05564117,SBP,numbers not located in any retained source
+NCT05564117,DBP,numbers not located in any retained source
+NCT05564117,HbA1c,numbers not located in any retained source
+NCT05564117,fasting_glucose,numbers not located in any retained source
+NCT05564117,TC,numbers not located in any retained source
+NCT05564117,TG,numbers not located in any retained source
+NCT05564117,LDL,numbers not located in any retained source
+NCT05564117,fasting_insulin,numbers not located in any retained source
+NCT05564117,hsCRP,numbers not located in any retained source
+STEP UP,SBP,publisher full text
+STEP UP,DBP,publisher full text
+STEP UP,HbA1c,publisher full text
+STEP UP,fasting_glucose,publisher full text
+STEP UP,TC,numbers not located in any retained source
+STEP UP,LDL,publisher full text
+STEP UP,TG,publisher full text
+STEP UP,hsCRP,publisher full text
+STEP UP,fasting_insulin,publisher full text
+STEP 1,SBP,numbers not located in any retained source
+STEP 1,DBP,numbers not located in any retained source
+STEP 1,HbA1c,numbers not located in any retained source
+STEP 1,fasting_glucose,numbers not located in any retained source
+STEP 1,TC,numbers not located in any retained source
+STEP 1,LDL,numbers not located in any retained source
+STEP 1,TG,numbers not located in any retained source
+STEP 1,hsCRP,numbers not located in any retained source
+NCT03131687-BIO,hsCRP,numbers not located in any retained source
+NCT03131687-BIO,hsCRP,publisher full text
+NCT03131687-BIO,hsCRP,numbers not located in any retained source
+NCT03131687-BIO,GDF15,numbers not located in any retained source
+NCT03131687-BIO,GDF15,numbers not located in any retained source
+NCT03131687-BIO,GDF15,numbers not located in any retained source
+NCT03131687-BIO,IL6,numbers not located in any retained source
+NCT03131687-BIO,IL6,numbers not located in any retained source
+NCT03131687-BIO,YKL40,numbers not located in any retained source
+NCT03131687-BIO,YKL40,numbers not located in any retained source
+NCT03131687-BIO,YKL40,numbers not located in any retained source
+NCT03131687-BIO,ICAM1,numbers not located in any retained source
+NCT03131687-BIO,ICAM1,numbers not located in any retained source
+NCT03131687-BIO,ICAM1,numbers not located in any retained source
+NCT03131687-BIO,leptin,numbers not located in any retained source
+NCT03131687-BIO,leptin,numbers not located in any retained source
+NCT03131687-BIO,leptin,numbers not located in any retained source
+NCT03131687-BIO,NTproBNP,numbers not located in any retained source
+NCT03131687-BIO,NTproBNP,numbers not located in any retained source
+Wu-2011,hsCRP,numbers not located in any retained source
+Wu-2011,HOMA_IR,numbers not located in any retained source
+Wu-2011,fasting_glucose,numbers not located in any retained source
+Wu-2011,fasting_insulin,numbers not located in any retained source
+NCT02147925 Light-On,liver_fat_pdff,publisher full text
+NCT02147925 Light-On,VAT,publisher full text
+NCT02147925 Light-On,HbA1c,publisher full text
+NCT02147925 Light-On,fasting_glucose,publisher full text
+NCT02147925 Light-On,ALT,publisher full text
+NCT02147925 Light-On,AST,publisher full text
+NCT02147925 Light-On,TC,publisher full text
+NCT02147925 Light-On,TG,publisher full text
+NCT02147925 Light-On,LDL,publisher full text
+NCT02147925 Light-On,SBP,publisher full text
+NCT02147925 Light-On,DBP,publisher full text
+NCT02147925 Light-On,adiponectin,publisher full text
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,HbA1c,"mixed, capture and publisher"
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,fasting_glucose,"mixed, capture and publisher"
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,HOMA_IR,"mixed, capture and publisher"
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,HOMA_beta,session capture only
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,leptin,"mixed, capture and publisher"
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,adiponectin,"mixed, capture and publisher"
+NCT00614120 Nanjing adipokine substudy,HbA1c,publisher full text
+NCT00614120 Nanjing adipokine substudy,fasting_glucose,publisher full text
+NCT00614120 Nanjing adipokine substudy,SBP,publisher full text
+NCT00614120 Nanjing adipokine substudy,DBP,publisher full text
+Zhu 2017 exenatide vs acarbose,VAT,numbers not located in any retained source
+Zhu 2017 exenatide vs acarbose,fasting_glucose,publisher full text
+Zhu 2017 exenatide vs acarbose,HbA1c,publisher full text
+Zhu 2017 exenatide vs acarbose,SBP,publisher full text
+Zhu 2017 exenatide vs acarbose,DBP,publisher full text
+Zhu 2017 exenatide vs acarbose,TC,publisher full text
+Zhu 2017 exenatide vs acarbose,TG,publisher full text
+Zhu 2017 exenatide vs acarbose,LDL,publisher full text
+Zhu 2017 exenatide vs acarbose,TNF_alpha,publisher full text
+Zhu 2017 exenatide vs acarbose,IL6,publisher full text
+Zhu 2017 exenatide vs acarbose,leptin,publisher full text
+Zhu 2017 exenatide vs acarbose,adiponectin,publisher full text

@@ -113,6 +113,20 @@ def line_has(num, line):
     return re.search(r"(?<![\d.])" + re.escape(num) + r"(?![\d])", line) is not None
 
 
+def matching_lines(nums, lines):
+    """
+    Indices of the lines that carry enough of a row's identifying numbers to be its source line.
+
+    Two of them where the row has more than one, because a single number coincides too easily. Kept
+    at module level so the provenance registry applies the same rule: if the registry counted a row
+    as located in a file that this gate would not accept as its source line, its split of this
+    gate's own counts would describe something else.
+    """
+    need = 2 if len(nums) > 1 else 1
+    return [i for i, ln in enumerate(lines)
+            if sum(1 for n in nums if line_has(n, ln)) >= need]
+
+
 def make_source_lines():
     """
     Build and return the trial to source lines lookup used by this gate.
@@ -151,10 +165,15 @@ def make_source_lines():
     for r in csv.DictReader(open(MASTER, newline="")):
         trial_notes.setdefault(r["trial_id"], []).append(r.get("notes", ""))
 
-    def lines_for(trial, notes):
-        key = trial
-        if key in cache:
-            return cache[key]
+    def files_for(trial, notes):
+        """
+        The source files a trial's rows were read from: its packet texts plus every companion
+        capture cited anywhere in the trial's notes.
+
+        Separated from the text loading below because the provenance registry needs the file list
+        without the text, and because a gate and the registry disagreeing about what counts as a
+        row's source would make the registry's counts meaningless for that gate.
+        """
         notes = " ".join(trial_notes.get(trial, [notes]))
         files = []
         for g in gm.get(file_of.get(trial, ""), []):
@@ -168,8 +187,14 @@ def make_source_lines():
             fp = os.path.join(ROOT, m)
             if os.path.exists(fp):
                 files.append(fp)
+        return sorted(set(files))
+
+    def lines_for(trial, notes):
+        key = trial
+        if key in cache:
+            return cache[key]
         txt = []
-        for fp in sorted(set(files)):
+        for fp in files_for(trial, notes):
             # Lancet style captures print 79·4 for 79.4, so the middle dot is normalised
             # here; without it every number of such a source misses and the row reads as
             # unattached, which is what the SCALE pressure rows did.
@@ -178,6 +203,7 @@ def make_source_lines():
         cache[key] = txt
         return txt
 
+    lines_for.files_for = files_for
     return lines_for
 
 
@@ -199,8 +225,7 @@ def main(argv):
             verdict["NOLINE"] += 1
             noline.append((r["trial_id"], r["biomarker"], "no identifying number on the row"))
             continue
-        hit_idx = [i for i, ln in enumerate(lines)
-                   if sum(1 for n in nums if line_has(n, ln)) >= (2 if len(nums) > 1 else 1)]
+        hit_idx = matching_lines(nums, lines)
         if not hit_idx:
             verdict["NOLINE"] += 1
             noline.append((r["trial_id"], r["biomarker"], f"numbers {','.join(nums[:3])} on no single line"))

@@ -50,4 +50,14 @@ echo "== arm_orientation_check $(date +%H:%M:%S)" >> "$log"
 python3 -I src/arm_orientation_check.py --self-test > "work/gate_arm_orientation_check.log" 2>&1; rc=$?
 echo "exit $rc" >> "$log"
 [ $rc -ne 0 ] && { echo "GATE FAILED: arm_orientation_check (see work/gate_arm_orientation_check.log)" >> "$log"; exit $rc; }
+# Gate fifteen asks what the gates above are entitled to claim. It classifies every retained source
+# by whether it is the publisher's text or a capture this review wrote while reading a page, and
+# splits the rows accordingly, because a match against the second establishes only that the
+# extraction reproduces the capture. It fails on a source it cannot classify and on a new capture
+# written without a provenance preamble, which is how the capture convention is enforced rather
+# than merely recommended.
+echo "== source_provenance $(date +%H:%M:%S)" >> "$log"
+python3 -I src/source_provenance.py > "work/gate_source_provenance.log" 2>&1; rc=$?
+echo "exit $rc" >> "$log"
+[ $rc -ne 0 ] && { echo "GATE FAILED: source_provenance (see work/gate_source_provenance.log)" >> "$log"; exit $rc; }
 echo "ALL DONE $(date +%H:%M:%S)" >> "$log"

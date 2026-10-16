@@ -1,0 +1,87 @@
+path,provenance_class,evidence,bytes
+work/extraction/packets/10/text_1-23.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',55592
+work/extraction/packets/102/text_1-249.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',59425
+work/extraction/packets/120/text_1-292.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',52619
+work/extraction/packets/126/text_1-306.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',81791
+work/extraction/packets/126/text_1-325.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2155
+work/extraction/packets/130/text_1-311.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',56992
+work/extraction/packets/135/text_1-319.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',32083
+work/extraction/packets/137/text_1-328.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',36383
+work/extraction/packets/142/text_1-340.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',40076
+work/extraction/packets/146/text_1-350.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2915
+work/extraction/packets/146/text_1-351.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2614
+work/extraction/packets/158/text_1-387.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2649
+work/extraction/packets/16/text_1-33.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',35507
+work/extraction/packets/165/text_1-402.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',25217
+work/extraction/packets/168/text_1-414.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',48746
+work/extraction/packets/172/text_1-436.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',27902
+work/extraction/packets/174/text_1-442.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',38512
+work/extraction/packets/183/text_1-463.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',44906
+work/extraction/packets/185/text_1-467.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',33444
+work/extraction/packets/187/text_1-470.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',32817
+work/extraction/packets/188/text_1-472.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',22699
+work/extraction/packets/197/text_1-499.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',1837
+work/extraction/packets/2/text_1-234.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',4101
+work/extraction/packets/2/text_1-9.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',38169
+work/extraction/packets/203/text_1-511.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',66621
+work/extraction/packets/204/text_1-513.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',39363
+work/extraction/packets/212/text_1-526.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',64000
+work/extraction/packets/213/text_1-529.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',53619
+work/extraction/packets/214/text_1-530.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',56948
+work/extraction/packets/219/text_1-538.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',3635
+work/extraction/packets/219/text_1-539.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',3444
+work/extraction/packets/224/text_1-548.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',50863
+work/extraction/packets/226/text_1-553.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2088
+work/extraction/packets/239/text_1-575.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',47831
+work/extraction/packets/24/text_1-55.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',46294
+work/extraction/packets/243/text_1-581.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',33585
+work/extraction/packets/249/text_1-594.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',39054
+work/extraction/packets/250/text_1-595.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',49942
+work/extraction/packets/251/text_1-602.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2807
+work/extraction/packets/252/text_1-603.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',34617
+work/extraction/packets/253/text_1-605.txt,publisher_api,packet manifest records the retrieval route 'direct_fulltext',35765
+work/extraction/packets/258/text_1-614.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2930
+work/extraction/packets/258/text_1-615.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',3313
+work/extraction/packets/259/text_1-616.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',18522
+work/extraction/packets/261/text_1-618.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2202
+work/extraction/packets/262/text_1-620.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',41638
+work/extraction/packets/264/text_1-622.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',25586
+work/extraction/packets/272/text_1-643.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2586
+work/extraction/packets/272/text_1-644.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2816
+work/extraction/packets/274/text_1-646.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',14866
+work/extraction/packets/275/text_1-647.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',48332
+work/extraction/packets/279/text_1-655.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2200
+work/extraction/packets/279/text_1-656.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',2373
+work/extraction/packets/279/text_1-657.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',3515
+work/extraction/packets/30/text_1-71.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',62761
+work/extraction/packets/305/text_2-52.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',42668
+work/extraction/packets/31/text_1-72.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',88392
+work/extraction/packets/345/text_2-115.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',15463
+work/extraction/packets/42/text_1-102.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',56745
+work/extraction/packets/429/text_2-233.txt,indexed_abstract,packet manifest records the retrieval route 'conference_abstract',1873
+work/extraction/packets/444/text_3-12.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',28173
+work/extraction/packets/50/text_1-120.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',85140
+work/extraction/packets/56/text_1-140.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',36801
+work/extraction/packets/59/text_1-144.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',47567
+work/extraction/packets/66/text_1-157.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',34423
+work/extraction/packets/68/text_1-161.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',42130
+work/extraction/packets/79/text_1-180.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',36042
+work/extraction/packets/85/text_1-188.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',41267
+work/extraction/packets/87/text_1-191.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',38998
+work/extraction/packets/9/text_1-22.txt,publisher_page,packet manifest records the retrieval route 'proxy_fulltext',65760
+work/extraction/packets/9/text_2-142.txt,publisher_api,packet manifest records the retrieval route 'epmc_fulltext',41718
+work/fulltext/companion/bizino2020_magna_victoria_tables1_3.txt,session_capture,CAPTURED header declares the session read the page,3805
+work/fulltext/companion/buse2014_dual2_sentences.txt,session_capture,CAPTURED header declares the session read the page,2454
+work/fulltext/companion/derosa2011_exenatide_glimepiride_tables.txt,session_capture,CAPTURED header declares the session read the page,6253
+work/fulltext/companion/diamant2010_duration3_tables.txt,session_capture,CAPTURED header declares the session read the page,4890
+work/fulltext/companion/diamant2014_4b_table2.txt,session_capture,CAPTURED header declares the session read the page,9820
+work/fulltext/companion/dutour2016_exenatide_mri_tables.txt,session_capture,CAPTURED header declares the session read the page,7147
+work/fulltext/companion/kelly2012_exenatide_metformin_prediabetes.txt,publisher_api,section markers or PMC identifier from the text retrieval route,25409
+work/fulltext/companion/leroux2017_scale3y_tables.txt,session_capture,CAPTURED header declares the session read the page,5303
+work/fulltext/companion/nct01003184_eqw_vs_detemir_registry_results.txt,session_capture,capture preamble declares 'with the chrome extension',5705
+work/fulltext/companion/sanyal2025_essence_tables.txt,session_capture,CAPTURED header declares the session read the page,4303
+work/fulltext/companion/shankar2024_proxymo_tables.txt,session_capture,CAPTURED header declares the session read the page,6127
+work/fulltext/companion/simo2015_eurexa_hscrp.txt,session_capture_undeclared,in the companion directory with no capture preamble,37415
+work/fulltext/companion/surpass3_mri_gastaldelli2022_table2.txt,session_capture,capture preamble declares 'accessibility tree',6754
+work/fulltext/companion/vilsboll2019_ideglira_cv_markers.txt,publisher_api,section markers or PMC identifier from the text retrieval route,20069
+work/fulltext/companion/yu2015_jem304w_tables1_3.txt,session_capture_undeclared,in the companion directory with no capture preamble,8301
