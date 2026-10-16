@@ -53,7 +53,7 @@ All 460 Trials selected, RIS (EndNote) format, "Include abstract" on.
 | Bytes | 1,905,402 |
 | SHA-256 | `7c12c88115631e45195e82641d2b0a6f9c5bd0835d48f7972c5b08372c0547f3` |
 
-Download mechanics, same as the Embase registry export earlier tonight: Chrome wrote the file under its temporary download name and did not finalise the rename. The file above is a copy of that complete temporary file; completeness is established by the counts, not by the browser.
+Download mechanics, corrected 16 October 02:10 from Chrome's own download history: Chrome received all 1,905,402 bytes into its temporary file and then recorded the download as cancelled (interrupt reason 40, no final file in the Downloads folder). The repository copy is that complete temporary file, taken before Chrome discarded it; a copy was placed at `~/Downloads/central_citation-export_2026-10-15.ris` on 16 October so the three exports sit together. Completeness is established by the counts and the SHA-256 above, not by the browser.
 
 ## Record composition
 

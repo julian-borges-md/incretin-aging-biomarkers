@@ -72,7 +72,7 @@ Clinical trials tab, all 51 selected, RIS format, full record content (study ove
 | Bytes | 624,926 |
 | SHA-256 | `d740d349bf45d00d5311d6cb72cf4c7fc92e64d21ee6bb9744940be6c407665a` |
 
-Download mechanics, recorded because they are not clean: Chrome wrote the export to its temporary download name and did not finalise the rename to `ctrecords.ris` in the Downloads folder (two identical temporary copies with the same SHA-256, one per click). The file above is a copy of that complete temporary file; completeness is established by the TY, ER and identifier counts, not by the browser's download state.
+Download mechanics, corrected 16 October 02:10 from Chrome's own download history: the first click completed normally (`~/Downloads/ctrecords.ris`, 624,926 bytes, state complete at 22:00:07), the second click was recorded as cancelled, and the earlier note that the rename never happened was written before the first download had finalised. `~/Downloads/ctrecords.ris` and the repository copy have the same SHA-256. Completeness is still established by the TY, ER and identifier counts, not by the browser.
 
 ### Registry export composition
 
