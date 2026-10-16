@@ -26,17 +26,28 @@ for m in manuscript/RESULTS_*.md; do
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: results_numbers_check $m (see work/gate_results_numbers_check.log)" >> "$log"; exit $rc; }
 done
-# Gates ten to twelve are provenance gates over the corpus rather than the pipeline. Ten asks
+# Gates ten to fourteen are provenance gates over the corpus rather than the pipeline. Ten asks
 # whether any packet bundles two unrelated studies, which silently drops the study that was not
 # read; eleven asks whether every extracted number is attached to the row's own biomarker in its
 # source; twelve asks whether a row's printed p value reconciles with the p implied by its own
-# effect and standard error, which is the part of the amendment A5 verifier pass that scales. Each
-# one fails only on a case not yet written up in its triage document, so a new defect blocks the
-# chain while the known and judged ones do not.
+# effect and standard error, which is the part of the amendment A5 verifier pass that scales;
+# thirteen asks whether two trials share a run of printed values, which is how a duplicate
+# publication enters a corpus twice; fourteen asks whether a row's arm values and its reported
+# effect agree in sign and magnitude, which is the one mechanical error the others cannot see,
+# because a swapped arm leaves every number present, attached and self consistent. Each one fails
+# only on a case not yet written up in its triage document, so a new defect blocks the chain while
+# the known and judged ones do not.
 for g in packet_grouping_check extraction_attachment_check pvalue_reconcile duplicate_numbers_check; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" > "work/gate_$g.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
 done
+# Gate fourteen runs with its self test, because a gate that reports no finding has not thereby
+# shown that it works. The self test injects a swapped arm into every passing row and a tenfold
+# digit shift into a sample of them, and fails the chain if the gate does not catch them.
+echo "== arm_orientation_check $(date +%H:%M:%S)" >> "$log"
+python3 -I src/arm_orientation_check.py --self-test > "work/gate_arm_orientation_check.log" 2>&1; rc=$?
+echo "exit $rc" >> "$log"
+[ $rc -ne 0 ] && { echo "GATE FAILED: arm_orientation_check (see work/gate_arm_orientation_check.log)" >> "$log"; exit $rc; }
 echo "ALL DONE $(date +%H:%M:%S)" >> "$log"
