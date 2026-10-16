@@ -1,0 +1,68 @@
+{
+ "group": "66",
+ "extractor": "S",
+ "study": {
+  "trial_id": "STARDUST",
+  "pmid": "40276845",
+  "doi": "10.1111/dom.16419",
+  "first_author": "Caruso",
+  "year": "2025",
+  "journal": "Diabetes Obes Metab",
+  "phase": "4",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1.8",
+  "comparator": "cardiovascular risk factor management without liraglutide (open label control)",
+  "comparator_type": "active",
+  "duration_weeks": "78",
+  "population": "T2D",
+  "n_tx": "27",
+  "n_ctrl": "28",
+  "assessment_timepoint_weeks": "78",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "FALSE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: STARDUST (NCT04881110), single centre open label randomised trial (Naples) in adults with type 2 diabetes and peripheral artery disease (TcPO2 30 to 49 mmHg, HbA1c 6.5 to 8.0 percent): liraglutide titrated to 1.8 mg daily (dose_mg 1.8) vs management of cardiovascular risk factors alone, 60 randomised (30 per arm), 55 analysed at 6 months and 27 vs 28 at 18 months (Table 4 column headers); this 18 month follow up report gives per arm mean (SD) changes and the estimated treatment difference with 95 percent CI at 6 months (Table 3) and 18 months (Table 4); rows at 18 months, 78 weeks, the longest on treatment timepoint (brief rule 1), with the 6 month values in the notes (route ci_95, MD in the printed units); laboratory staff blinded to allocation; CRP, IL-6 and TNF-alpha are prespecified additional outcomes (prespecified TRUE); baselines in Table 1 are medians (IQR) for CRP 0.4 and 0.4 mg/dL, IL-6 44.7 and 43.9 pg/mL, TNF-alpha 9.1 and 9.6 pg/mL (no mean denominators); body weight change not printed as a contrast, pct_weight_change empty (Table 4 weights 80.9 vs 81.9 kg at 18 months); funded by a university PhD programme (industry_funded FALSE); rob_overall some_concerns"
+ },
+ "rows": [
+  {"biomarker": "hsCRP", "measure": "MD", "unit": "mg/dL", "yi_reported": "-0.5", "ci_lb_reported": "-0.8", "ci_ub_reported": "-0.2", "p_reported": "0.002", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 4: CRP mg/dL change at 18 months, liraglutide minus 0.4 (0.6) vs control minus 0.05 (0.5), estimated treatment difference minus 0.5 (minus 0.8 to minus 0.2), p 0.002; 6 months (Table 3) minus 0.4 (minus 0.7 to minus 0.07), p 0.018; high sensitivity CRP by ELISA, baseline medians 0.4 and 0.4 mg/dL"},
+  {"biomarker": "IL6", "measure": "MD", "unit": "pg/mL", "yi_reported": "-32.6", "ci_lb_reported": "-54.6", "ci_ub_reported": "-10.5", "p_reported": "0.004", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 4: IL-6 pg/mL change at 18 months, liraglutide minus 49.3 (54.6) vs control minus 16.8 (19.0), estimated treatment difference minus 32.6 (minus 54.6 to minus 10.5), p 0.004; 6 months minus 31.6 (minus 54.6 to minus 8.7); baseline medians 44.7 and 43.9 pg/mL (high for an ELISA, as printed)"},
+  {"biomarker": "TNF_alpha", "measure": "MD", "unit": "pg/mL", "yi_reported": "-3.9", "ci_lb_reported": "-27.4", "ci_ub_reported": "19.4", "p_reported": "0.734", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 4: TNF-alpha pg/mL change at 18 months, liraglutide minus 32.9 (43.3) vs control minus 28.9 (42.3), estimated treatment difference minus 3.9 (minus 27.4 to 19.4), p 0.734; 6 months minus 4.4 (minus 26.6 to 17.6); baseline medians 9.1 and 9.6 pg/mL"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "liraglutide",
+  "trial_id": "STARDUST",
+  "design": "single centre open label randomised trial, liraglutide 1.8 mg vs risk factor management, type 2 diabetes with peripheral artery disease, 60 randomised, 18 month follow up",
+  "reason": "full text group (institutional route); three inventory markers (CRP, IL-6, TNF-alpha) as estimated treatment differences with 95 percent CI at 18 months from Table 4",
+  "biomarkers_reported_no_variance": [
+   "HbA1c, SBP, DBP, LDL, TG, eGFR (Table 4 values at 18 months per arm as mean plus or minus SD or median, no baseline to pair and no contrast printed)"
+  ],
+  "other_markers": [
+   "transcutaneous oxygen pressure (primary outcome)",
+   "urinary albumin to creatinine ratio",
+   "circulating progenitor and endothelial progenitor cells",
+   "VEGF-A"
+  ],
+  "tables_used": [
+   "Table 1 (baseline medians)",
+   "Table 3",
+   "Table 4"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "some_concerns",
+   "justification": "randomised trial with concealed laboratory assessment (D1 low); open label with risk factor prescriptions in both arms (D2 some concerns); 5 of 60 withdrew and 55 analysed (D3 some concerns); laboratory staff blinded (D4 low); registered trial with named secondary outcomes (D5 low)"
+  },
+  "doubts": [
+   "IL-6 baseline medians near 44 pg/mL are far above usual circulating values; the ELISA values are entered as printed in pg/mL",
+   "the CRP contrast is in mg/dL with median baselines only, so it converts to percent only through the hand keyed BASELINE table",
+   "the 6 month primary report (Caruso 2024) may be a separate record of the corpus; the 18 month values are entered here"
+  ]
+ }
+}

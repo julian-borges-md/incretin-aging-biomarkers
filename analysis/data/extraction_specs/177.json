@@ -1,0 +1,63 @@
+{
+ "group": "177",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Larsen 2017 schizophrenia liraglutide",
+  "pmid": "",
+  "doi": "10.1093/schizbullopen/sgaa044",
+  "first_author": "Tomasik",
+  "year": "2020",
+  "journal": "Schizophr Bull Open",
+  "phase": "4",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1.8",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "16",
+  "population": "obesity",
+  "n_tx": "39",
+  "n_ctrl": "42",
+  "assessment_timepoint_weeks": "16",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "FALSE",
+  "rob_overall": "low",
+  "notes": "STUDY: post hoc biomarker analysis (Tomasik 2020) of the Danish randomised double blind placebo controlled trial (Larsen 2017) of liraglutide (dose_mg 1.8 recorded from the primary report, the dose is not printed in this text) vs placebo for 16 weeks in prediabetic overweight or obese patients with schizophrenia spectrum disorder treated with clozapine or olanzapine; 81 randomised (39 liraglutide, 42 placebo); the text gives adjusted between group mean differences on the log10 scale with 95 percent CI for leptin and adiponectin (route log10_diff_ci, measure RR, brief amendment A11; the other six proteins were not significant, values in supplementary tables); exploratory post hoc proteins (prespecified FALSE); body weight change in the primary report, pct_weight_change empty; unrestricted grant and drug supply from Novo Nordisk to an investigator initiated study (industry_funded FALSE, see doubts); population schizophrenia with prediabetes and overweight, held under amendment A6; rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "leptin", "measure": "RR", "unit": "log10 pg/mL difference", "yi_reported": "-0.081", "ci_lb_reported": "-0.147", "ci_ub_reported": "-0.015", "p_reported": "0.017", "p_is_bound": "FALSE", "se_source": "log10_diff_ci", "notes": "Results text: leptin mean between group difference at week 16, liraglutide vs placebo, minus 0.081 log10 pg/mL (95 percent CI minus 0.147 to minus 0.015), P 0.017, adjusted for clozapine or olanzapine treatment; converted to a natural log ratio by Route 2c"},
+  {"biomarker": "adiponectin", "measure": "RR", "unit": "log10 pg/mL difference", "yi_reported": "0.140", "ci_lb_reported": "0.021", "ci_ub_reported": "0.259", "p_reported": "0.022", "p_is_bound": "FALSE", "se_source": "log10_diff_ci", "notes": "Results text: adiponectin mean between group difference at week 16, liraglutide vs placebo, 0.140 log10 pg/mL (95 percent CI 0.021 to 0.259), P 0.022, adjusted for clozapine or olanzapine treatment"}
+ ],
+ "json": {
+  "status": "held_pending_decision",
+  "molecule": "liraglutide",
+  "trial_id": "Larsen 2017 schizophrenia liraglutide",
+  "design": "randomised double blind placebo controlled trial, liraglutide vs placebo, prediabetic overweight or obese patients with schizophrenia spectrum disorder on clozapine or olanzapine, 81 randomised, 16 weeks; post hoc serum protein analysis",
+  "reason": "population schizophrenia with prediabetes and overweight, held under amendment A6 (Director decision on held populations); two inventory markers (leptin, adiponectin) extracted to staging as log10 differences with 95 percent CI (Route 2c, amendment A11)",
+  "biomarkers_reported_no_variance": [
+   "hsCRP (one of the eight measured proteins; not significantly changed, values in supplementary tables only)"
+  ],
+  "other_markers": [
+   "IL-1 receptor antagonist, macrophage migration inhibitory factor, prolactin, RAGE, VEGF",
+   "2 h OGTT glucose (primary report)"
+  ],
+  "tables_used": [
+   "results text (Figure 2 and supplementary table 4 values)"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "randomised double blind placebo controlled trial with Novo Nordisk placebo pens (D1, D2 low); 81 randomised with complete week 16 protein data as reported (D3 low); multiplexed immunoassay (D4 low); post hoc analysis of eight proteins without a registered biomarker plan (D5 some concerns)"
+  },
+  "doubts": [
+   "held population (schizophrenia); the contrast is on the log10 scale and converts to a percent change through Route 2c",
+   "dose_mg 1.8 is from the primary report (Larsen 2017), not printed in this text",
+   "industry_funded recorded FALSE for an investigator initiated study with an unrestricted grant and drug supply from Novo Nordisk; the verifier may prefer TRUE"
+  ]
+ }
+}

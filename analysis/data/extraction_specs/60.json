@@ -1,0 +1,65 @@
+{
+ "group": "60",
+ "extractor": "S",
+ "study": {
+  "trial_id": "REDEFINE 1",
+  "pmid": "",
+  "doi": "10.1056/NEJMoa2502081",
+  "first_author": "Garvey",
+  "year": "2025",
+  "journal": "N Engl J Med",
+  "phase": "3",
+  "drug": "CagriSema",
+  "receptor_class": "GLP1_AMY",
+  "dose_mg": "2.4",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "68",
+  "population": "obesity",
+  "n_tx": "2108",
+  "n_ctrl": "705",
+  "assessment_timepoint_weeks": "68",
+  "pct_weight_change": "-17.3",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: REDEFINE 1 (NCT05567796), phase 3a 68 week four group multicentre double blind placebo and active controlled trial in 22 countries of once weekly cagrilintide 2.4 mg plus semaglutide 2.4 mg (CagriSema, dose_mg 2.4 for each component) vs semaglutide 2.4 mg alone vs cagrilintide 2.4 mg alone vs placebo in adults without diabetes with BMI 30 or more, or 27 or more with a weight related complication; 3417 randomised (2108, 302, 302, 705), treatment policy estimand at week 68; Table 2 (HTML table read from the NEJM page through the proxy) and the results text give the CagriSema vs placebo differences with 95 percent CI for systolic and diastolic pressure (route ci_95, MD); HbA1c, glucose, insulin, lipids and C-reactive protein are stated as improved vs placebo with the values in the Supplementary Appendix (supplement pass); the semaglutide alone vs placebo contrasts are not printed in the main text (supplement pass); pct_weight_change is the coprimary difference in percent weight change, minus 17.3 (95 percent CI minus 18.1 to minus 16.6; arms minus 20.4 vs minus 3.0; semaglutide alone minus 14.9, cagrilintide alone minus 11.5); receptor class GLP1_AMY is not yet a factor level of the master (decision D-X1), group held; funded by Novo Nordisk (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-6.7", "ci_lb_reported": "-7.8", "ci_ub_reported": "-5.6", "se_source": "ci_95", "notes": "Table 2 and results text: change in systolic blood pressure from baseline to week 68, CagriSema minus 9.9 vs placebo minus 3.2 mm Hg, estimated difference minus 6.7 (minus 7.8 to minus 5.6), P below 0.001; baseline in the supplement"},
+  {"biomarker": "DBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-3.2", "ci_lb_reported": "-3.9", "ci_ub_reported": "-2.5", "se_source": "ci_95", "notes": "Results text: change in diastolic blood pressure from baseline to week 68, CagriSema minus 5.0 vs placebo minus 1.9 mm Hg, estimated difference minus 3.2 (minus 3.9 to minus 2.5)"}
+ ],
+ "json": {
+  "status": "held_pending_decision",
+  "molecule": "CagriSema",
+  "trial_id": "REDEFINE 1",
+  "design": "REDEFINE 1, phase 3a four group double blind placebo and active controlled trial, CagriSema vs semaglutide vs cagrilintide vs placebo, adults with overweight or obesity without diabetes, 3417 randomised, 68 weeks",
+  "reason": "CagriSema (GLP-1 plus amylin analogue) needs the GLP1_AMY receptor class the master does not yet carry (decision D-X1); two CagriSema vs placebo blood pressure contrasts are extracted to staging; the other markers and the semaglutide alone arm contrasts are in the Supplementary Appendix (supplement pass)",
+  "biomarkers_reported_no_variance": [
+   "HbA1c, fasting_glucose, fasting_insulin, TC, LDL, TG, hsCRP (stated as improved with CagriSema vs placebo; values in the Supplementary Appendix, not in the packet)"
+  ],
+  "other_markers": [
+   "waist circumference",
+   "IWQOL-Lite-CT and SF-36 physical function",
+   "normoglycaemia among participants with prediabetes",
+   "body composition by DXA (subset)"
+  ],
+  "tables_used": [
+   "Table 2 (read through the proxy)",
+   "results text"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "double blind placebo and active controlled phase 3a trial with central randomisation (D1, D2 low); treatment policy estimand with multiple imputation (D3 low); standardised measurements under blinding (D4 low); registered trial with confirmatory secondary endpoints under type I error control (D5 low)"
+  },
+  "doubts": [
+   "held on receptor class (D-X1); the semaglutide 2.4 mg alone vs placebo contrasts, which are admissible now, are only in the supplement",
+   "dose_mg 2.4 records each component of the coadministered dose"
+  ]
+ }
+}

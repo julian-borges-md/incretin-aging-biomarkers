@@ -187,6 +187,24 @@ resolve_effect <- function(row) {
     return(list(yi = row$yi_reported, se = se, route = "ci_95"))
   }
 
+  # Route 2c (2026-10-16, systematic corpus): a between arm difference reported on the log10
+  # scale with its interval (Larsen 2020, schizophrenia trial: leptin minus 0.081 log10 pg/mL,
+  # 95% CI minus 0.147 to minus 0.015). A log10 difference is a log ratio in another base; it is
+  # carried to the natural log scale by the constant ln(10), so the row joins the log_ratio
+  # family (harmonise converts exp(yi) minus 1 to a percent change) with no arithmetic by the
+  # extractor. The extractor records the printed log10 values in yi_reported and the interval
+  # columns, measure RR and se_source log10_diff_ci. A natural log difference would be declared
+  # ln_diff_ci and needs no constant; it is not implemented until a paper prints one.
+  # Placed before Route 2, which would otherwise take the natural log of a negative
+  # log10 difference.
+  if (has(row$se_source) && row$se_source == "log10_diff_ci" &&
+      has(row$yi_reported) && has(row$ci_lb_reported) && has(row$ci_ub_reported)) {
+    k <- log(10)
+    yi <- row$yi_reported * k
+    se <- (row$ci_ub_reported - row$ci_lb_reported) * k / (2 * qnorm(0.975))
+    return(list(yi = yi, se = se, route = "log10_diff_ci"))
+  }
+
   # Route 2: ratio measure with an interval, logged before conversion.
   if (has(row$yi_reported) && has(row$ci_lb_reported) && has(row$ci_ub_reported) &&
       has(row$measure) && row$measure %in% c("OR", "RR", "HR")) {
@@ -320,5 +338,25 @@ local({
     inherits(try(resolve_effect(c(printed[names(printed) != "corr_assumed"],
                                   list(se_source = "arm_change_imputed_r_sem"))), silent = TRUE),
              "try-error")
+  )
+})
+
+# Counterexample for Route 2c, run at source time. A log10 difference of 0.140 (0.021 to 0.259)
+# must give the natural log ratio 0.140 * ln(10) with the standard error of the scaled
+# interval, exp(yi) must equal 10^0.140, and the same row without the declaration must fall to
+# Route 2, which cannot be right for a signed log10 difference (it would log a negative number
+# for the leptin row), so the declared route and the undeclared route must differ.
+local({
+  printed <- list(trial_id = "route 2c test", biomarker = "adiponectin", measure = "RR",
+                  yi_reported = 0.140, ci_lb_reported = 0.021, ci_ub_reported = 0.259)
+  declared <- resolve_effect(c(printed, list(se_source = "log10_diff_ci")))
+  undeclared <- resolve_effect(c(printed, list(se_source = "log_RR_ci")))
+  stopifnot(
+    declared$route == "log10_diff_ci",
+    abs(declared$yi - 0.140 * log(10)) < 1e-12,
+    abs(exp(declared$yi) - 10^0.140) < 1e-12,
+    abs(declared$se - (0.259 - 0.021) * log(10) / (2 * qnorm(0.975))) < 1e-12,
+    undeclared$route == "log_RR_ci",
+    abs(undeclared$yi - declared$yi) > 1e-6
   )
 })

@@ -139,7 +139,7 @@ stopifnot(!any(duplicated(BASELINE[c("trial_id", "biomarker")])))
 # the relative change in the proportion responding, not a change in a marker's level; the two
 # binary inventory keys (MASH_resolution, fibrosis_improvement) are outside the composite set and
 # their Table 2 presentation on the ratio scale is decision D-X6 for the Director.
-LOG_RATIO_ROUTES <- c("log_RR_ci", "log_OR_ci", "events_log_RR")
+LOG_RATIO_ROUTES <- c("log_RR_ci", "log_OR_ci", "events_log_RR", "log10_diff_ci")
 PCT_BIOMARKERS   <- c("hsCRP", "IL6", "GDF15", "YKL40", "ICAM1", "leptin",
                       "NTproBNP", "liver_fat_pdff")
 

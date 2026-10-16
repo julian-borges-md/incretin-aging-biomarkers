@@ -1,0 +1,69 @@
+{
+ "group": "79",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT03951753",
+  "pmid": "",
+  "doi": "10.1111/dom.16159",
+  "first_author": "Mather",
+  "year": "2025",
+  "journal": "Diabetes Obes Metab",
+  "phase": "1",
+  "drug": "tirzepatide",
+  "receptor_class": "GLP1_GIP",
+  "dose_mg": "15",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "28",
+  "population": "T2D",
+  "n_tx": "45",
+  "n_ctrl": "28",
+  "assessment_timepoint_weeks": "28",
+  "pct_weight_change": "-11.5",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: NCT03951753, phase 1 multicentre randomised double blind parallel arm mechanism of action trial (28 weeks) in adults with type 2 diabetes on metformin, BMI 25 to 45, randomised 3:3:2 to tirzepatide 15 mg weekly (maintenance from week 20, dose_mg 15), semaglutide 1 mg weekly (from week 8, dose_mg 1) or placebo, 117 randomised (45, 44, 28); this post hoc exploratory report (Mather 2025) prints Table 1 with baseline and week 28 mean plus or minus SD per arm for HbA1c, triglycerides, leptin and adiponectin with exact p values for the pairwise change comparisons (route arm_change_imputed_r, correlation 0.5; the p values are recorded in the notes, not used); both active arms are entered against the shared placebo arm (rows carry the drug, receptor class, dose and n); biomarkers are exploratory (prespecified FALSE); pct_weight_change from the Table 1 means, tirzepatide 94.2 to 83.4 kg, minus 10.8 kg equals minus 11.5 percent (semaglutide 92.7 to 85.3 kg, minus 8.0 percent; placebo 98.7 to 97.9 kg, minus 0.8 percent; no contrast printed); the primary report (Heise 2023) is the companion; funded by Eli Lilly (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "HbA1c", "measure": "MD", "unit": "%", "base_mean_tx": "7.8", "base_sd_tx": "0.7", "final_mean_tx": "5.8", "final_sd_tx": "0.5", "base_mean_ctrl": "7.9", "base_sd_ctrl": "0.5", "final_mean_ctrl": "8.1", "final_sd_ctrl": "0.7", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: HbA1c percent, tirzepatide 15 mg (N 45) baseline and week 28 vs placebo (N 28); change comparison p below 0.001"},
+  {"biomarker": "TG", "measure": "MD", "unit": "mmol/L", "base_mean_tx": "2.1", "base_sd_tx": "0.9", "final_mean_tx": "1.4", "final_sd_tx": "0.7", "base_mean_ctrl": "2.5", "base_sd_ctrl": "0.7", "final_mean_ctrl": "2.4", "final_sd_ctrl": "0.7", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: fasting triglycerides mmol/L, tirzepatide vs placebo; change comparison p 0.0002"},
+  {"biomarker": "leptin", "measure": "MD", "unit": "ng/mL", "base_mean_tx": "13.7", "base_sd_tx": "11.4", "final_mean_tx": "8.4", "final_sd_tx": "10.6", "base_mean_ctrl": "19.2", "base_sd_ctrl": "20.9", "final_mean_ctrl": "17.6", "final_sd_ctrl": "25.1", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: fasting leptin ng/mL, tirzepatide vs placebo; change comparison p 0.0439"},
+  {"biomarker": "adiponectin", "measure": "MD", "unit": "ug/mL", "base_mean_tx": "3.8", "base_sd_tx": "2.1", "final_mean_tx": "5.0", "final_sd_tx": "2.4", "base_mean_ctrl": "3.8", "base_sd_ctrl": "2.7", "final_mean_ctrl": "4.3", "final_sd_ctrl": "2.4", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: fasting adiponectin ug/mL, tirzepatide vs placebo; change comparison p 0.0399"},
+  {"biomarker": "HbA1c", "drug": "semaglutide", "receptor_class": "GLP1_mono", "dose_mg": "1", "n_tx": "44", "pct_weight_change": "-8.0", "measure": "MD", "unit": "%", "base_mean_tx": "7.7", "base_sd_tx": "0.6", "final_mean_tx": "6.2", "final_sd_tx": "0.5", "base_mean_ctrl": "7.9", "base_sd_ctrl": "0.5", "final_mean_ctrl": "8.1", "final_sd_ctrl": "0.7", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: HbA1c percent, semaglutide 1 mg (N 44) baseline and week 28 vs placebo (N 28); change comparison p below 0.001; pct_weight_change for this arm minus 8.0 (92.7 to 85.3 kg)"},
+  {"biomarker": "TG", "drug": "semaglutide", "receptor_class": "GLP1_mono", "dose_mg": "1", "n_tx": "44", "pct_weight_change": "-8.0", "measure": "MD", "unit": "mmol/L", "base_mean_tx": "2.2", "base_sd_tx": "0.9", "final_mean_tx": "1.6", "final_sd_tx": "0.6", "base_mean_ctrl": "2.5", "base_sd_ctrl": "0.7", "final_mean_ctrl": "2.4", "final_sd_ctrl": "0.7", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: fasting triglycerides mmol/L, semaglutide vs placebo; change comparison p 0.0016"},
+  {"biomarker": "leptin", "drug": "semaglutide", "receptor_class": "GLP1_mono", "dose_mg": "1", "n_tx": "44", "pct_weight_change": "-8.0", "measure": "MD", "unit": "ng/mL", "base_mean_tx": "15.2", "base_sd_tx": "16.8", "final_mean_tx": "10.1", "final_sd_tx": "11.1", "base_mean_ctrl": "19.2", "base_sd_ctrl": "20.9", "final_mean_ctrl": "17.6", "final_sd_ctrl": "25.1", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: fasting leptin ng/mL, semaglutide vs placebo; change comparison p 0.0205"},
+  {"biomarker": "adiponectin", "drug": "semaglutide", "receptor_class": "GLP1_mono", "dose_mg": "1", "n_tx": "44", "pct_weight_change": "-8.0", "measure": "MD", "unit": "ug/mL", "base_mean_tx": "4.2", "base_sd_tx": "2.5", "final_mean_tx": "4.8", "final_sd_tx": "2.4", "base_mean_ctrl": "3.8", "base_sd_ctrl": "2.7", "final_mean_ctrl": "4.3", "final_sd_ctrl": "2.4", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r", "notes": "Table 1: fasting adiponectin ug/mL, semaglutide vs placebo; change comparison p 0.7700"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "tirzepatide; semaglutide",
+  "trial_id": "NCT03951753",
+  "design": "phase 1 randomised double blind parallel arm mechanism of action trial, tirzepatide 15 mg vs semaglutide 1 mg vs placebo 3:3:2, type 2 diabetes on metformin, 117 randomised, 28 weeks",
+  "reason": "full text group (institutional route); four inventory markers from Table 1 per active arm against the shared placebo arm by the imputed change route (eight rows)",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "hyperinsulinaemic euglycaemic clamp M value and Matsuda index (insulin sensitivity)",
+   "fat mass and fat free mass by DXA",
+   "free fatty acids",
+   "IGFBP2",
+   "waist circumference"
+  ],
+  "tables_used": [
+   "Table 1"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "randomised double blind placebo controlled mechanism trial (D1, D2 low); pharmacodynamic analysis set with evaluable data, N as randomised in the table (D3 some concerns); laboratory assays (D4 low); post hoc exploratory biomarker analysis of a registered trial (D5 some concerns)"
+  },
+  "doubts": [
+   "the placebo arm is shared by the tirzepatide and semaglutide rows",
+   "the primary report (Heise 2023, Diabetes Care) may carry the same Table 1 values; not a separate record of the corpus as far as the pool shows"
+  ]
+ }
+}

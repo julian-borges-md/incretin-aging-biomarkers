@@ -1,0 +1,142 @@
+{
+ "group": "262",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Chaudhuri 2012",
+  "pmid": "",
+  "doi": "10.1210/jc.2011-1508",
+  "first_author": "Chaudhuri",
+  "year": "2012",
+  "journal": "J Clin Endocrinol Metab",
+  "phase": "4",
+  "drug": "exenatide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "0.01",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "12",
+  "population": "T2D",
+  "n_tx": "12",
+  "n_ctrl": "12",
+  "assessment_timepoint_weeks": "12",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "FALSE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: single centre randomised placebo controlled single blind (patient) trial (Buffalo) in obese insulin treated type 2 diabetes with HbA1c 7.5 to 9 percent: exenatide 10 ug twice daily (dose_mg 0.01 per injection) vs placebo for 12 weeks (the eligibility minimum), 12 per arm; Table 1 gives baseline and 12 week values per arm as mean plus or minus SE (route arm_change_imputed_r_sem, brief amendment A8, correlation 0.5; the superscript a marks paired t tests vs baseline, not used); the inflammatory indices (ROS, NF kappa B, MCP-1, MMP-9, SAA, IL-6) are the stated aim, IL-6 is given for the exenatide arm only (no placebo values printed) and is not entered; body weight in pounds unchanged (251 to 251 lbs exenatide), pct_weight_change empty; NIH and ADA grants to the senior author, no industry role stated (industry_funded FALSE); rob_overall some_concerns"
+ },
+ "rows": [
+  {
+   "biomarker": "HbA1c",
+   "measure": "MD",
+   "unit": "%",
+   "base_mean_tx": "8.6",
+   "base_sd_tx": "0.4",
+   "final_mean_tx": "7.4",
+   "final_sd_tx": "0.5",
+   "base_mean_ctrl": "8.5",
+   "base_sd_ctrl": "0.3",
+   "final_mean_ctrl": "8.0",
+   "final_sd_ctrl": "0.3",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r_sem",
+   "notes": "Table 1: HbA1c percent baseline and 12 weeks per arm, SE as printed (n 12 per arm)"
+  },
+  {
+   "biomarker": "fasting_glucose",
+   "measure": "MD",
+   "unit": "mg/dL",
+   "base_mean_tx": "139",
+   "base_sd_tx": "17",
+   "final_mean_tx": "110",
+   "final_sd_tx": "9",
+   "base_mean_ctrl": "128",
+   "base_sd_ctrl": "13",
+   "final_mean_ctrl": "139",
+   "final_sd_ctrl": "33",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r_sem",
+   "notes": "Table 1: fasting glucose mg/dL, SE as printed"
+  },
+  {
+   "biomarker": "fasting_insulin",
+   "measure": "MD",
+   "unit": "uU/mL",
+   "base_mean_tx": "12.7",
+   "base_sd_tx": "2.8",
+   "final_mean_tx": "16.4",
+   "final_sd_tx": "3.2",
+   "base_mean_ctrl": "13.1",
+   "base_sd_ctrl": "3.1",
+   "final_mean_ctrl": "13.9",
+   "final_sd_ctrl": "5.9",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r_sem",
+   "notes": "Table 1: fasting insulin uU/mL, SE as printed; all patients on insulin therapy, the rise with exenatide is as printed"
+  },
+  {
+   "biomarker": "SBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "base_mean_tx": "134",
+   "base_sd_tx": "6",
+   "final_mean_tx": "127",
+   "final_sd_tx": "5",
+   "base_mean_ctrl": "128",
+   "base_sd_ctrl": "5",
+   "final_mean_ctrl": "130",
+   "final_sd_ctrl": "6.0",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r_sem",
+   "notes": "Table 1: systolic blood pressure mm Hg, SE as printed"
+  },
+  {
+   "biomarker": "DBP",
+   "measure": "MD",
+   "unit": "mmHg",
+   "base_mean_tx": "82",
+   "base_sd_tx": "2",
+   "final_mean_tx": "77",
+   "final_sd_tx": "3",
+   "base_mean_ctrl": "78",
+   "base_sd_ctrl": "2",
+   "final_mean_ctrl": "76",
+   "final_sd_ctrl": "4",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r_sem",
+   "notes": "Table 1: diastolic blood pressure mm Hg, SE as printed"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "exenatide",
+  "trial_id": "Chaudhuri 2012",
+  "design": "single centre randomised placebo controlled single blind trial, exenatide 10 ug twice daily vs placebo, obese insulin treated type 2 diabetes, 24 randomised (12 per arm), 12 weeks",
+  "reason": "full text group (institutional route); five inventory markers from Table 1 (mean plus or minus SE per arm, amendment A8 route); IL-6 and the other inflammatory indices are given for the exenatide arm only",
+  "biomarkers_reported_no_variance": [
+   "IL6 (exenatide arm only: 3.01 plus or minus 0.49 to 2.07 plus or minus 0.57 pg/mL at 12 weeks, minus 22 plus or minus 12 percent, P below 0.05; placebo stated as no change, no values)",
+   "TNF_alpha (mRNA expression in mononuclear cells only, no plasma value)"
+  ],
+  "other_markers": [
+   "free fatty acids",
+   "MCP-1, MMP-9, serum amyloid A",
+   "mononuclear cell ROS generation, NF kappa B binding, JNK-1, TLR-2, TLR-4, SOCS-3 expression",
+   "insulin dose"
+  ],
+  "tables_used": [
+   "Table 1"
+  ],
+  "rob": {
+   "d1_randomisation": "some_concerns",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "randomised without a described sequence or concealment (D1 some concerns); patient blinded only (D2 some concerns); 12 per arm analysed throughout as reported (D3 low); laboratory assays (D4 low); no registration cited, markers named in the aims (D5 some concerns)"
+  },
+  "doubts": [
+   "Table 1 prints SE with n 12 per arm; rows declared arm_change_imputed_r_sem"
+  ]
+ }
+}

@@ -1,0 +1,63 @@
+{
+ "group": "264",
+ "extractor": "S",
+ "study": {
+  "trial_id": "Sathyanarayana 2011",
+  "pmid": "",
+  "doi": "10.1038/oby.2011.152",
+  "first_author": "Sathyanarayana",
+  "year": "2011",
+  "journal": "Obesity (Silver Spring)",
+  "phase": "4",
+  "drug": "exenatide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "0.01",
+  "comparator": "pioglitazone 45 mg daily (exenatide added to pioglitazone vs pioglitazone alone)",
+  "comparator_type": "active",
+  "duration_weeks": "52",
+  "population": "T2D",
+  "n_tx": "11",
+  "n_ctrl": "10",
+  "assessment_timepoint_weeks": "52",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "high",
+  "notes": "STUDY: single centre randomised open trial (Houston, random number table) in type 2 diabetes on diet or metformin: exenatide 5 ug twice daily escalated to 10 ug twice daily (dose_mg 0.01 per injection) plus pioglitazone vs pioglitazone 45 mg alone for 12 months (52 weeks); 24 enrolled, 21 completed (11 combination, 10 pioglitazone), completers analysed; the results text gives per arm baseline and 12 month means plus or minus SEM (statistical analysis section: data are mean plus or minus s.e.m.) for plasma adiponectin and hepatic fat content by MRS (route arm_change_imputed_r_sem, brief amendment A8, correlation 0.5); Table 1 (glycaemia, lipids, transaminases) is an image not captured in the proxy text; hepatic fat and adiponectin are the stated outcomes (prespecified TRUE); body weight change in the combination arm 0.2 kg (pioglitazone plus 3.7 kg), pct_weight_change empty (kg only, baseline weights in Table 1 not captured); the contrast is exenatide added to pioglitazone vs pioglitazone, both arms on a thiazolidinedione; research grant from Amylin and Eli Lilly (industry_funded TRUE); rob_overall high"
+ },
+ "rows": [
+  {"biomarker": "adiponectin", "measure": "MD", "unit": "ug/mL", "base_mean_tx": "7.9", "base_sd_tx": "0.9", "final_mean_tx": "23.2", "final_sd_tx": "2.7", "base_mean_ctrl": "8.5", "base_sd_ctrl": "0.8", "final_mean_ctrl": "15.8", "final_sd_ctrl": "1.4", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r_sem", "notes": "Results text: plasma adiponectin ug/mL, combination 7.9 plus or minus 0.9 to 23.2 plus or minus 2.7 (193 percent) vs pioglitazone 8.5 plus or minus 0.8 to 15.8 plus or minus 1.4 (86 percent), between group P below 0.001; SEM as printed, n 11 and 10"},
+  {"biomarker": "liver_fat_pdff", "measure": "MD", "unit": "% (1H MRS)", "base_mean_tx": "12.1", "base_sd_tx": "1.7", "final_mean_tx": "4.7", "final_sd_tx": "1.3", "base_mean_ctrl": "11.0", "base_sd_ctrl": "3.1", "final_mean_ctrl": "6.5", "final_sd_ctrl": "1.9", "corr_assumed": "0.5", "se_source": "arm_change_imputed_r_sem", "notes": "Results text: hepatic fat content by MRS percent, combination 12.1 plus or minus 1.7 to 4.7 plus or minus 1.3 vs pioglitazone 11.0 plus or minus 3.1 to 6.5 plus or minus 1.9, reduction significantly greater with the combination; SEM as printed; MRS fat fraction entered under liver_fat_pdff as for Dutour 2016"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "exenatide",
+  "trial_id": "Sathyanarayana 2011",
+  "design": "single centre randomised trial, exenatide plus pioglitazone vs pioglitazone, type 2 diabetes, 24 enrolled, 21 completed (11 and 10), 12 months",
+  "reason": "full text group (institutional route); two inventory markers (adiponectin, liver fat by MRS) from the results text as per arm means with SEM (amendment A8 route); Table 1 with the other parameters is an image not captured",
+  "biomarkers_reported_no_variance": [
+   "HbA1c, fasting_glucose, fasting_insulin, TG, TC, LDL, ALT, AST (Table 1 image not captured; the text states directions and p values only; the combination lowered ALT more than pioglitazone, P below 0.05)"
+  ],
+  "other_markers": [
+   "free fatty acids",
+   "HDL cholesterol",
+   "body weight"
+  ],
+  "tables_used": [
+   "results text (Figure 1 values)"
+  ],
+  "rob": {
+   "d1_randomisation": "some_concerns",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "high",
+   "justification": "random number table without concealment (D1 some concerns); open treatment with a thiazolidinedione in both arms (D2 some concerns); 3 of 24 did not complete, completers analysed (D3 some concerns); MRS and laboratory assays (D4 low); no registration cited (D5 some concerns); small open completer analysis, overall high"
+  },
+  "doubts": [
+   "the comparator arm receives pioglitazone, which itself raises adiponectin and lowers liver fat, so the contrast is the incremental effect of exenatide on top of a thiazolidinedione",
+   "Table 1 is an image; the glycaemic, lipid and transaminase rows could be added through the publisher page (companion pass)"
+  ]
+ }
+}

@@ -1,0 +1,62 @@
+{
+ "group": "23",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT04019197",
+  "pmid": "",
+  "doi": "10.1093/cid/ciaf577",
+  "first_author": "",
+  "year": "2025",
+  "journal": "Clin Infect Dis",
+  "phase": "2b",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "32",
+  "population": "obesity",
+  "n_tx": "54",
+  "n_ctrl": "54",
+  "assessment_timepoint_weeks": "32",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "FALSE",
+  "rob_overall": "low",
+  "notes": "STUDY: single site randomised double blind placebo controlled phase 2b trial (University Hospitals Cleveland, NCT04019197) of weekly semaglutide (titrated to 1 mg) vs placebo for 32 weeks in virologically suppressed adults with HIV, BMI above 25 and lipohypertrophy; 108 randomised (54 per arm), 8 per arm withdrew before week 32; three reports in the group (Clin Infect Dis inflammation markers, AIDS vascular outcomes, Open Forum Infect Dis); Table 3 of the inflammation report prints absolute and percent changes over 32 weeks as medians (IQR) per arm with within arm and between arm rank sum p values, no means or SDs, so no row can be formed under the brief (medians recorded below); population HIV associated lipohypertrophy with overweight, held under amendment A6"
+ },
+ "rows": [],
+ "json": {
+  "status": "held_pending_decision",
+  "molecule": "semaglutide",
+  "trial_id": "NCT04019197",
+  "design": "single site randomised double blind placebo controlled phase 2b trial, semaglutide vs placebo, people with HIV and lipohypertrophy with overweight, 108 randomised, 32 weeks",
+  "reason": "population HIV associated lipohypertrophy, held under amendment A6; the inflammatory markers are reported as medians with IQR only (hsCRP absolute change minus 1.17 vs minus 0.11 ug/mL, between arm p 0.02; IL-6 minus 0.39 vs minus 0.25 pg/mL, p 0.43; sICAM-1 minus 4.99 vs minus 6.85 ng/mL, p 0.82), no row can be formed",
+  "biomarkers_reported_no_variance": [
+   "hsCRP (Table 3 medians: absolute change minus 1.17 (minus 3.09 to 0.15) vs minus 0.11 (minus 1.30 to 2.37) ug/mL over 32 weeks, between arm p 0.02; baseline 3.73 vs 5.23 ug/mL)",
+   "IL6 (Table 3 medians: minus 0.39 vs minus 0.25 pg/mL, p 0.43)",
+   "ICAM1 (sICAM-1, Table 3 medians: minus 4.99 vs minus 6.85 ng/mL, p 0.82)"
+  ],
+  "other_markers": [
+   "sCD14, sCD163, sVCAM-1, sTNFR-I and II, D-dimer, oxLDL (medians)",
+   "pulse wave velocity, coronary artery calcium, reactive hyperaemia index (AIDS report)",
+   "Cognivue cognitive scores (Open Forum Infect Dis report)"
+  ],
+  "tables_used": [
+   "Table 2 and Table 3 of the Clin Infect Dis report"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "computer generated concealed allocation with matching placebo (D1, D2 low); 8 of 54 per arm withdrew before the primary endpoint (D3 some concerns); laboratory assays (D4 low); registered trial with prespecified secondary biomarker analyses (D5 low)"
+  },
+  "doubts": [
+   "held population; even if admitted, the markers are medians only and would need the authors' means or a median to mean conversion the brief does not allow",
+   "first author not read from the Clin Infect Dis page header (not needed while no row exists)"
+  ]
+ }
+}

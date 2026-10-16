@@ -1,0 +1,81 @@
+{
+ "group": "59",
+ "extractor": "S",
+ "study": {
+  "trial_id": "STOP",
+  "pmid": "",
+  "doi": "10.1016/j.numecd.2025.104036",
+  "first_author": "Golub",
+  "year": "2025",
+  "journal": "Nutr Metab Cardiovasc Dis",
+  "phase": "4",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "52",
+  "population": "T2D",
+  "n_tx": "59",
+  "n_ctrl": "55",
+  "assessment_timepoint_weeks": "52",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: STOP (Semaglutide Treatment On coronary Progression), single centre randomised double blind placebo controlled trial (Lundquist Institute, Torrance) of once weekly semaglutide 1.0 mg (dose_mg 1) vs placebo for 12 months in type 2 diabetes with HbA1c 7 percent or more; 140 randomised, this secondary analysis includes 114 with paired cardiac CT (59 semaglutide, 55 placebo), analysed as randomised; Table 3 gives the treatment group coefficient for the change in ALT and AST over 12 months with standard errors from univariable and multivariable regression (route se_reported, MD U/L; the univariable coefficient is entered, the adjusted one in the notes); liver fat by CT attenuation (Hounsfield units, Table 2) is not an inventory measure; secondary outcomes of the trial (prespecified FALSE); body weight change not printed, pct_weight_change empty; Table 1 baselines for hsCRP (medians), lipids and HbA1c but no ALT or AST baseline; supported in part by a Novo Nordisk investigator sponsored studies grant (industry_funded TRUE); rob_overall some_concerns"
+ },
+ "rows": [
+  {
+   "biomarker": "ALT",
+   "measure": "MD",
+   "unit": "U/L",
+   "yi_reported": "-2.60",
+   "se_reported": "1.91",
+   "p_reported": "0.176",
+   "p_is_bound": "FALSE",
+   "se_source": "se_reported",
+   "notes": "Table 3: change in ALT over 12 months, treatment group coefficient (univariable) minus 2.60, SE 1.91, p 0.176; multivariable (age, sex, BMI, hypertension, hyperlipidaemia, past smoking, baseline ALT) minus 3.95, SE 1.77, p 0.028; no baseline ALT printed"
+  },
+  {
+   "biomarker": "AST",
+   "measure": "MD",
+   "unit": "U/L",
+   "yi_reported": "-0.70",
+   "se_reported": "1.89",
+   "p_reported": "0.712",
+   "p_is_bound": "FALSE",
+   "se_source": "se_reported",
+   "notes": "Table 3: change in AST over 12 months, treatment group coefficient (univariable) minus 0.70, SE 1.89, p 0.712; multivariable minus 1.42, SE 1.76, p 0.422; no baseline AST printed"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "STOP",
+  "design": "single centre randomised double blind placebo controlled trial, semaglutide 1.0 mg weekly vs placebo, type 2 diabetes, 140 randomised, 114 in this cardiac CT secondary analysis, 12 months",
+  "reason": "full text group (institutional route); two inventory markers (ALT, AST) as regression treatment coefficients with standard errors; liver fat by CT attenuation is outside the inventory",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "liver fat attenuation by non contrast cardiac CT (Hounsfield units; adjusted difference 4.66 HU, SE 1.43, favouring semaglutide)",
+   "hsCRP, lipids and HbA1c at baseline only (Table 1)",
+   "coronary plaque progression (primary report)"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 3"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "randomised double blind placebo controlled trial (D1, D2 low); 114 of 140 randomised with paired scans, baseline BMI differed between the analysed arms (D3 some concerns); laboratory transaminases (D4 low); secondary outcome analysis without a stated analysis plan for the transaminases (D5 some concerns)"
+  },
+  "doubts": [
+   "no ALT or AST baseline in this report, so the rows carry no denominator"
+  ]
+ }
+}

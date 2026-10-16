@@ -1,0 +1,71 @@
+{
+ "group": "126",
+ "extractor": "S",
+ "study": {
+  "trial_id": "OASIS 1",
+  "pmid": "",
+  "doi": "10.1016/S0140-6736(23)01185-6",
+  "first_author": "Knop",
+  "year": "2023",
+  "journal": "Lancet",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "50",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "68",
+  "population": "obesity",
+  "n_tx": "334",
+  "n_ctrl": "333",
+  "assessment_timepoint_weeks": "68",
+  "pct_weight_change": "-12.7",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: OASIS 1 (NCT05035095), randomised double blind placebo controlled phase 3 trial at 50 sites in nine countries of oral semaglutide 50 mg once daily (dose_mg 50) vs placebo in adults without diabetes with BMI 30 or more, or 27 or more with a weight related complication, 68 weeks; 667 randomised (334 and 333), full analysis set, treatment policy estimand; Table 2 gives estimated mean (SE) changes per arm and the estimated treatment difference with 95 percent CI (route ci_95): HbA1c, fasting glucose and blood pressure as MD in native units, fasting insulin, lipids and hsCRP as percent changes (PCT, ETD in percentage points); supportive secondary endpoints (prespecified TRUE); pct_weight_change is the coprimary ETD, minus 12.7 (95 percent CI minus 14.2 to minus 11.3; arms minus 15.1 vs minus 2.4); Table 1 baselines, lipids and hsCRP as geometric means (hsCRP 3.4 mg/dL printed, the unit label as in the paper); the group also holds a conference abstract of the same trial; funded by Novo Nordisk (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {"biomarker": "HbA1c", "measure": "MD", "unit": "%", "yi_reported": "-0.3", "ci_lb_reported": "-0.3", "ci_ub_reported": "-0.2", "base_mean_tx": "5.6", "base_mean_ctrl": "5.6", "se_source": "ci_95", "notes": "Table 2: change in HbA1c percentage points, oral semaglutide minus 0.2 (SE 0.0, n 311) vs placebo 0.1 (0.0, n 286), ETD minus 0.3 (minus 0.3 to minus 0.2); Table 1 baseline 5.6 and 5.6"},
+  {"biomarker": "fasting_glucose", "measure": "MD", "unit": "mmol/L", "yi_reported": "-0.4", "ci_lb_reported": "-0.5", "ci_ub_reported": "-0.3", "base_mean_tx": "5.4", "base_mean_ctrl": "5.5", "se_source": "ci_95", "notes": "Table 2: change in fasting plasma glucose mmol/L, minus 0.5 (0.0, n 314) vs minus 0.1 (0.0, n 294), ETD minus 0.4 (minus 0.5 to minus 0.3); Table 1 baseline 5.4 and 5.5"},
+  {"biomarker": "fasting_insulin", "measure": "PCT", "unit": "%", "yi_reported": "-27.2", "ci_lb_reported": "-33.4", "ci_ub_reported": "-20.4", "base_mean_tx": "93.7", "base_mean_ctrl": "92.7", "se_source": "ci_95", "notes": "Table 2: change in fasting serum insulin percent, minus 33.1 (n 309) vs minus 8.1 (n 287), ETD minus 27.2 (minus 33.4 to minus 20.4); Table 1 geometric mean baseline 93.7 and 92.7 pmol/L"},
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-6.3", "ci_lb_reported": "-8.3", "ci_ub_reported": "-4.3", "base_mean_tx": "129", "base_mean_ctrl": "130", "se_source": "ci_95", "notes": "Table 2: change in systolic blood pressure mm Hg, minus 6.6 (0.7, n 317) vs minus 0.3 (0.7, n 295), ETD minus 6.3 (minus 8.3 to minus 4.3); Table 1 baseline 129 and 130"},
+  {"biomarker": "DBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-1.9", "ci_lb_reported": "-3.2", "ci_ub_reported": "-0.6", "base_mean_tx": "82", "base_mean_ctrl": "83", "se_source": "ci_95", "notes": "Table 2: change in diastolic blood pressure mm Hg, minus 2.4 (0.5) vs minus 0.6 (0.5), ETD minus 1.9 (minus 3.2 to minus 0.6); Table 1 baseline 82 and 83"},
+  {"biomarker": "TC", "measure": "PCT", "unit": "%", "yi_reported": "-2.4", "ci_lb_reported": "-5.0", "ci_ub_reported": "0.2", "base_mean_tx": "5.0", "base_mean_ctrl": "4.9", "se_source": "ci_95", "notes": "Table 2: change in total cholesterol percent, minus 2.3 (n 315) vs 0.2 (n 293), ETD minus 2.4 (minus 5.0 to 0.2); Table 1 geometric mean baseline 5.0 and 4.9 mmol/L"},
+  {"biomarker": "LDL", "measure": "PCT", "unit": "%", "yi_reported": "-2.2", "ci_lb_reported": "-5.9", "ci_ub_reported": "1.7", "base_mean_tx": "3.0", "base_mean_ctrl": "2.8", "se_source": "ci_95", "notes": "Table 2: change in LDL cholesterol percent, minus 0.6 vs 1.7, ETD minus 2.2 (minus 5.9 to 1.7); Table 1 geometric mean baseline 3.0 and 2.8 mmol/L"},
+  {"biomarker": "TG", "measure": "PCT", "unit": "%", "yi_reported": "-17.9", "ci_lb_reported": "-22.5", "ci_ub_reported": "-13.1", "base_mean_tx": "1.4", "base_mean_ctrl": "1.4", "se_source": "ci_95", "notes": "Table 2: change in triglycerides percent, minus 22.3 vs minus 5.3, ETD minus 17.9 (minus 22.5 to minus 13.1); Table 1 geometric mean baseline 1.4 and 1.4 mmol/L"},
+  {"biomarker": "hsCRP", "measure": "PCT", "unit": "%", "yi_reported": "-50.4", "ci_lb_reported": "-57.1", "ci_ub_reported": "-42.6", "base_mean_tx": "3.4", "base_mean_ctrl": "3.4", "se_source": "ci_95", "notes": "Table 2: change in high sensitivity C-reactive protein percent, minus 57.3 (n 315) vs minus 13.8 (n 293), ETD minus 50.4 (minus 57.1 to minus 42.6); Table 1 geometric mean baseline 3.4 and 3.4 (printed mg/dL)"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "OASIS 1",
+  "design": "OASIS 1, randomised double blind placebo controlled phase 3 trial, oral semaglutide 50 mg daily vs placebo, adults with overweight or obesity without diabetes, 667 randomised, 68 weeks",
+  "reason": "full text group (institutional route); nine inventory markers from Table 2 as estimated treatment differences with 95 percent CI (MD for HbA1c, glucose and blood pressure; PCT for insulin, lipids and hsCRP)",
+  "biomarkers_reported_no_variance": [
+   "eGFR (Table 1 geometric mean baseline only)"
+  ],
+  "other_markers": [
+   "HDL and VLDL cholesterol, free fatty acids",
+   "waist circumference, BMI, body weight in kg",
+   "IWQOL-Lite-CT and SF-36v2 physical function",
+   "glycaemic status transitions"
+  ],
+  "tables_used": [
+   "Table 1",
+   "Table 2"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "double blind placebo controlled phase 3 trial with central randomisation (D1, D2 low); full analysis set with the treatment policy estimand (D3 low); laboratory outcomes (D4 low); registered trial with prespecified supportive secondary endpoints (D5 low)"
+  },
+  "doubts": [
+   "the lipid, insulin and hsCRP rows are percent change ETDs (differences of percent changes), entered as PCT; the hsCRP baseline unit is printed as mg/dL"
+  ]
+ }
+}

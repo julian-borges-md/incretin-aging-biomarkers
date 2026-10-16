@@ -1,0 +1,73 @@
+{
+ "group": "212",
+ "extractor": "S",
+ "study": {
+  "trial_id": "SUSTAIN 4",
+  "pmid": "",
+  "doi": "10.1016/S2213-8587(17)30085-2",
+  "first_author": "Aroda",
+  "year": "2017",
+  "journal": "Lancet Diabetes Endocrinol",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1",
+  "comparator": "insulin glargine titrated, both on metformin with or without a sulfonylurea",
+  "comparator_type": "active",
+  "duration_weeks": "30",
+  "population": "T2D",
+  "n_tx": "360",
+  "n_ctrl": "360",
+  "assessment_timepoint_weeks": "30",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: SUSTAIN 4 (NCT02128932), randomised open label non inferiority phase 3a trial at 196 sites in 14 countries of once weekly semaglutide 0.5 mg or 1.0 mg vs titrated insulin glargine in insulin naive type 2 diabetes on metformin with or without a sulfonylurea, 30 weeks; 1089 randomised, mITT 362, 360 and 360; Table 2 gives change from baseline at week 30 per arm and the estimated treatment difference vs insulin glargine with 95 percent CI for each semaglutide dose (route ci_95, MD; rows for 1.0 mg with dose_mg 1 and for 0.5 mg with dose_mg 0.5); lipids and C-reactive protein are in the appendix (stated as reduced; supplement pass); glycaemic, pressure and pulse endpoints are prespecified secondary endpoints (prespecified TRUE); body weight ETD in kg (minus 6.33 kg for 1.0 mg, minus 4.62 kg for 0.5 mg, baseline 93.45 kg overall), pct_weight_change left empty per amendment A2 (kg only, overall baseline); Table 2 overall baselines: HbA1c 8.2, FPG 9.7 mmol/L, DBP 79.9, SBP 132.1, pulse 74.5 (overall, not per arm); funded by Novo Nordisk (industry_funded TRUE); rob_overall some_concerns (open label)"
+ },
+ "rows": [
+  {"biomarker": "HbA1c", "measure": "MD", "unit": "%", "yi_reported": "-0.81", "ci_lb_reported": "-0.96", "ci_ub_reported": "-0.67", "base_mean_tx": "8.2", "base_mean_ctrl": "8.2", "se_source": "ci_95", "notes": "Table 2: HbA1c change at week 30, 1.0 mg semaglutide minus 1.64 (minus 1.74 to minus 1.54) vs glargine minus 0.83 (minus 0.93 to minus 0.73), ETD minus 0.81 (minus 0.96 to minus 0.67), p below 0.0001; overall baseline 8.2 (0.9)"},
+  {"biomarker": "fasting_glucose", "measure": "MD", "unit": "mmol/L", "yi_reported": "-0.61", "ci_lb_reported": "-0.93", "ci_ub_reported": "-0.29", "base_mean_tx": "9.7", "base_mean_ctrl": "9.7", "p_reported": "0.0002", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: FPG change at week 30, 1.0 mg minus 2.73 vs glargine minus 2.12 mmol/L, ETD minus 0.61 (minus 0.93 to minus 0.29), p 0.0002; overall baseline 9.7 (2.8)"},
+  {"biomarker": "DBP", "measure": "MD", "unit": "mmHg", "yi_reported": "0.45", "ci_lb_reported": "-0.74", "ci_ub_reported": "1.64", "base_mean_tx": "79.9", "base_mean_ctrl": "79.9", "p_reported": "0.4545", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: DBP change at week 30, 1.0 mg minus 0.98 vs glargine minus 1.44 mm Hg, ETD 0.45 (minus 0.74 to 1.64); overall baseline 79.9 (8.5)"},
+  {"biomarker": "SBP", "measure": "MD", "unit": "mmHg", "yi_reported": "-3.50", "ci_lb_reported": "-5.46", "ci_ub_reported": "-1.54", "base_mean_tx": "132.1", "base_mean_ctrl": "132.1", "p_reported": "0.0005", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: SBP change at week 30, 1.0 mg minus 5.17 vs glargine minus 1.68 mm Hg, ETD minus 3.50 (minus 5.46 to minus 1.54), p 0.0005; overall baseline 132.1 (15.3)"},
+  {"biomarker": "resting_heart_rate", "measure": "MD", "unit": "bpm", "yi_reported": "3.19", "ci_lb_reported": "1.88", "ci_ub_reported": "4.50", "base_mean_tx": "74.5", "base_mean_ctrl": "74.5", "se_source": "ci_95", "notes": "Table 2: pulse rate change at week 30, 1.0 mg 3.14 vs glargine minus 0.05 beats per min, ETD 3.19 (1.88 to 4.50), p below 0.0001; overall baseline 74.5 (10.2)"},
+  {"biomarker": "HbA1c", "dose_mg": "0.5", "n_tx": "362", "measure": "MD", "unit": "%", "yi_reported": "-0.38", "ci_lb_reported": "-0.52", "ci_ub_reported": "-0.24", "base_mean_tx": "8.2", "base_mean_ctrl": "8.2", "se_source": "ci_95", "notes": "Table 2: HbA1c change at week 30, 0.5 mg semaglutide minus 1.21 vs glargine minus 0.83, ETD minus 0.38 (minus 0.52 to minus 0.24), p below 0.0001"},
+  {"biomarker": "fasting_glucose", "dose_mg": "0.5", "n_tx": "362", "measure": "MD", "unit": "mmol/L", "yi_reported": "0.08", "ci_lb_reported": "-0.24", "ci_ub_reported": "0.40", "base_mean_tx": "9.7", "base_mean_ctrl": "9.7", "p_reported": "0.6243", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: FPG change at week 30, 0.5 mg minus 2.04 vs glargine minus 2.12 mmol/L, ETD 0.08 (minus 0.24 to 0.40)"},
+  {"biomarker": "DBP", "dose_mg": "0.5", "n_tx": "362", "measure": "MD", "unit": "mmHg", "yi_reported": "0.06", "ci_lb_reported": "-1.12", "ci_ub_reported": "1.24", "base_mean_tx": "79.9", "base_mean_ctrl": "79.9", "p_reported": "0.9183", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: DBP change at week 30, 0.5 mg minus 1.38 vs glargine minus 1.44 mm Hg, ETD 0.06 (minus 1.12 to 1.24)"},
+  {"biomarker": "SBP", "dose_mg": "0.5", "n_tx": "362", "measure": "MD", "unit": "mmHg", "yi_reported": "-2.97", "ci_lb_reported": "-4.92", "ci_ub_reported": "-1.03", "base_mean_tx": "132.1", "base_mean_ctrl": "132.1", "p_reported": "0.0028", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: SBP change at week 30, 0.5 mg minus 4.65 vs glargine minus 1.68 mm Hg, ETD minus 2.97 (minus 4.92 to minus 1.03), p 0.0028"},
+  {"biomarker": "resting_heart_rate", "dose_mg": "0.5", "n_tx": "362", "measure": "MD", "unit": "bpm", "yi_reported": "2.36", "ci_lb_reported": "1.07", "ci_ub_reported": "3.65", "base_mean_tx": "74.5", "base_mean_ctrl": "74.5", "p_reported": "0.0004", "p_is_bound": "FALSE", "se_source": "ci_95", "notes": "Table 2: pulse rate change at week 30, 0.5 mg 2.31 vs glargine minus 0.05 beats per min, ETD 2.36 (1.07 to 3.65), p 0.0004"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "SUSTAIN 4",
+  "design": "SUSTAIN 4, randomised open label non inferiority phase 3a trial, semaglutide 0.5 mg or 1.0 mg weekly vs insulin glargine, insulin naive type 2 diabetes, 1089 randomised, 30 weeks",
+  "reason": "full text group (institutional route); five inventory markers per dose (ten rows) as estimated treatment differences vs insulin glargine with 95 percent CI from Table 2; lipids and C-reactive protein are in the appendix (supplement pass)",
+  "biomarkers_reported_no_variance": [
+   "TC, LDL, TG, hsCRP (appendix: all lipids except free fatty acids reduced with 1.0 mg vs glargine, TC and LDL with 0.5 mg; CRP and PAI-1 reduced with both doses; values not in the packet)"
+  ],
+  "other_markers": [
+   "8 point self monitored plasma glucose",
+   "body weight, BMI, waist circumference",
+   "PAI-1",
+   "treatment satisfaction and SF-36"
+  ],
+  "tables_used": [
+   "Table 2"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "some_concerns",
+   "d3_missing": "low",
+   "d4_measurement": "some_concerns",
+   "d5_selection": "low",
+   "overall": "some_concerns",
+   "justification": "central automated randomisation (D1 low); open label with a titrated insulin comparator (D2 some concerns); mITT with 99 percent exposed and multiple imputation (D3 low); laboratory outcomes, open label blood pressure and pulse (D4 some concerns); registered trial with prespecified secondary endpoints (D5 low)"
+  },
+  "doubts": [
+   "the glargine arm is shared by the two semaglutide dose row sets",
+   "baselines are the overall trial means from Table 2, used for both arms",
+   "lipids and CRP contrasts are in the appendix only"
+  ]
+ }
+}
