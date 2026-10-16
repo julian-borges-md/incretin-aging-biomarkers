@@ -152,3 +152,39 @@ convertible to the placebo corrected percent change scale; the 27 unconvertible 
 in absolute units whose baseline denominator is not printed in any text in hand, listed by trial in
 `work/gate_harmonise_units.log`. A PRISMA diagram drawn now would therefore be accurate for
 identification, screening and eligibility, and provisional for the included count.
+
+### Update 2026-10-16, 16:00 local: the extraction queue is closed
+
+The queue is empty. Every one of the 340 ledger groups now carries a terminal status, so the included
+count of the PRISMA diagram is final for this corpus and no longer provisional.
+
+| Ledger status | Groups | Meaning |
+|---|---|---|
+| no_usable_contrast_scan | 104 | closed by the deterministic variance mark scan (`src/abstract_scan.py`) without an agent read |
+| no_usable_contrast | 84 | read, but no dispersion, interval or exact p from which a standard error is recoverable |
+| extracted | 61 | rows written to `analysis/data/extraction_*.csv` |
+| excluded_at_extraction | 37 | eligibility failure visible only at extraction (design, population, molecule) or a data integrity refusal |
+| already_extracted | 22 | the trial is in the master under another record |
+| held_pending_decision | 16 | 13 populations held under amendment A6 (five polycystic ovary syndrome trials, two obstructive sleep apnoea, two HIV associated lipohypertrophy, schizophrenia, knee osteoarthritis and two combination designs) and three groups waiting on the fifth receptor class or on a stratified table decision |
+| ongoing_no_results | 11 | registered, no results posted |
+| molecule_not_admitted | 5 | NNC0090-2746, lixisenatide and orforglipron class agents |
+| queued | 0 | the queue is closed |
+
+The 340 ledger groups are the 338 indexed packets plus two conference abstract packets built after the
+index (groups 158 and 429), whose trials were extracted from other records.
+
+The master at this update holds 518 rows over 75 trials or trial analyses and 35 of the 36 inventory
+biomarkers, 480 of them convertible to the placebo corrected percent change scale; the 38 unconvertible
+rows are mean differences in absolute units whose baseline denominator is not printed in any text in
+hand, listed by trial in `work/gate_harmonise_units.log`. Risk of bias with RoB 2 is recorded for 76
+trials, the 75 that contribute a pooled row and one whose rows were closed at extraction.
+
+Three integrity refusals are recorded in the ledger with their arithmetic rather than as eligibility
+exclusions: two trials whose printed statistics are impossible for their printed means and standard
+deviations, and one whose baseline MCP-1 differs between randomised arms by 8.05 standard errors while
+its other ten baseline comparisons behave exactly as randomisation predicts.
+
+What remains is not extraction but the supplement pass: named tables and appendices of trials already
+in the corpus that hold further rows, including the hsCRP and adiponectin contrasts of the exenatide
+against insulin detemir trial, which the publisher renders as a table graphic behind a subscriber gate
+and which the registry record does not post.

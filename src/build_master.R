@@ -307,6 +307,26 @@ if (nrow(dup) > 0) {
                           nrow(dup)))
 }
 
+# The check above keys on the dose, so the same contrast entered twice ESCAPES
+# it whenever one of the two rows has no dose: a trial reporting two real doses
+# of one biomarker is legitimate, a trial reporting one dose and one blank is
+# the same arm written twice from two papers. That is not hypothetical. On 16
+# October the DUAL II hsCRP ratio 0.90 (0.78 to 1.04) was staged a second time
+# from the 2017 conference abstract, which prints no dose in mg, while the row
+# from the Buse 2014 main report carries 1.8 mg; the duplicate was caught by
+# reading, not by this script, and would have double counted an arm of 199.
+dose_blank_dup <- dat |>
+  mutate(.dose_blank = is.na(dose_mg) | !nzchar(trimws(as.character(dose_mg)))) |>
+  group_by(trial_id, biomarker, duration_weeks) |>
+  summarise(n_rows = n(), n_blank = sum(.dose_blank), .groups = "drop") |>
+  filter(n_rows > 1, n_blank > 0, n_blank < n_rows)
+if (nrow(dose_blank_dup) > 0) {
+  errs <- c(errs, sprintf(
+    "%d trial/biomarker/timepoint combination(s) hold both a dosed row and a row with no dose (%s)",
+    nrow(dose_blank_dup),
+    paste(sprintf("%s %s", dose_blank_dup$trial_id, dose_blank_dup$biomarker), collapse = "; ")))
+}
+
 if (length(errs) > 0) {
   for (e in errs) message("  ERROR  ", e)
   fail("extraction did not validate; master file not written.")

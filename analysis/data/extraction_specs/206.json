@@ -1,0 +1,57 @@
+{
+ "group": "206",
+ "extractor": "S",
+ "study": {
+  "trial_id": "DUAL II",
+  "pmid": "",
+  "doi": "10.1007/s00125-017-4350-z",
+  "first_author": "",
+  "year": "2017",
+  "journal": "Diabetologia (conference abstract)",
+  "phase": "3",
+  "drug": "liraglutide (IDegLira fixed ratio with insulin degludec)",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "",
+  "comparator": "insulin degludec titrated to a maximum of 50 U, both arms with metformin",
+  "comparator_type": "active",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "",
+  "n_ctrl": "",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "",
+  "notes": "STUDY: DUAL II, a 26 week randomised double blind treat to target trial in which 413 patients with type 2 diabetes (HbA1c 7.5 to 10.0 per cent) on basal insulin 20 to 40 U and metformin with or without a sulfonylurea or glinide were randomised 1:1 to once daily IDegLira or insulin degludec, both capped at 50 dose steps or units; the row comes from the post hoc cardiovascular risk marker analysis of DUAL II and DUAL V reported as a 2017 Diabetologia conference abstract. The only pharmacological difference between the arms is the liraglutide component of the fixed ratio product, which is why the abstract attributes the effects to it, and the row is recorded under liraglutide and GLP1_mono with the fixed ratio product named in the drug field so that it can be filtered if the Director rules fixed ratio insulin plus agonist products out; the corpus already holds group 185, liraglutide added to multiple daily injection insulin against placebo on the same insulin. NOT WRITTEN, because the abstract does not print them: the arm split of the 413 (1:1 is stated, the integers are not), the liraglutide dose in mg (the product is dosed in steps and the mg per step is not given), the baseline weight needed for pct_weight_change (the weight effect itself is ETD minus 2.5 kg, 95 per cent CI minus 3.2 to minus 1.8, p < 0.0001), and the funding statement. Systolic pressure, heart rate, total cholesterol and LDL are reported as significant but their numbers are in a table the abstract text does not carry ('Table Presented'), and the DUAL V contrasts are in the same missing table. OTHER ANALYTE: brain natriuretic peptide fell with an estimated treatment ratio of 0.66 (0.55 to 0.79, p < 0.0001), which is NOT entered, because the inventory key is NT-proBNP and BNP is a different analyte on a different scale; whether BNP earns its own inventory key is recorded as a decision. The group also bundles two LIPER2 records, a conference abstract and the design paper of a 30 patient phase 4 trial of liraglutide 1.8 mg on physical performance, which carry no results"
+ },
+ "rows": [
+  {"biomarker": "hsCRP", "measure": "RR", "unit": "ratio",
+   "yi_reported": "0.90", "ci_lb_reported": "0.78", "ci_ub_reported": "1.04",
+   "p_is_bound": "FALSE", "se_source": "log_RR_ci",
+   "notes": "DUAL II post hoc: high sensitivity C reactive protein was similar after 26 weeks, estimated treatment ratio 0.90 (95 per cent CI 0.78 to 1.04), p reported as non significant, IDegLira vs insulin degludec; the ratio is the estimated treatment ratio of the two arms at 26 weeks as the abstract prints it, with no baseline value given"}
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "liraglutide",
+  "design": "randomised double blind treat to target parallel, post hoc cardiovascular risk marker analysis reported as a conference abstract",
+  "reason": "",
+  "biomarkers_reported_no_variance": ["SBP", "resting_heart_rate", "TC", "LDL"],
+  "other_markers": ["brain natriuretic peptide (ETR 0.66, 0.55 to 0.79)", "apolipoprotein B (ETR 0.92, 0.88 to 0.95)", "body weight (ETD minus 2.5 kg)", "DUAL V contrasts against insulin glargine U100"],
+  "tables_used": ["abstract text of the DUAL II and DUAL V post hoc analysis"],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "high",
+   "overall": "high",
+   "justification": "d1 low: randomised 1:1 in a double blind trial. d2 low: double blind, both arms injected and titrated to target. d3 some_concerns: the abstract gives no accounting of withdrawals or of the analysis population for the marker panel. d4 low: central laboratory assays in a phase 3 programme. d5 high: a post hoc analysis of cardiovascular risk markers reported only as a conference abstract, with the numeric table absent from the record and only the markers the authors chose to name in the text available"
+  },
+  "doubts": [
+   "fixed ratio product: the intervention is insulin degludec plus liraglutide against insulin degludec, so the liraglutide component is the pharmacological difference but the insulin exposure of the two arms is not printed in the abstract",
+   "brain natriuretic peptide ETR 0.66 (0.55 to 0.79) is not entered under NT-proBNP because the analytes differ; a decision on a BNP inventory key would add this contrast",
+   "the numeric table of the abstract is not in the record, so systolic pressure, heart rate, total cholesterol and LDL are listed as reported without variance rather than extracted",
+   "the arm split, the liraglutide dose in mg, the baseline weight and the funding statement are not printed and are left empty rather than inferred"
+  ]
+ }
+}

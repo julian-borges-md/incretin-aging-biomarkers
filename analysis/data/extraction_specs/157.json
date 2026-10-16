@@ -1,0 +1,141 @@
+{
+ "group": "157",
+ "extractor": "S",
+ "study": {
+  "trial_id": "exenatide QW plus metformin in PCOS (Chin Med J 2021, NCT04029272)",
+  "pmid": "",
+  "doi": "10.1097/cm9.0000000000001712",
+  "first_author": "",
+  "year": "2021",
+  "journal": "Chin Med J (Engl)",
+  "phase": "4",
+  "drug": "exenatide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "2",
+  "comparator": "metformin 500 mg three times daily alone",
+  "comparator_type": "active",
+  "duration_weeks": "12",
+  "population": "obesity",
+  "n_tx": "19",
+  "n_ctrl": "21",
+  "assessment_timepoint_weeks": "12",
+  "pct_weight_change": "-2.12",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "",
+  "rob_overall": "high",
+  "notes": "STUDY: open label prospective randomised two arm trial, Peking Union Medical College Hospital, 50 overweight or obese women with polycystic ovary syndrome (Rotterdam criteria) randomised 25 and 25 by a computer generated two block procedure to metformin 500 mg three times daily (MET) or the same metformin plus exenatide 2 mg once weekly (COM) for 12 weeks; 40 of 50 (80 per cent) completed and Tables 2 and 3 are the per protocol completers, 21 MET and 19 COM. HELD under amendment A6: the defining population is polycystic ovary syndrome, outside the population criterion, with overweight or obesity required for entry (baseline BMI 30.4 and 30.8 kg/m2), so the group is extracted in full and held with groups 202, 44, 200 and 205 rather than excluded by the extractor. ROUTE: Table 3 prints the per arm change as mean plus or minus SD with the between group P, and its sign convention is PRE MINUS POST, verified against the Table 2 pre and post values on three markers (weight 79.10 to 77.05 in MET printed as 2.05; ApoA1 1.25 to 1.65 printed as minus 0.40; fasting insulin 20.50 to 21.81 in MET printed as minus 1.31), so every Table 3 value is entered here negated into the post minus pre convention of the pipeline. Baseline means and SDs are Table 2 pre treatment, which gives the percent scale denominator on the row. DOUBT: Table 2 and Table 3 disagree for COM fasting insulin, 26.55 to 23.0 implies a fall of 3.55 while Table 3 prints 2.43; the change table is used, because it is the source of the dispersion, and the discrepancy is recorded. Markers reported without a usable dispersion: hsCRP, HOMA-IR, HOMA-beta, triglycerides and QUICKI are printed as medians with IQR in both tables and a median change cannot be rescaled to a percent of a mean baseline (A12), so they are listed, not extracted. pct_weight_change minus 2.12 computed by the session: COM lost 3.76 kg and MET 2.05 kg (Table 3), a between arm difference of minus 1.71 kg over the n weighted baseline weight (82.34*19 + 79.10*21)/40 = 80.64 kg, 100*(-1.71)/80.64 = -2.12. prespecified_endpoint FALSE: the primary outcomes were the anthropometric changes, the metabolic parameters were secondary. industry_funded left empty: no funding or conflict statement is present in the captured text, and FALSE would assert a declaration the paper does not make"
+ },
+ "rows": [
+  {
+   "biomarker": "fasting_glucose",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "mean_tx": "-0.26",
+   "sd_tx": "0.45",
+   "mean_ctrl": "-0.01",
+   "sd_ctrl": "0.31",
+   "p_reported": "0.040",
+   "p_is_bound": "FALSE",
+   "se_source": "arm_sds",
+   "base_mean_tx": "5.21",
+   "base_sd_tx": "0.57",
+   "base_mean_ctrl": "5.20",
+   "base_sd_ctrl": "0.46",
+   "notes": "Table 3 fasting plasma glucose change 0.26 (0.45) COM vs 0.01 (0.31) MET mmol/L printed pre minus post, P = 0.040, entered negated; Table 2 pre 5.21 (0.57) and post 4.93 (0.47) COM, pre 5.20 (0.46) and post 5.19 (0.51) MET"
+  },
+  {
+   "biomarker": "fasting_insulin",
+   "measure": "MD",
+   "unit": "uIU/mL",
+   "mean_tx": "-2.43",
+   "sd_tx": "10.23",
+   "mean_ctrl": "1.31",
+   "sd_ctrl": "7.52",
+   "p_reported": "0.118",
+   "p_is_bound": "FALSE",
+   "se_source": "arm_sds",
+   "base_mean_tx": "26.55",
+   "base_sd_tx": "14.70",
+   "base_mean_ctrl": "20.50",
+   "base_sd_ctrl": "7.51",
+   "notes": "Table 3 fasting insulin change 2.43 (10.23) COM vs minus 1.31 (7.52) MET micro IU/mL printed pre minus post, P = 0.118, entered negated; Table 2 pre 26.55 (14.70) and post 23.0 (10.16) COM implies a fall of 3.55, which Table 3 prints as 2.43, a discrepancy of 1.12 between the paper's own tables that is recorded and not reconciled by the extractor"
+  },
+  {
+   "biomarker": "TC",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "mean_tx": "0.18",
+   "sd_tx": "0.87",
+   "mean_ctrl": "0.49",
+   "sd_ctrl": "0.80",
+   "p_reported": "0.270",
+   "p_is_bound": "FALSE",
+   "se_source": "arm_sds",
+   "base_mean_tx": "4.94",
+   "base_sd_tx": "0.78",
+   "base_mean_ctrl": "5.15",
+   "base_sd_ctrl": "0.87",
+   "notes": "Table 3 total cholesterol change minus 0.18 (0.87) COM vs minus 0.49 (0.80) MET mmol/L printed pre minus post, so cholesterol ROSE in both arms, P = 0.270, entered negated; Table 2 pre 4.94 (0.78) to post 5.13 (0.99) COM and pre 5.15 (0.87) to post 5.64 (0.88) MET confirms the rise in both arms"
+  },
+  {
+   "biomarker": "LDL",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "mean_tx": "-0.23",
+   "sd_tx": "0.75",
+   "mean_ctrl": "-0.01",
+   "sd_ctrl": "0.68",
+   "p_reported": "0.328",
+   "p_is_bound": "FALSE",
+   "se_source": "arm_sds",
+   "base_mean_tx": "3.22",
+   "base_sd_tx": "0.61",
+   "base_mean_ctrl": "3.38",
+   "base_sd_ctrl": "0.71",
+   "notes": "Table 3 LDL cholesterol change 0.23 (0.75) COM vs 0.01 (0.68) MET mmol/L printed pre minus post, P = 0.328, entered negated; Table 2 pre 3.22 (0.61) to post 2.98 (0.83) COM and pre 3.38 (0.71) to post 3.37 (0.78) MET"
+  }
+ ],
+ "json": {
+  "status": "held_pending_decision",
+  "molecule": "exenatide",
+  "design": "randomised open label parallel two arm, per protocol completers analysed",
+  "reason": "population polycystic ovary syndrome with overweight or obesity (NCT04029272, Chin Med J 2021, exenatide 2 mg once weekly plus metformin vs metformin alone, 12 weeks), held under amendment A6 with groups 202, 44, 200 and 205; four rows are staged and ready to enter the master if the Director admits the population",
+  "biomarkers_reported_no_variance": [
+   "hsCRP",
+   "HOMA_IR",
+   "HOMA_beta",
+   "TG"
+  ],
+  "other_markers": [
+   "apolipoprotein A1",
+   "apolipoprotein B",
+   "free fatty acids",
+   "QUICKI",
+   "Matsuda index",
+   "total testosterone",
+   "DHEAS",
+   "OGTT 2 h glucose and insulin",
+   "HDL cholesterol",
+   "waist and hip circumference"
+  ],
+  "tables_used": [
+   "Table 2 baseline and 12 week per arm",
+   "Table 3 per arm change with between group P"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "high",
+   "d3_missing": "high",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "high",
+   "justification": "d1 low: computer generated two block randomisation with an average of 25 per group. d2 high: open label, and the comparator is metformin alone against metformin plus an injected agonist, so neither participants nor investigators are blinded in a trial whose primary outcome is weight. d3 high: 10 of 50 randomised did not complete and the analysis in Tables 2 and 3 is per protocol with no imputation, 21 and 19 of 25 and 25. d4 low: laboratory assays. d5 some_concerns: the metabolic markers are secondary outcomes, the registration is NCT04029272 and the captured text does not state which of them were registered"
+  },
+  "doubts": [
+   "Table 2 and Table 3 disagree for COM fasting insulin (fall of 3.55 from Table 2 against 2.43 in Table 3); the change table is used and the discrepancy recorded",
+   "Table 3 prints reductions as positive numbers (pre minus post), the opposite of the pipeline convention, so every value is negated here; the convention was verified on weight, ApoA1 and MET fasting insulin against Table 2",
+   "no funding or conflict of interest statement is present in the captured text",
+   "the first author is not in the captured text and is left empty rather than guessed"
+  ]
+ }
+}
