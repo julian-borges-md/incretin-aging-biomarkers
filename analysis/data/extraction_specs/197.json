@@ -1,7 +1,113 @@
-{"group": "197", "extractor": "S",
- "study": {"trial_id": "DUAL II", "pmid": "", "doi": "", "first_author": "", "year": "2018", "journal": "conference abstract", "phase": "3", "drug": "liraglutide", "receptor_class": "GLP1_mono", "dose_mg": "1.8", "comparator": "insulin degludec", "comparator_type": "active", "duration_weeks": "26", "population": "T2D", "n_tx": "", "n_ctrl": "", "assessment_timepoint_weeks": "26", "pct_weight_change": "", "prespecified_endpoint": "FALSE", "industry_funded": "TRUE", "rob_overall": "some_concerns",
-  "notes": "2018 conference abstract, post hoc analysis of DUAL II (IDegLira vs insulin degludec, both with metformin, 26 weeks, double blind, treat to target, 413 randomised 1:1): the contrast isolates the liraglutide component because both arms receive degludec (IDegLira delivers up to 1.8 mg liraglutide with 50 units degludec; dose_mg 1.8 is the maximum liraglutide component); per arm n not in the abstract; estimated treatment ratios with 95 percent CI; brain natriuretic peptide (BNP, not NT proBNP) ETR 0.66 [0.55; 0.79] and apolipoprotein B ETR 0.92 [0.88; 0.95] recorded as other markers; DUAL V (IDegLira vs insulin glargine, open label, 557) reports only directions in this abstract; weight loss vs gain without numbers; sponsor Novo Nordisk; extracted by the session (S), 2026-10-16"},
+{
+ "group": "197",
+ "extractor": "S",
+ "study": {
+  "trial_id": "DUAL II",
+  "pmid": "25114296",
+  "doi": "10.2337/dc14-0785",
+  "first_author": "Buse",
+  "year": "2014",
+  "journal": "Diabetes Care",
+  "phase": "3",
+  "drug": "liraglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "1.8",
+  "comparator": "insulin degludec",
+  "comparator_type": "active",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "199",
+  "n_ctrl": "199",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "-2.65",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: DUAL II (NCT01392573), Buse 2014 (Diabetes Care 37:2926-2933), the primary paper of the trial whose 2018 post hoc cardiovascular risk marker abstract is in this group; reached through the institutional route, Table 1 and Results sentences copied into work/fulltext/companion/buse2014_dual2_sentences.txt; double blind randomised 26 week treat to target trial, IDegLira (up to 50 units degludec with 1.8 mg liraglutide) vs insulin degludec capped at 50 units, both with metformin, full analysis set 199 per arm; the contrast isolates the liraglutide component because the degludec doses were equivalent (45 units) at 26 weeks; dose_mg 1.8 is the maximal liraglutide component; hsCRP from the 2018 abstract (estimated treatment ratio); HbA1c and fasting glucose from the paper (ETD with 95% CI, route ci_95, ANCOVA with LOCF); pct_weight_change -2.65 computed by the session: ETD in body weight -2.5 kg over the n weighted baseline weight (95.4*199 + 93.5*199)/398 = 94.45 kg; the degludec cap at 50 units is a design feature that favours the combination on glycaemic endpoints (noted in the paper); sponsor Novo Nordisk (industry); the Vilsboll 2019 subgroup paper (open access, work/fulltext/companion/vilsboll2019_ideglira_cv_markers.txt) reports subgroup effects in figures only"
+ },
  "rows": [
-  {"biomarker": "hsCRP", "measure": "RR", "yi_reported": "0.90", "ci_lb_reported": "0.78", "ci_ub_reported": "1.04", "se_source": "ci_95", "notes": "estimated treatment ratio IDegLira vs IDeg at 26 weeks, p not significant; ratio of geometric means on the natural scale (logged by the pipeline)"}
+  {
+   "biomarker": "hsCRP",
+   "measure": "RR",
+   "yi_reported": "0.90",
+   "ci_lb_reported": "0.78",
+   "ci_ub_reported": "1.04",
+   "se_source": "ci_95",
+   "notes": "estimated treatment ratio IDegLira vs IDeg at 26 weeks, p not significant; ratio of geometric means on the natural scale (logged by the pipeline); from the 2018 post hoc abstract (hsCRP measured in DUAL II only)"
+  },
+  {
+   "biomarker": "HbA1c",
+   "measure": "MD",
+   "unit": "percent points",
+   "yi_reported": "-1.1",
+   "ci_lb_reported": "-1.3",
+   "ci_ub_reported": "-0.8",
+   "p_reported": "0.0001",
+   "p_is_bound": "TRUE",
+   "se_source": "ci_95",
+   "mean_tx": "-1.9",
+   "mean_ctrl": "-0.9",
+   "base_mean_tx": "8.7",
+   "base_sd_tx": "0.7",
+   "base_mean_ctrl": "8.8",
+   "base_sd_ctrl": "0.7",
+   "notes": "Buse 2014 Results: A1C decreased by 1.9 percent with IDegLira and 0.9 with IDeg, ETD -1.1 (95% CI -1.3 to -0.8) percentage points, P < 0.0001 (primary endpoint, superiority); baseline Table 1 8.7 (0.7) vs 8.8 (0.7); the degludec arm was capped at 50 units"
+  },
+  {
+   "biomarker": "fasting_glucose",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "yi_reported": "-0.73",
+   "ci_lb_reported": "-1.19",
+   "ci_ub_reported": "-0.27",
+   "p_reported": "0.0019",
+   "p_is_bound": "FALSE",
+   "se_source": "ci_95",
+   "mean_tx": "-3.5",
+   "sd_tx": "2.9",
+   "mean_ctrl": "-2.6",
+   "sd_ctrl": "3.3",
+   "base_mean_tx": "9.7",
+   "base_sd_tx": "2.9",
+   "base_mean_ctrl": "9.6",
+   "base_sd_ctrl": "3.1",
+   "notes": "Buse 2014 Results: FPG decreased by 3.5 (SD 2.9) mmol/L with IDegLira and 2.6 (3.3) with IDeg, ETD -0.73 (95% CI -1.19 to -0.27) mmol/L, P = 0.0019; baseline Table 1 9.7 (2.9) vs 9.6 (3.1) mmol/L"
+  }
  ],
- "json": {"status": "extracted", "design": "randomised double blind treat to target trial (DUAL II), post hoc cardiovascular risk marker analysis; plus DUAL V (open label vs insulin glargine) without usable numbers", "biomarkers_reported_no_variance": ["SBP", "resting_heart_rate", "TC", "LDL"], "other_markers": ["BNP ETR 0.66 [0.55; 0.79]", "apolipoprotein B ETR 0.92 [0.88; 0.95]"], "tables_used": ["abstract text"], "rob": {"d1_randomisation": "low", "d2_deviations": "low", "d3_missing": "some_concerns", "d4_measurement": "low", "d5_selection": "some_concerns", "overall": "some_concerns", "justification": "DUAL II: randomised double blind (D1, D2 low); attrition not reported in the abstract (D3 some concerns); laboratory outcomes (D4 low); post hoc analysis of risk markers, selection of reported markers possible (D5 some concerns)"}, "doubts": ["companion full paper needed (DUAL II and DUAL V cardiovascular risk marker analysis, 2018)", "per arm n not given"]}}
+ "json": {
+  "status": "extracted",
+  "design": "randomised double blind treat to target trial (DUAL II), post hoc cardiovascular risk marker analysis; plus DUAL V (open label vs insulin glargine) without usable numbers",
+  "biomarkers_reported_no_variance": [
+   "SBP",
+   "resting_heart_rate",
+   "TC",
+   "LDL"
+  ],
+  "other_markers": [
+   "NIS-4",
+   "Pro-C3",
+   "BNP (not NT-proBNP), ETR 0.66 (0.55 to 0.79)",
+   "apolipoprotein B, ETR 0.92 (0.88 to 0.95)",
+   "body weight",
+   "blood pressure, heart rate and lipids reported only in subgroup figures of Vilsboll 2019 and in the DUAL II supplement, not captured"
+  ],
+  "tables_used": [
+   "abstract text",
+   "Buse 2014 Table 1 and Results text"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "DUAL II: randomised double blind (D1, D2 low); attrition not reported in the abstract (D3 some concerns); laboratory outcomes (D4 low); post hoc analysis of risk markers, selection of reported markers possible (D5 some concerns)"
+  },
+  "doubts": [
+   "per arm n taken as the full analysis set of 199 per arm",
+   "the degludec cap at 50 units limits the comparator, a design feature that favours IDegLira on glycaemic endpoints"
+  ],
+  "reason": "primary paper of DUAL II reached through the institutional route adds HbA1c and fasting glucose rows with baselines and the weight covariate to the abstract's hsCRP ratio"
+ }
+}
