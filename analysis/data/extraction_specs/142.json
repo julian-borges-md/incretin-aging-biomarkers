@@ -1,0 +1,119 @@
+{
+ "group": "142",
+ "extractor": "S",
+ "study": {
+  "trial_id": "PIONEER 1",
+  "pmid": "",
+  "doi": "10.1186/s12933-022-01585-7",
+  "first_author": "Mosenzon",
+  "year": "2022",
+  "journal": "Cardiovasc Diabetol",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "14",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "",
+  "n_ctrl": "",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: exploratory patient level hsCRP analysis of four randomised double blind trials of semaglutide in type 2 diabetes (SUSTAIN 3, PIONEER 1, PIONEER 2, PIONEER 5), 2471 of 2482 randomised subjects with a baseline hsCRP. Ratios to baseline at end of treatment were log transformed and analysed by a mixed model for repeated measurements with the baseline value as covariate, on treatment without rescue medication, and are reported as estimated treatment ratios with 95 percent CI (route log_RR_ci, measure RR, the convention already used for SOUL and OASIS 4). SUSTAIN 3 compares semaglutide 1.0 mg with exenatide extended release 2.0 mg, an incretin versus incretin contrast, and is not entered. PIONEER 1 contributes two dose rows (oral semaglutide 7 mg and 14 mg versus placebo at week 26), PIONEER 2 one row (oral semaglutide 14 mg versus empagliflozin 25 mg at week 52) and PIONEER 5 one row (oral semaglutide versus placebo at week 26 in type 2 diabetes with moderate renal impairment). Each trial is entered under its own trial_id. n per arm with available hsCRP is given only in the figures, so the denominators are empty; the intervals supply the standard errors. Novo Nordisk funded and authored (industry_funded TRUE); rob_overall low from the parent designs"
+ },
+ "rows": [
+  {
+   "biomarker": "hsCRP",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "trial_id": "PIONEER 1",
+   "dose_mg": "14",
+   "yi_reported": "0.76",
+   "ci_lb_reported": "0.62",
+   "ci_ub_reported": "0.93",
+   "se_source": "log_RR_ci",
+   "assessment_timepoint_weeks": "26",
+   "duration_weeks": "26",
+   "notes": "PIONEER 1, oral semaglutide 14 mg versus placebo at week 26: estimated treatment ratio 0.76 (0.62 to 0.93), p below 0.01, a 24 percent reduction; baseline geometric mean hsCRP 2.9 mg/L"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "trial_id": "PIONEER 1",
+   "dose_mg": "7",
+   "yi_reported": "0.72",
+   "ci_lb_reported": "0.59",
+   "ci_ub_reported": "0.89",
+   "se_source": "log_RR_ci",
+   "assessment_timepoint_weeks": "26",
+   "duration_weeks": "26",
+   "notes": "PIONEER 1, oral semaglutide 7 mg versus placebo at week 26: estimated treatment ratio 0.72 (0.59 to 0.89), p below 0.01, a 28 percent reduction; the lower of the two dose arms, kept for the dose selection rule"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "trial_id": "PIONEER 2",
+   "dose_mg": "14",
+   "comparator": "empagliflozin 25 mg",
+   "comparator_type": "active",
+   "yi_reported": "0.70",
+   "ci_lb_reported": "0.61",
+   "ci_ub_reported": "0.80",
+   "se_source": "log_RR_ci",
+   "assessment_timepoint_weeks": "52",
+   "duration_weeks": "52",
+   "notes": "PIONEER 2, oral semaglutide 14 mg versus empagliflozin 25 mg at week 52: estimated treatment ratio 0.70 (0.61 to 0.80), p below 0.0001, a 30 percent reduction; the comparator is an SGLT2 inhibitor, an active non incretin agent"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "trial_id": "PIONEER 5",
+   "dose_mg": "14",
+   "yi_reported": "0.83",
+   "ci_lb_reported": "0.67",
+   "ci_ub_reported": "1.03",
+   "se_source": "log_RR_ci",
+   "assessment_timepoint_weeks": "26",
+   "duration_weeks": "26",
+   "notes": "PIONEER 5, oral semaglutide versus placebo at week 26 in type 2 diabetes with moderate renal impairment: estimated treatment ratio 0.83 (0.67 to 1.03), p 0.08; the subgroup analysis by baseline eGFR gave 0.91 (0.64 to 1.30) below 45 and 0.78 (0.60 to 1.01) at or above 45 mL/min/1.73 m2"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "PIONEER 1, PIONEER 2 and PIONEER 5",
+  "design": "exploratory patient level hsCRP analysis of four randomised double blind semaglutide trials in type 2 diabetes; the three PIONEER trials contribute incretin versus non incretin contrasts",
+  "reason": "full text group (Europe PMC); estimated treatment ratios with 95 percent CI are printed per trial and dose in the results text and enter as four log ratio rows",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "absolute hsCRP treatment differences in mg/L (PIONEER 1 only, minus 1.39 (minus 2.56 to minus 0.22))",
+   "hsCRP cutoff and tertile subgroups",
+   "CRP defined cardiovascular risk categories"
+  ],
+  "tables_used": [
+   "results text",
+   "Figure 1 legend"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "all parent trials randomised and double blind (D1 and D2 low); 99.6 percent of randomised subjects had a baseline measurement and the analysis is on treatment without rescue medication from the full analysis set (D3 low); central laboratory hsCRP (D4 low); hsCRP was an exploratory endpoint analysed after the trials, with all four trials and both PIONEER 1 doses reported (D5 some concerns)"
+  },
+  "doubts": [
+   "SUSTAIN 3 (semaglutide 1.0 mg versus exenatide extended release 2.0 mg, ratio 0.75, 0.65 to 0.88) is an incretin versus incretin contrast and is excluded by the comparator rule, although it is the only head to head hsCRP comparison of two GLP-1 receptor agonists in the corpus and may interest the Director",
+   "PIONEER 2's comparator is empagliflozin, an SGLT2 inhibitor with its own anti inflammatory signal, so this row understates the semaglutide effect against an inert comparator",
+   "n per arm is not printed in the text and the rows carry empty denominators"
+  ]
+ }
+}

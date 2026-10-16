@@ -1,0 +1,136 @@
+{
+ "group": "9",
+ "extractor": "S",
+ "study": {
+  "trial_id": "SURMOUNT-1",
+  "pmid": "",
+  "doi": "10.1016/j.jacc.2026.04.044",
+  "first_author": "not named in the capture",
+  "year": "2026",
+  "journal": "J Am Coll Cardiol",
+  "phase": "3",
+  "drug": "tirzepatide",
+  "receptor_class": "GLP1_GIP",
+  "dose_mg": "15",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "72",
+  "population": "obesity",
+  "n_tx": "",
+  "n_ctrl": "",
+  "assessment_timepoint_weeks": "72",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: cardiovascular biomarker analysis of SURMOUNT-1 (NCT04184622, phase 3, randomised, double blind, placebo controlled, tirzepatide 5, 10 or 15 mg once weekly for 72 weeks in obesity or overweight without diabetes). Biomarkers were assayed in plasma from 100 randomly selected completers per group, 392 participants after exclusions for low sample volume, by a mixed model for repeated measures on log transformed values, back transformed to percent change in geometric means. The text prints the placebo corrected percent reduction with its 95 percent CI for hsCRP and leptin at each of the three doses, and those six rows are the extraction (measure PCT, route ci_95; the intervals are printed as magnitudes of reduction and are recorded signed). The remaining inventory markers are given as point estimates only in the summary sentence (IL-6 minus 25.4, minus 27.8, minus 30.2 percent; HOMA-IR minus 26.4, minus 35.5, minus 39.1; GGT minus 18.6, minus 21.6, minus 32.7; adiponectin plus 21.1, plus 35.1, plus 47.7; sICAM-1 not significant, minus 9.7, minus 11.1), with their intervals in Supplemental Table 7, which is not in hand; they are recorded as reported without variance and the supplement is on the supplement pass list. E-selectin, PAI-1 antigen, tissue plasminogen activator, thrombomodulin, fibrinogen, leukocytes, platelets, FGF-21 and free fatty acids are outside the inventory. The packet also holds a separate post hoc of SURMOUNT-1 and SURMOUNT-2 by early weight response (doi 10.1111/dom.71009), which reports weight and HbA1c outcomes by response category rather than biomarker contrasts. n per arm is not printed for the biomarker subset beyond the 100 selected per group and the 392 analysed, so the denominators are left empty and the intervals supply the standard errors. Eli Lilly funded (industry_funded TRUE); rob_overall low from the parent design"
+ },
+ "rows": [
+  {
+   "biomarker": "hsCRP",
+   "measure": "PCT",
+   "unit": "percent",
+   "dose_mg": "15",
+   "yi_reported": "-54.6",
+   "ci_lb_reported": "-64.6",
+   "ci_ub_reported": "-41.7",
+   "se_source": "ci_95",
+   "notes": "percent reduction in geometric mean versus placebo at week 72, tirzepatide 15 mg: 54.6 percent (95 percent CI 41.7 to 64.6), p below 0.001; the arm values were minus 64.5 percent (minus 70.1 to minus 57.8) with tirzepatide and minus 21.8 percent (minus 34.7 to minus 6.2) with placebo"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "PCT",
+   "unit": "percent",
+   "dose_mg": "10",
+   "yi_reported": "-46.9",
+   "ci_lb_reported": "-58.7",
+   "ci_ub_reported": "-31.8",
+   "se_source": "ci_95",
+   "notes": "percent reduction in geometric mean versus placebo at week 72, tirzepatide 10 mg: 46.9 percent (95 percent CI 31.8 to 58.7)"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "PCT",
+   "unit": "percent",
+   "dose_mg": "5",
+   "yi_reported": "-36.9",
+   "ci_lb_reported": "-51.0",
+   "ci_ub_reported": "-18.7",
+   "se_source": "ci_95",
+   "notes": "percent reduction in geometric mean versus placebo at week 72, tirzepatide 5 mg: 36.9 percent (95 percent CI 18.7 to 51.0)"
+  },
+  {
+   "biomarker": "leptin",
+   "measure": "PCT",
+   "unit": "percent",
+   "dose_mg": "15",
+   "yi_reported": "-61.4",
+   "ci_lb_reported": "-69.4",
+   "ci_ub_reported": "-51.1",
+   "se_source": "ci_95",
+   "notes": "percent reduction in geometric mean versus placebo at week 72, tirzepatide 15 mg: 61.4 percent (95 percent CI 51.1 to 69.4); arm values minus 66.9 percent (minus 71.8 to minus 61.1) and placebo minus 14.3 percent (minus 27.7 to 1.7)"
+  },
+  {
+   "biomarker": "leptin",
+   "measure": "PCT",
+   "unit": "percent",
+   "dose_mg": "10",
+   "yi_reported": "-59.3",
+   "ci_lb_reported": "-67.8",
+   "ci_ub_reported": "-48.5",
+   "se_source": "ci_95",
+   "notes": "percent reduction in geometric mean versus placebo at week 72, tirzepatide 10 mg: 59.3 percent (95 percent CI 48.5 to 67.8)"
+  },
+  {
+   "biomarker": "leptin",
+   "measure": "PCT",
+   "unit": "percent",
+   "dose_mg": "5",
+   "yi_reported": "-44.4",
+   "ci_lb_reported": "-56.1",
+   "ci_ub_reported": "-29.5",
+   "se_source": "ci_95",
+   "notes": "percent reduction in geometric mean versus placebo at week 72, tirzepatide 5 mg: 44.4 percent (95 percent CI 29.5 to 56.1)"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "tirzepatide",
+  "trial_id": "SURMOUNT-1",
+  "design": "biomarker analysis of a phase 3 randomised double blind placebo controlled trial of tirzepatide 5, 10 or 15 mg for 72 weeks in obesity without diabetes, in 392 of the randomly selected completers",
+  "reason": "full text group (institutional route); the placebo corrected percent reductions with 95 percent CI for hsCRP and leptin at all three doses are printed in the results text and give six rows",
+  "biomarkers_reported_no_variance": [
+   "IL6",
+   "HOMA_IR",
+   "GGT",
+   "adiponectin",
+   "ICAM1"
+  ],
+  "other_markers": [
+   "E-selectin",
+   "plasminogen activator inhibitor 1 antigen",
+   "tissue plasminogen activator antigen and thrombomodulin",
+   "fibrinogen, leukocytes and platelets",
+   "fibroblast growth factor 21",
+   "free fatty acids"
+  ],
+  "tables_used": [
+   "results text of the inflammation and metabolic biomarker sections"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "the parent trial is randomised and double blind with a matched placebo (D1 and D2 low); the biomarker set is restricted to 100 randomly selected completers per group and 392 after sample volume exclusions, so it is a non random subset of the randomised population in one respect (completion) although the selection within completers was random (D3 some concerns); central assays of stored plasma on a mixed model of log transformed values (D4 low); these are exploratory biomarkers outside the parent protocol's endpoints, and five of the inventory markers are reported with point estimates whose intervals sit in a supplement (D5 some concerns)"
+  },
+  "doubts": [
+   "the 95 percent intervals printed for the placebo corrected reductions are magnitudes (for example 41.7 to 64.6 for a 54.6 percent reduction) and are recorded signed, with the lower bound the more negative value",
+   "five inventory markers (IL-6, HOMA-IR, GGT, adiponectin, sICAM-1) have point estimates in the text but their intervals only in Supplemental Table 7; reading that supplement would add up to fifteen more rows and is the highest value item on the supplement pass list",
+   "the analysis set is completers only, so the estimates are on treatment rather than treatment policy",
+   "the authorship of the capture is not visible, so first_author is left for a verifier"
+  ]
+ }
+}

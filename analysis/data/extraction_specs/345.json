@@ -1,0 +1,87 @@
+{
+ "group": "345",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT03131687-BIO",
+  "pmid": "",
+  "doi": "10.2337/dc19-1892",
+  "first_author": "Hartman",
+  "year": "2020",
+  "journal": "Diabetes Care",
+  "phase": "2",
+  "drug": "tirzepatide",
+  "receptor_class": "GLP1_GIP",
+  "dose_mg": "15",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "26",
+  "population": "T2D",
+  "n_tx": "",
+  "n_ctrl": "",
+  "assessment_timepoint_weeks": "26",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "some_concerns",
+  "notes": "STUDY: post hoc analysis of NASH related biomarkers in the phase 2 dose finding trial of tirzepatide (NCT03131687), 26 weeks, randomised 1:1:1:1:1:1 to tirzepatide 1, 5, 10 or 15 mg, dulaglutide 1.5 mg or placebo, modified intention to treat. The trial is already in the master as NCT03131687-BIO from the Wilson 2021 biomarker report (hsCRP, GDF15, IL-6, YKL-40, ICAM-1, leptin, NT-proBNP), and the same trial_id is used so the trial is counted once; adiponectin is the only inventory marker this report adds. Of the contrasts printed with intervals, ALT and AST are compared with dulaglutide only (an incretin versus incretin contrast, not admitted) or stated as not significant against placebo without values, and K-18 and pro-C3 are outside the inventory, so the two adiponectin rows against placebo are the extraction. The per arm baseline adiponectin values are in Supplementary Table 2, which is not in hand; the discussion gives only the range across arms (4.0 to 5.4 mg/L), so no denominator is recorded and both rows stay unconvertible to the percent scale until the supplement is read. Eli Lilly funded with company authors (industry_funded TRUE); rob_overall some_concerns"
+ },
+ "rows": [
+  {
+   "biomarker": "adiponectin",
+   "measure": "MD",
+   "unit": "mg/L",
+   "dose_mg": "15",
+   "yi_reported": "1.0",
+   "ci_lb_reported": "0.3",
+   "ci_ub_reported": "1.6",
+   "p_reported": "0.004",
+   "se_source": "ci_95",
+   "notes": "results text: total adiponectin increase with tirzepatide 15 mg versus placebo at 26 weeks, 1.0 mg/L (0.3 to 1.6), p 0.004; the discussion states the higher dose increases were 21.8 to 26.4 percent within arm on baselines of 4.0 to 5.4 mg/L across arms"
+  },
+  {
+   "biomarker": "adiponectin",
+   "measure": "MD",
+   "unit": "mg/L",
+   "dose_mg": "10",
+   "yi_reported": "0.9",
+   "ci_lb_reported": "0.3",
+   "ci_ub_reported": "1.5",
+   "p_reported": "0.003",
+   "se_source": "ci_95",
+   "notes": "results text: total adiponectin increase with tirzepatide 10 mg versus placebo at 26 weeks, 0.9 mg/L (0.3 to 1.5), p 0.003"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "tirzepatide",
+  "trial_id": "NCT03131687-BIO",
+  "design": "post hoc NASH biomarker analysis of a 26 week phase 2 randomised double blind dose finding trial of tirzepatide with dulaglutide and placebo comparators in type 2 diabetes",
+  "reason": "full text group (Europe PMC); two adiponectin contrasts against placebo with 95 percent CI, for the same trial already in the master under NCT03131687-BIO",
+  "biomarkers_reported_no_variance": [
+   "ALT",
+   "AST"
+  ],
+  "other_markers": [
+   "keratin-18 M30 fragment",
+   "procollagen III (pro-C3)"
+  ],
+  "tables_used": [
+   "results text",
+   "discussion for the baseline range"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "some_concerns",
+   "justification": "randomised 1:1:1:1:1:1 and double blind in the parent trial (D1 and D2 low); a modified intention to treat population that excludes data after study drug discontinuation or rescue medication (D3 some concerns); central laboratory assays by a contract laboratory (D4 low); these are post hoc analyses of biomarkers outside the parent protocol's endpoints, and the ALT and AST comparisons against placebo are stated as non significant without values (D5 some concerns)"
+  },
+  "doubts": [
+   "ALT and AST are reported against dulaglutide with intervals (minus 6.8 U/L, minus 11.8 to minus 1.8 for 10 mg and minus 6.4, minus 11.7 to minus 1.1 for 15 mg) but against placebo only as 'not significant' with no value, so no row for either",
+   "no per arm baseline adiponectin is printed outside Supplementary Table 2, so both rows are unconvertible to the percent scale; reading that supplement would recover them and is on the supplement pass list",
+   "the dulaglutide 1.5 mg arm of this trial is already a row set in the master from Wilson 2021 under the same trial_id"
+  ]
+ }
+}

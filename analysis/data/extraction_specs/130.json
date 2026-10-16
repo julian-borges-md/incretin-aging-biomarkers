@@ -1,0 +1,145 @@
+{
+ "group": "130",
+ "extractor": "S",
+ "study": {
+  "trial_id": "NCT03987451",
+  "pmid": "",
+  "doi": "10.1016/s2468-1253(23)00068-7",
+  "first_author": "Loomba",
+  "year": "2023",
+  "journal": "Lancet Gastroenterol Hepatol",
+  "phase": "2",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "2.4",
+  "comparator": "visually matching placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "48",
+  "population": "MASH",
+  "n_tx": "47",
+  "n_ctrl": "24",
+  "assessment_timepoint_weeks": "48",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "TRUE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: randomised double blind placebo controlled phase 2 trial of once weekly semaglutide escalated to 2.4 mg versus matching placebo for 48 weeks in biopsy confirmed NASH related cirrhosis with BMI 27 or above (NCT03987451), randomised 2:1 and stratified by diabetes status, 47 versus 24 patients, 64 of 71 completing treatment. The paper reports its continuous secondary endpoints as estimated treatment ratios with 95 percent CI from a log scale analysis (route log_RR_ci, measure RR), which is the convention already used for SOUL, OASIS 4 and the PIONEER rows, and its histological endpoints as proportions. The primary endpoint (improvement in fibrosis of one stage or more without worsening of NASH) favoured placebo, 5 of 47 against 7 of 24, and is entered as the fibrosis_improvement row by the events route. The composite of NASH resolution with fibrosis improvement (3 of 47 against 3 of 24, odds ratio 0.48) is a composite, not the MASH_resolution key, and is not entered. The HbA1c estimated treatment difference of minus 1.63 percentage points (minus 2.20 to minus 1.06) is restricted to the diabetes subgroup and is recorded in doubts under decision D-X8 rather than entered. Liver stiffness by elastography, pro-C3, hyaluronic acid, TIMP-1, ELF and VLDL cholesterol are outside the inventory. Novo Nordisk funded with company authors (industry_funded TRUE); rob_overall low"
+ },
+ "rows": [
+  {
+   "biomarker": "liver_fat_pdff",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "yi_reported": "0.67",
+   "ci_lb_reported": "0.51",
+   "ci_ub_reported": "0.88",
+   "p_reported": "0.0042",
+   "se_source": "log_RR_ci",
+   "base_mean_tx": "10.0",
+   "base_mean_ctrl": "10.4",
+   "notes": "results text: relative change in liver fat by MRI-PDFF at week 48, estimated treatment ratio 0.67 (0.51 to 0.88), p 0.0042; baseline MRI-PDFF 10.0 percent (CV 58.3) and 10.4 percent (CV 54.7), lower than in non cirrhotic NASH as expected at this disease stage"
+  },
+  {
+   "biomarker": "ALT",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "yi_reported": "0.76",
+   "ci_lb_reported": "0.61",
+   "ci_ub_reported": "0.93",
+   "p_reported": "0.0090",
+   "se_source": "log_RR_ci",
+   "notes": "results text: change in ALT at week 48, estimated treatment ratio 0.76 (0.61 to 0.93), p 0.0090"
+  },
+  {
+   "biomarker": "AST",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "yi_reported": "0.77",
+   "ci_lb_reported": "0.65",
+   "ci_ub_reported": "0.92",
+   "p_reported": "0.0046",
+   "se_source": "log_RR_ci",
+   "notes": "results text: change in AST at week 48, estimated treatment ratio 0.77 (0.65 to 0.92), p 0.0046"
+  },
+  {
+   "biomarker": "GGT",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "yi_reported": "0.74",
+   "ci_lb_reported": "0.62",
+   "ci_ub_reported": "0.88",
+   "p_reported": "0.0007",
+   "se_source": "log_RR_ci",
+   "notes": "results text: change in gamma glutamyltransferase at week 48, estimated treatment ratio 0.74 (0.62 to 0.88), p 0.0007"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "yi_reported": "0.59",
+   "ci_lb_reported": "0.40",
+   "ci_ub_reported": "0.87",
+   "p_reported": "0.0072",
+   "se_source": "log_RR_ci",
+   "notes": "results text: hsCRP at week 48, estimated treatment ratio 0.59 (0.40 to 0.87), p 0.0072, reported alongside pro-C3 0.84 (0.73 to 0.98)"
+  },
+  {
+   "biomarker": "TG",
+   "measure": "RR",
+   "unit": "ratio to baseline",
+   "yi_reported": "0.83",
+   "ci_lb_reported": "0.72",
+   "ci_ub_reported": "0.96",
+   "p_reported": "0.013",
+   "se_source": "log_RR_ci",
+   "notes": "results text: triglycerides at week 48, estimated treatment ratio 0.83 (0.72 to 0.96), p 0.013; VLDL cholesterol had the same ratio and is outside the inventory"
+  },
+  {
+   "biomarker": "fibrosis_improvement",
+   "measure": "RR",
+   "unit": "proportion improving",
+   "events_tx": "5",
+   "events_ctrl": "7",
+   "se_source": "events_log_RR",
+   "prespecified_endpoint": "TRUE",
+   "notes": "primary endpoint: improvement in liver fibrosis of one stage or more without worsening of NASH at week 48, 5 of 47 (11 percent) with semaglutide against 7 of 24 (29 percent) with placebo, not significant; the direction favours placebo and is entered as reported"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "NCT03987451",
+  "design": "randomised double blind placebo controlled phase 2 trial, semaglutide 2.4 mg versus placebo for 48 weeks in biopsy confirmed NASH related cirrhosis, 71 patients randomised 2:1",
+  "reason": "full text group (Europe PMC); six continuous markers carry estimated treatment ratios with 95 percent CI and the primary histological endpoint carries events per arm",
+  "biomarkers_reported_no_variance": [
+   "adiponectin"
+  ],
+  "other_markers": [
+   "liver stiffness by magnetic resonance elastography",
+   "pro-C3 and pro-C3 amino terminal peptide",
+   "hyaluronic acid, TIMP-1 and the enhanced liver fibrosis score",
+   "FIB-4 and Child-Pugh score",
+   "VLDL cholesterol",
+   "NAS components (steatosis, lobular inflammation, ballooning) as proportions"
+  ],
+  "tables_used": [
+   "results text",
+   "Table 1 for the baseline MRI-PDFF"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "low",
+   "overall": "low",
+   "justification": "randomised 2:1 by an interactive web response system stratified by diabetes status (D1 low); double blind with a visually matching placebo (D2 low); 64 of 71 completed treatment with 63 evaluable paired biopsies and the full analysis set used (D3 low); histology read centrally by one blinded pathologist and imaging and laboratory measures central (D4 low); registered trial reporting its prespecified primary (which was null and in the unfavourable direction) and its secondary endpoints (D5 low)"
+  },
+  "doubts": [
+   "the HbA1c estimated treatment difference of minus 1.63 percentage points (minus 2.20 to minus 1.06) applies only to the patients with type 2 diabetes, a subgroup of this cirrhosis trial, so it is not entered pending decision D-X8 on subgroup rows",
+   "the fibrosis_improvement row favours placebo (5 of 47 against 7 of 24) in a trial of 71 patients, so the events route gives a wide interval; it is the trial's prespecified primary endpoint and is entered as reported",
+   "adiponectin was measured but no contrast for it is printed in the article text",
+   "this is cirrhotic NASH, a later disease stage than the other MASH trials in the corpus, which the Director may wish to treat as a separate stratum"
+  ]
+ }
+}

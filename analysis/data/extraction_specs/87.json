@@ -1,0 +1,101 @@
+{
+ "group": "87",
+ "extractor": "S",
+ "study": {
+  "trial_id": "semaglutide psoriasis T2D open label (Biomolecules 2025)",
+  "pmid": "",
+  "doi": "10.3390/biom15010046",
+  "first_author": "not named in the capture",
+  "year": "2025",
+  "journal": "Biomolecules",
+  "phase": "4",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "",
+  "comparator": "metformin at the maximally tolerated dose without a GLP-1 receptor agonist",
+  "comparator_type": "active",
+  "duration_weeks": "12",
+  "population": "T2D",
+  "n_tx": "15",
+  "n_ctrl": "16",
+  "assessment_timepoint_weeks": "12",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "FALSE",
+  "rob_overall": "high",
+  "notes": "STUDY: open label randomised study in 31 patients with moderate to severe plaque psoriasis and type 2 diabetes on maximally tolerated metformin; 15 received semaglutide in standard escalating doses for 12 weeks and 16 continued metformin alone. The primary interest of the report is the psoriasis area and severity index. Tables 2 and 3 print baseline (F0) and 12 week (F1) values per arm with a within arm p, as mean plus or minus SD for some rows and median with interquartile range for others; only total cholesterol and LDL carry a mean and SD in both arms, so those two rows are taken by route arm_change_imputed_r (correlation 0.5). Triglycerides, glucose, HbA1c, insulin, CRP, IL-6, IL-1 beta and IL-23 are printed as a median in at least one arm, which cannot be mixed with a mean in the other arm, and are recorded as reported without variance. The population is type 2 diabetes with psoriasis as the comorbidity of interest; psoriasis is not one of the populations held under amendment A6, and the inventory rows here are metabolic rather than dermatological. dose_mg empty because the report says only 'standard treatment doses'. No funding statement or manufacturer involvement is visible in the capture (industry_funded FALSE); rob_overall high"
+ },
+ "rows": [
+  {
+   "biomarker": "TC",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "base_mean_tx": "5.2",
+   "base_sd_tx": "1.1",
+   "final_mean_tx": "4.6",
+   "final_sd_tx": "1.2",
+   "base_mean_ctrl": "5.1",
+   "base_sd_ctrl": "1.1",
+   "final_mean_ctrl": "5.1",
+   "final_sd_ctrl": "1.2",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 2 cholesterol mmol/L at F0 and F1 per arm; within arm p 0.2 (semaglutide) and 0.5 (control)"
+  },
+  {
+   "biomarker": "LDL",
+   "measure": "MD",
+   "unit": "mmol/L",
+   "base_mean_tx": "3.6",
+   "base_sd_tx": "1",
+   "final_mean_tx": "2.8",
+   "final_sd_tx": "0.9",
+   "base_mean_ctrl": "3.6",
+   "base_sd_ctrl": "1.2",
+   "final_mean_ctrl": "3.4",
+   "final_sd_ctrl": "1",
+   "corr_assumed": "0.5",
+   "se_source": "arm_change_imputed_r",
+   "notes": "Table 2 LDL mmol/L at F0 and F1 per arm; within arm p 0.03 (semaglutide) and 0.2 (control)"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "semaglutide psoriasis T2D open label (Biomolecules 2025)",
+  "design": "open label randomised study, semaglutide added to maximally tolerated metformin versus metformin alone for 12 weeks, 31 patients with plaque psoriasis and type 2 diabetes",
+  "reason": "full text group (Europe PMC); two lipid rows are the only inventory markers printed as a mean with SD in both arms at both timepoints",
+  "biomarkers_reported_no_variance": [
+   "hsCRP",
+   "IL6",
+   "TG",
+   "fasting_glucose",
+   "HbA1c",
+   "fasting_insulin"
+  ],
+  "other_markers": [
+   "psoriasis area and severity index",
+   "IL-1 beta and IL-23",
+   "HDL cholesterol",
+   "uric acid and homocysteine"
+  ],
+  "tables_used": [
+   "Table 2",
+   "Table 3"
+  ],
+  "rob": {
+   "d1_randomisation": "high",
+   "d2_deviations": "high",
+   "d3_missing": "some_concerns",
+   "d4_measurement": "some_concerns",
+   "d5_selection": "some_concerns",
+   "overall": "high",
+   "justification": "described as randomised but the groups are defined by whether patients were assigned semaglutide, with no sequence, concealment or allocation ratio described and a threefold difference in baseline CRP between arms (3.8 against 9.6 mg/L) in 31 patients (D1 high); open label with no placebo and the comparator arm simply continuing metformin (D2 high); no account of withdrawals (D3 some concerns); dermatological scoring by unblinded assessors, laboratory measures unblinded (D4 some concerns); the metabolic markers are secondary to the skin endpoint and are reported as a mixture of means and medians without a between arm comparison (D5 some concerns)"
+  },
+  "doubts": [
+   "baseline CRP differs almost threefold between arms (median 3.8 mg/L against mean 9.6 mg/L), which with 31 patients makes any inflammatory comparison in this trial unreliable even if the dispersions allowed it",
+   "the HbA1c fall is large in both arms (7.3 to 6.1 and 7.2 to 6.3 percent as medians) for 12 weeks on unchanged metformin in the control arm, which suggests co intervention or regression to the mean",
+   "the authorship is not in the captured text, so first_author is left for a verifier to complete; the DOI (10.3390/biom15010046, Biomolecules 2025) comes from the packet metadata"
+  ]
+ }
+}

@@ -1,0 +1,87 @@
+{
+ "group": "137",
+ "extractor": "S",
+ "study": {
+  "trial_id": "STEP 2",
+  "pmid": "",
+  "doi": "10.1016/j.eclinm.2022.101737",
+  "first_author": "Mosenzon",
+  "year": "2023",
+  "journal": "eClinicalMedicine",
+  "phase": "3",
+  "drug": "semaglutide",
+  "receptor_class": "GLP1_mono",
+  "dose_mg": "2.4",
+  "comparator": "placebo",
+  "comparator_type": "placebo",
+  "duration_weeks": "68",
+  "population": "T2D",
+  "n_tx": "",
+  "n_ctrl": "",
+  "assessment_timepoint_weeks": "68",
+  "pct_weight_change": "",
+  "prespecified_endpoint": "FALSE",
+  "industry_funded": "TRUE",
+  "rob_overall": "low",
+  "notes": "STUDY: post hoc C reactive protein analysis of three 68 week randomised double blind placebo controlled semaglutide 2.4 mg trials (STEP 1 and STEP 3 in overweight or obesity without diabetes, randomised 2:1; STEP 2 in type 2 diabetes with obesity, randomised 1:1:1 to semaglutide 2.4 mg, semaglutide 1.0 mg or placebo), analysed on the treatment policy estimand in the full analysis set with CRP changes estimated as ratios to baseline and reported as percent estimated treatment differences. Each trial is a row with its own trial_id; STEP 1 is already in the master from its primary report and has no hsCRP row, so this adds one. Only the semaglutide 2.4 mg versus placebo contrast is entered for STEP 2; its 2.4 versus 1.0 mg comparison (minus 12 percent, minus 23 to 1) is an incretin versus incretin contrast and is not a row. n per arm is not printed anywhere in this report and is left empty; the CI supplies the standard error, so no row depends on it. pct_weight_change left empty for the same reason, with the primary reports carrying the weight contrasts. Novo Nordisk funded and authored (industry_funded TRUE); rob_overall low from the parent designs ; the STEP 1 row is NOT entered here: the master already carries STEP 1 hsCRP at week 68 from the NEJM primary report (treatment ratio 0.56, 0.51 to 0.61, route log_RR_ci), which is the same trial, biomarker and timepoint, so this report's STEP 1 estimate (minus 44 percent, minus 49 to minus 39) is recorded here only as a cross check: exp of the log ratio 0.56 corresponds to minus 44 percent, and the two sources agree exactly."
+ },
+ "rows": [
+  {
+   "biomarker": "hsCRP",
+   "measure": "PCT",
+   "unit": "percent",
+   "trial_id": "STEP 2",
+   "population": "T2D",
+   "yi_reported": "-39",
+   "ci_lb_reported": "-46",
+   "ci_ub_reported": "-30",
+   "se_source": "ci_95",
+   "base_mean_tx": "3.4",
+   "notes": "results text: estimated treatment difference in CRP at week 68, semaglutide 2.4 mg versus placebo, minus 39 percent (minus 46 to minus 30), p below 0.001; baseline CRP 3.4 mg/L; STEP 2 is in type 2 diabetes and randomised 1:1:1, the semaglutide 1.0 mg arm is not entered"
+  },
+  {
+   "biomarker": "hsCRP",
+   "measure": "PCT",
+   "unit": "percent",
+   "trial_id": "STEP 3",
+   "population": "obesity",
+   "yi_reported": "-48",
+   "ci_lb_reported": "-55",
+   "ci_ub_reported": "-39",
+   "se_source": "ci_95",
+   "base_mean_tx": "4.5",
+   "notes": "results text: estimated treatment difference in CRP at week 68, semaglutide 2.4 mg versus placebo, minus 48 percent (minus 55 to minus 39), p below 0.001; baseline CRP 4.5 mg/L; STEP 3 adds intensive behavioural therapy in both arms and randomised 2:1"
+  }
+ ],
+ "json": {
+  "status": "extracted",
+  "molecule": "semaglutide",
+  "trial_id": "STEP 1, STEP 2 and STEP 3",
+  "design": "post hoc CRP analysis of three 68 week randomised double blind placebo controlled trials of semaglutide 2.4 mg for weight management, treatment policy estimand, full analysis set",
+  "reason": "full text group (Europe PMC); the percent estimated treatment differences for CRP with 95 percent CI are printed per trial in the results text and are entered as three PCT rows, one per trial",
+  "biomarkers_reported_no_variance": [],
+  "other_markers": [
+   "CRP defined cardiovascular risk categories (descriptive only)",
+   "correlations of CRP change with weight, waist, fasting glucose, fasting insulin and HOMA-IR"
+  ],
+  "tables_used": [
+   "results text",
+   "Figure 1 legend for the baseline values"
+  ],
+  "rob": {
+   "d1_randomisation": "low",
+   "d2_deviations": "low",
+   "d3_missing": "low",
+   "d4_measurement": "low",
+   "d5_selection": "some_concerns",
+   "overall": "low",
+   "justification": "all three parent trials randomised and double blind with matched placebo (D1 and D2 low); the treatment policy estimand on the full analysis set with multiple imputation for missing data (D3 low); central laboratory CRP (D4 low); CRP was an exploratory endpoint analysed post hoc across three trials, although all three are reported with their intervals (D5 some concerns)"
+  },
+  "doubts": [
+   "n per arm is not printed in this report, so the rows carry empty denominators; the standard errors come from the printed intervals",
+   "the semaglutide 2.4 versus 1.0 mg comparison in STEP 2 is an incretin versus incretin contrast and is excluded by the comparator rule",
+   "STEP 3 adds intensive behavioural therapy to both arms, so its contrast is semaglutide on top of behavioural therapy",
+   "STEP 1 is in the master from the NEJM primary report and its hsCRP row is not duplicated here; the two sources agree (ratio 0.56 equals minus 44 percent)"
+  ]
+ }
+}
