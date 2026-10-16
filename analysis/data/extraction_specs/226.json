@@ -1,79 +1,44 @@
-{
- "group": "226",
- "extractor": "S",
- "study": {
-  "trial_id": "Dutour 2016 abstract",
-  "pmid": "",
-  "doi": "",
-  "first_author": "",
-  "year": "2016",
-  "journal": "conference abstract",
-  "phase": "",
-  "drug": "exenatide",
-  "receptor_class": "GLP1_mono",
-  "dose_mg": "0.01",
-  "comparator": "reference treatment (French guidelines)",
-  "comparator_type": "active",
-  "duration_weeks": "26",
-  "population": "T2D",
-  "n_tx": "",
-  "n_ctrl": "",
-  "assessment_timepoint_weeks": "26",
-  "pct_weight_change": "",
-  "prespecified_endpoint": "FALSE",
-  "industry_funded": "",
-  "rob_overall": "some_concerns",
-  "notes": "2016 conference abstract (no author on the record): 44 obese T2D uncontrolled on oral agents randomised to exenatide 10 ug bid or reference treatment, 26 weeks, 3T MRI and 1H MRS 45 min after a standardised meal; per arm n not given (44 total); the exenatide dose is not stated in the abstract, 0.01 mg (10 ug twice daily, the licensed dose) is entered as an assumption to confirm in the full paper; the \u00b1 values are read as SEM (HbA1c 7.5 \u00b1 0.2 percent for 44 patients cannot be an SD), to be confirmed in the full paper (companion paper needed: Dutour 2016 Diabetes Obes Metab); weight change exenatide -5.5 \u00b1 1.2 kg vs -0.2 \u00b1 0.8 kg (p=0.001), baseline weight not given (BMI 36.1), so pct_weight_change empty; prespecified endpoints not named in the abstract (ectopic fat was the aim); extracted by the session (S) from the abstract, 2026-10-16"
- },
+{"group": "226", "extractor": "S",
+ "study": {"trial_id": "Dutour 2016", "pmid": "27106272", "doi": "10.1111/dom.12680", "first_author": "Dutour", "year": "2016",
+           "journal": "Diabetes Obes Metab", "phase": "4", "drug": "exenatide", "receptor_class": "GLP1_mono", "dose_mg": "0.01",
+           "comparator": "reference treatment (French guidelines)", "comparator_type": "active", "duration_weeks": "26", "population": "T2D",
+           "n_tx": "22", "n_ctrl": "22", "assessment_timepoint_weeks": "26", "pct_weight_change": "-5.08",
+           "prespecified_endpoint": "FALSE", "industry_funded": "TRUE", "rob_overall": "some_concerns",
+           "notes": "STUDY: Dutour 2016 (Diabetes Obes Metab 18:882-891), the full paper of the group's 2016 conference abstract, reached through the institutional route; Tables 1 and 2 and sentences of the Methods and Results copied into work/fulltext/companion/dutour2016_exenatide_mri_tables.txt; prospective randomised trial, 44 obese adults with type 2 diabetes uncontrolled on oral agents, exenatide (dose increased to 10 ug twice daily after 4 weeks; dose_mg 0.01 per injection) vs reference treatment intensified according to local guidelines, 26 weeks, 3T MRI and 1H MRS; n 22 per arm in Tables 1 and 2 (six participants dropped out or were withdrawn, the tables keep 22 per arm); primary outcome the change in ectopic fat (EAT, MTGC, HTGC, PTGC), the biomarkers here are secondary (prespecified_endpoint FALSE); Table 2 gives mean (SD) at week 0 and week 26 per arm with the p of the time by group interaction (route arm_change_imputed_r, correlation 0.5, the interaction p recorded in the row notes and not used); the text and Table 1 give mean (SEM); pct_weight_change -5.08 computed by the session: exenatide -5.5 kg on a baseline of 104 kg (Table 1) is -5.29 percent, reference -0.2 kg on 95 kg is -0.21 percent, corrected -5.29 - (-0.21) = -5.08; industry_funded TRUE: supported by a grant from Lilly, Amylin Pharmaceuticals and AstraZeneca (ESR MB001-029); fasting glucose, insulin and HOMA-IR were calculated after excluding patients on sulphonylureas with the resulting n not given, so no rows are written for them; rob_overall some_concerns"},
  "rows": [
-  {
-   "biomarker": "liver_fat_pdff",
-   "measure": "pct_change",
-   "mean_tx": "-23.8",
-   "sem_tx": "9.5",
-   "mean_ctrl": "12.5",
-   "sem_ctrl": "9.6",
-   "se_source": "arm_sems",
-   "notes": "hepatic triglyceride content by 1H MRS (HTGC), percent change from baseline per arm, between group p=0.007 (recorded here, not used as a route); reference group increased (+12.5)"
-  },
-  {
-   "biomarker": "HbA1c",
-   "measure": "abs_change",
-   "mean_tx": "-0.7",
-   "sem_tx": "0.3",
-   "mean_ctrl": "-0.7",
-   "sem_ctrl": "0.4",
-   "se_source": "arm_sems",
-   "notes": "HbA1c change in percentage points per arm, p=0.29 between groups; baseline 7.5 \u00b1 0.2 percent overall"
-  }
+  {"biomarker": "liver_fat_pdff", "measure": "PCT", "unit": "percent", "mean_tx": "-23.8", "sem_tx": "9.5", "mean_ctrl": "12.5", "sem_ctrl": "9.6", "p_reported": "0.007", "p_is_bound": "FALSE", "se_source": "arm_sems",
+   "notes": "Results text: hepatic triglyceride content by 1H MRS (HTGC), percent change from baseline per arm, exenatide -23.8 ± 9.5 vs reference +12.5 ± 9.6 (mean ± SEM per the Methods), p = 0.007 between groups (recorded, not used as the route); recorded under liver_fat_pdff as the MRS measure of liver fat"},
+  {"biomarker": "HbA1c", "measure": "MD", "unit": "percent points", "mean_tx": "-0.7", "sem_tx": "0.3", "mean_ctrl": "-0.7", "sem_ctrl": "0.4", "p_reported": "0.29", "p_is_bound": "FALSE", "se_source": "arm_sems",
+   "notes": "Results text: HbA1c change -0.7 ± 0.3 vs -0.7 ± 0.4 percentage points (mean ± SEM), p = 0.29; study population baseline HbA1c 7.5 ± 0.2 percent (n 44), per arm baseline not captured"},
+  {"biomarker": "TC", "measure": "MD", "unit": "g/L", "base_mean_tx": "1.81", "base_sd_tx": "0.34", "final_mean_tx": "1.72", "final_sd_tx": "0.38", "base_mean_ctrl": "1.71", "base_sd_ctrl": "0.37", "final_mean_ctrl": "1.75", "final_sd_ctrl": "0.32", "corr_assumed": "0.5", "p_reported": "0.14", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: total cholesterol g/L, week 0 and week 26 mean (SD) per arm, time by group p = 0.14"},
+  {"biomarker": "LDL", "measure": "MD", "unit": "g/L", "base_mean_tx": "1.04", "base_sd_tx": "0.33", "final_mean_tx": "1.00", "final_sd_tx": "0.33", "base_mean_ctrl": "0.98", "base_sd_ctrl": "0.32", "final_mean_ctrl": "1.00", "final_sd_ctrl": "0.26", "corr_assumed": "0.5", "p_reported": "0.40", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: LDL cholesterol g/L, week 0 and week 26 mean (SD) per arm, time by group p = 0.40"},
+  {"biomarker": "TG", "measure": "MD", "unit": "g/L", "base_mean_tx": "1.70", "base_sd_tx": "0.72", "final_mean_tx": "1.46", "final_sd_tx": "0.70", "base_mean_ctrl": "1.72", "base_sd_ctrl": "1.07", "final_mean_ctrl": "1.60", "final_sd_ctrl": "0.55", "corr_assumed": "0.5", "p_reported": "0.23", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: triglycerides g/L, week 0 and week 26 mean (SD) per arm, time by group p = 0.23"},
+  {"biomarker": "hsCRP", "measure": "MD", "unit": "mg/L", "base_mean_tx": "11.65", "base_sd_tx": "10.36", "final_mean_tx": "7.26", "final_sd_tx": "6.71", "base_mean_ctrl": "9.96", "base_sd_ctrl": "11.01", "final_mean_ctrl": "10.43", "final_sd_ctrl": "10.22", "corr_assumed": "0.5", "p_reported": "0.30", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: high sensitivity C-reactive protein mg/L, week 0 and week 26 mean (SD) per arm, time by group p = 0.30; skewed (SD about equal to the mean)"},
+  {"biomarker": "adiponectin", "measure": "MD", "unit": "ug/mL", "base_mean_tx": "3.80", "base_sd_tx": "1.70", "final_mean_tx": "4.07", "final_sd_tx": "2.01", "base_mean_ctrl": "3.70", "base_sd_ctrl": "2.41", "final_mean_ctrl": "4.37", "final_sd_ctrl": "3.29", "corr_assumed": "0.5", "p_reported": "0.96", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: adiponectin ug/mL, week 0 and week 26 mean (SD) per arm, time by group p = 0.96"},
+  {"biomarker": "leptin", "measure": "MD", "unit": "ng/mL", "base_mean_tx": "27.73", "base_sd_tx": "20.55", "final_mean_tx": "20.92", "final_sd_tx": "17.39", "base_mean_ctrl": "31.41", "base_sd_ctrl": "22.38", "final_mean_ctrl": "32.26", "final_sd_ctrl": "25.23", "corr_assumed": "0.5", "p_reported": "0.0004", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: leptin ng/mL, week 0 and week 26 mean (SD) per arm, time by group p = 0.0004"},
+  {"biomarker": "AST", "measure": "MD", "unit": "U/L", "base_mean_tx": "33", "base_sd_tx": "25", "final_mean_tx": "38", "final_sd_tx": "45", "base_mean_ctrl": "30", "base_sd_ctrl": "13", "final_mean_ctrl": "28", "final_sd_ctrl": "10", "corr_assumed": "0.5", "p_reported": "0.81", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: aspartate transaminase UI/L, week 0 and week 26 mean (SD) per arm, time by group p = 0.81; exenatide arm rose (unfavourable direction)"},
+  {"biomarker": "ALT", "measure": "MD", "unit": "U/L", "base_mean_tx": "48", "base_sd_tx": "35", "final_mean_tx": "45", "final_sd_tx": "30", "base_mean_ctrl": "48", "base_sd_ctrl": "27", "final_mean_ctrl": "47", "final_sd_ctrl": "27", "corr_assumed": "0.5", "p_reported": "0.75", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: alanine transaminase UI/L, week 0 and week 26 mean (SD) per arm, time by group p = 0.75"},
+  {"biomarker": "GGT", "measure": "MD", "unit": "U/L", "base_mean_tx": "54", "base_sd_tx": "66", "final_mean_tx": "41", "final_sd_tx": "41", "base_mean_ctrl": "41", "base_sd_ctrl": "30", "final_mean_ctrl": "38", "final_sd_ctrl": "21", "corr_assumed": "0.5", "p_reported": "0.32", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: gamma glutamyltranspeptidase UI/L, week 0 and week 26 mean (SD) per arm, time by group p = 0.32"},
+  {"biomarker": "VAT", "measure": "MD", "unit": "cm2", "base_mean_tx": "274", "base_sd_tx": "103", "final_mean_tx": "242", "final_sd_tx": "122", "base_mean_ctrl": "234", "base_sd_ctrl": "113", "final_mean_ctrl": "246", "final_sd_ctrl": "104", "corr_assumed": "0.5", "p_reported": "0.09", "p_is_bound": "FALSE", "se_source": "arm_change_imputed_r",
+   "notes": "Table 2: visceral adipose tissue area by abdominal computed tomography, cm2, week 0 and week 26 mean (SD) per arm, time by group p = 0.09"}
  ],
- "json": {
-  "status": "extracted",
-  "design": "randomised, open label, two arm, 26 weeks, single centre (France)",
-  "biomarkers_reported_no_variance": [
-   "HOMA_IR",
-   "adiponectin"
-  ],
-  "other_markers": [
-   "epicardial adipose tissue (EAT -8.8 \u00b1 2.1 vs -1.2 \u00b1 1.6 percent, p=0.003)",
-   "pancreatic and myocardial triglyceride content (no difference)"
-  ],
-  "tables_used": [
-   "abstract text"
-  ],
-  "rob": {
-   "d1_randomisation": "some_concerns",
-   "d2_deviations": "some_concerns",
-   "d3_missing": "some_concerns",
-   "d4_measurement": "low",
-   "d5_selection": "some_concerns",
-   "overall": "some_concerns",
-   "justification": "abstract only: randomisation stated without method (D1 some concerns); open label active comparator (D2 some concerns); attrition not reported (D3 some concerns); MRI and MRS outcomes are objective (D4 low); no registration or endpoint hierarchy in the abstract (D5 some concerns); to be re rated from the full paper"
-  },
-  "doubts": [
-   "SEM versus SD of the \u00b1 values",
-   "per arm n",
-   "companion full paper needed (Dutour 2016 DOM)"
-  ]
- }
-}
+ "json": {"status": "extracted", "molecule": "exenatide", "trial_id": "Dutour 2016",
+          "design": "prospective randomised trial, exenatide vs reference treatment, 26 weeks, 44 randomised, single centre (Marseille)",
+          "reason": "full paper of the group's 2016 abstract reached through the institutional route; replaces the abstract read (2 rows) with 12 rows (the two abstract rows kept, ten Table 2 rows added by the imputed change route)",
+          "biomarkers_reported_no_variance": [],
+          "other_markers": ["epicardial adipose tissue (primary)", "pancreatic and myocardial triglyceride content", "waist, hip and thigh circumference", "subcutaneous adipose tissue", "fasting glucose, fasting insulin and HOMA-IR in Table 2 computed after excluding sulphonylurea users with the n not given (no rows)", "HDL cholesterol", "free fatty acids", "PAI-1", "fibrinogen", "ferritin", "creatinine", "uric acid"],
+          "tables_used": ["Table 1", "Table 2", "Results text"],
+          "rob": {"d1_randomisation": "some_concerns", "d2_deviations": "some_concerns", "d3_missing": "some_concerns", "d4_measurement": "low", "d5_selection": "some_concerns", "overall": "some_concerns",
+                  "justification": "S (full paper, tables and sentences captured): randomisation method and concealment not in the captured text (D1); open design with a reference treatment arm, imaging reader blinded (D2); six of 44 dropped out or were withdrawn while the tables keep 22 per arm, handling not captured (D3); MRI, MRS and laboratory outcomes (D4 low); no registration seen in the captured text (D5)"},
+          "doubts": ["Table 2 states mean (SD) while the Methods state mean (SEM); the Table 2 magnitudes (hsCRP 9.96 ± 11.01, leptin 31.41 ± 22.38) are only consistent with SDs, so Table 2 values are read as SDs and the text values (HbA1c, weight, HTGC) as SEMs",
+                     "n per arm for Table 2 is taken as 22 although six participants dropped out; the analysed numbers are not given",
+                     "pct_weight_change derived by the session from the kg changes and Table 1 baseline weights"]}}

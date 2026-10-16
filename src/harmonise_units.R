@@ -127,7 +127,11 @@ BASELINE <- tibble::tribble(
   # Adiponectin has no printed 12 week mean, so it has no denominator and stays unconvertible.
   "Fan 2013",    "ALT",    ((39.82 + 27.32)*49 + (51.48 + 12.85)*68)/117, "Fan 2013 Results text citing Tables 2 and 3: ((39.82+27.32)*49 + (51.48+12.85)*68)/117 U/L",
   "Fan 2013",    "GGT",    ((47.53 + 26.48)*49 + (53.44 + 10.26)*68)/117, "Fan 2013 Results text citing Tables 2 and 3: ((47.53+26.48)*49 + (53.44+10.26)*68)/117 U/L",
-  "Fan 2013",    "hsCRP",  ((2.18 + 0.89)*49 + (2.69 + 0.61)*68)/117,     "Fan 2013 Results text citing Tables 2 and 3: ((2.18+0.89)*49 + (2.69+0.61)*68)/117 mg/L"
+  "Fan 2013",    "hsCRP",  ((2.18 + 0.89)*49 + (2.69 + 0.61)*68)/117,     "Fan 2013 Results text citing Tables 2 and 3: ((2.18+0.89)*49 + (2.69+0.61)*68)/117 mg/L",
+  # Dutour 2016 (group 226, companion full paper through the institutional route): the HbA1c row
+  # carries arm changes with SEMs; the paper gives the study population's baseline HbA1c (n 44),
+  # not per arm, in the Results text.
+  "Dutour 2016", "HbA1c",  7.5,  "Dutour 2016 Results text: mean HbA1c 7.5 (SEM 0.2) percent in the 44 randomised participants"
 )
 stopifnot(!any(duplicated(BASELINE[c("trial_id", "biomarker")])))
 

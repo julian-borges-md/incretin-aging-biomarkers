@@ -41,6 +41,7 @@ def variants(v):
         out.add(s.rstrip("0").rstrip("."))
         out.add(s + "0")
         out.add(s.replace(".", ","))
+        out.add(s.replace(".", "·"))  # Lancet house style prints the decimal point as a middle dot
         if s.startswith("0."):
             out.add(s[1:])
     return [x for x in out if x]
