@@ -13,3 +13,6 @@ analysis/output/*
 # The search log records the counts, strings and SHA-256 so the export is
 # verifiable without redistributing Elsevier-licensed records in a public repo.
 search/**/*.ris
+
+# Per record dedup flags carry the export titles; counts live in RECALL_AND_DEDUP.md
+search/**/*_dedup.csv

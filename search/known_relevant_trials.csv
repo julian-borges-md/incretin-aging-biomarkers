@@ -1,0 +1,39 @@
+first_author,year,source,intervention,comparator
+Ahmad,2021,Alrasheed2026,Liraglutide 1.8 mg,Sitagliptin 100 mg
+Anholm,2019,Alrasheed2026,Liraglutide + metformin,Placebo + metformin
+Bi,2014,Alrasheed2026,Exenatide,Insulin; Pioglitazone
+Bouchi,2017,Alrasheed2026,Liraglutide + Insulin,Insulin alone
+Bunck,2010,Alrasheed2026,Exenatide + metformin,Insulin Glargine + metformin
+Derosa,2010,Alrasheed2026,Exenatide + metformin,Glibenclamide + metformin
+Derosa,2012,Alrasheed2026,Exenatide + metformin,Placebo + metformin
+Dutour,2016,Alrasheed2026,Exenatide,Reference Treatment (per guidelines)
+Fan,2013,Alrasheed2026,Exenatide,Metformin
+Forst,2012,Alrasheed2026,Liraglutide + MET,MET alone
+Guarnotta,2021,Alrasheed2026,Dulaglutide or Liraglutide added to therapy,Baseline therapy
+Gurkan,2014,Alrasheed2026,Exenatide + Metformin,Insulin Glargine + Metformin
+Kang,2021,Alrasheed2026,Exenatide,Insulin glargine
+Lambadiari,2018,Alrasheed2026,Liraglutide,Metformin
+Lambadiari,2021,Alrasheed2026,Liraglutide; Liraglutide + Empagliflozin,Insulin; Empagliflozin
+le Roux,2017,Alrasheed2026,,
+Liang,2013,Alrasheed2026,Usual care + Exenatide,Usual care; RYGB surgery
+Liu,2017,Alrasheed2026,Liraglutide (1.2mg),Metformin; Liraglutide (1.8mg) + Metformin
+Liu,2019,Alrasheed2026,Liraglutide + Insulin,Insulin alone
+Pastel,2017,Alrasheed2026,Liraglutide,Calorie Restriction (Diet)
+Quan,2017,Alrasheed2026,Exenatide + MET,BIAsp 30 + MET
+Santilli,2017,Alrasheed2026,Liraglutide (1.8 mg/d),Lifestyle modification
+Savvidou,2016,Alrasheed2026,Exenatide + glargine,Intensive insulin
+Shi,2017,Alrasheed2026,Exenatide + metformin,Acarbose + metformin
+Simó,2015,Alrasheed2026,Exenatide + metformin,Glimepiride + metformin
+Suzuki,2014,Alrasheed2026,Liraglutide (0.9 mg/d),Sitagliptin (50 mg/d)
+Takeshita,2015,Alrasheed2026,Liraglutide,Vildagliptin (DPP-4i)
+Tian,2018,Alrasheed2026,Liraglutide,Metformin
+von Scholten,2017,Alrasheed2026,Liraglutide,Placebo
+Wang,2019,Alrasheed2026,Dulaglutide,Insulin Glargine
+Wang,2020,Alrasheed2026,Sitagliptin,Liraglutide
+Wu,2011,Alrasheed2026,Exenatide,Placebo
+Wägner,2019,Alrasheed2026,Liraglutide 1.8 mg,Placebo
+Xie,2022,Alrasheed2026,Metformin + Dulaglutide (MET-DUL),Metformin (MET)
+Yan,2019,Alrasheed2026,Liraglutide,Sitagliptin; Insulin Glargine
+Yao,2020,Alrasheed2026,CSII + Liraglutide,CSII
+Ying,2023,Alrasheed2026,Liraglutide,Metformin
+Zhang,2018,Alrasheed2026,Liraglutide,Metformin

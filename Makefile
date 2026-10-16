@@ -37,6 +37,11 @@ analysis:
 sensitivity:
 	$(RS) src/sensitivity_corr.R
 
+# Links the gitignored Embase export to the known corpus and measures the
+# recall of the search string; writes counts to search/embase_*/RECALL_AND_DEDUP.md.
+dedup:
+	python3 -I src/dedup_embase.py
+
 clean:
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep
