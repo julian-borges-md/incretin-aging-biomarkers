@@ -126,3 +126,40 @@ message(sprintf("  biomarkers with 3 or more    : %d", sum(res$k >= 3)))
 
 readr::write_csv(res, "analysis/output/table2_pooled_by_biomarker.csv")
 message("\nWrote analysis/output/table2_pooled_by_biomarker.csv")
+
+# ---- Sensitivity: eligibility as originally written (amendment R4) ----------
+# prespecification/analysis_plan.md excludes exenatide and dulaglutide as
+# interventions. The mono agonist arm adopted from Alrasheed 2026 and the
+# Lab Director's directive of 2026-10-15 to extract Derosa 2012 and Wu 2011
+# admit exenatide; amendment R4 records that. Every marker that an exenatide
+# or dulaglutide row touches is re-pooled here without those rows, so the
+# effect of the amendment on Table 2 is visible on every run.
+R4_DRUGS <- c("exenatide", "dulaglutide")
+touched <- dat |> filter(drug %in% R4_DRUGS) |> distinct(biomarker) |> pull(biomarker)
+if (length(touched) > 0) {
+  res_r4 <- dat |>
+    filter(!drug %in% R4_DRUGS, biomarker %in% touched) |>
+    group_by(biomarker, hallmark_domain, aging_direction) |>
+    group_modify(~ pool_one(.x)) |>
+    ungroup()
+  message("\nSENSITIVITY R4: eligibility as originally written, exenatide and dulaglutide rows removed")
+  message(sprintf("%-18s %12s %9s %18s %7s   %12s %9s %18s", "biomarker", "k with/without",
+                  "with", "95% CI", "I2", "", "without", "95% CI"))
+  message(strrep("-", 112))
+  for (b in sort(touched)) {
+    a <- res |> filter(biomarker == b)
+    w <- res_r4 |> filter(biomarker == b)
+    if (nrow(w) == 0) {
+      message(sprintf("%-18s %12s %8.1f%% %8.1f to %-7.1f %6s   %12s", b,
+                      sprintf("%d / 0", a$k), a$est, a$lo, a$hi,
+                      ifelse(is.na(a$i2), "-", sprintf("%.0f%%", a$i2)), "no row left"))
+    } else {
+      message(sprintf("%-18s %12s %8.1f%% %8.1f to %-7.1f %6s   %12s %8.1f%% %8.1f to %-7.1f", b,
+                      sprintf("%d / %d", a$k, w$k), a$est, a$lo, a$hi,
+                      ifelse(is.na(a$i2), "-", sprintf("%.0f%%", a$i2)), "",
+                      w$est, w$lo, w$hi))
+    }
+  }
+  readr::write_csv(res_r4, "analysis/output/table2_sensitivity_eligibility_R4.csv")
+  message("Wrote analysis/output/table2_sensitivity_eligibility_R4.csv")
+}

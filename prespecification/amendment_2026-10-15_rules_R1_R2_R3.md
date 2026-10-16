@@ -45,3 +45,15 @@ Rule going forward: a marker enters the master only if it is in Table 1 or is li
 | Highest dose rule drops within trial cross class arms (Wilson 2021 dulaglutide) | Origin session | Open; recorded in the SIRLP addendum; not changed by this amendment |
 
 Baseline denominators entered under R1 for the percent scale are keyed by trial and biomarker in src/harmonise_units.R, each with the table and arithmetic that produced it.
+
+## R4. Eligibility: exenatide and dulaglutide as interventions (added 21:20, same day)
+
+| Item | Statement |
+|---|---|
+| What the plan says | `prespecification/analysis_plan.md`, Eligibility: intervention is the ten named molecules plus amycretin, cagrilintide and CagriSema; "exenatide and dulaglutide except as comparators" are excluded; GLP1_mono is listed as semaglutide and liraglutide |
+| What has happened | EUREXA (exenatide, extracted in the origin session), Derosa 2012 and Wu 2011 (exenatide, extracted today on the Lab Director's directive of 2026-10-15) sit in the master as GLP1_mono interventions. The mono agonist comparator pool adopted from Alrasheed 2026 is 13 of 40 exenatide trials. The Embase string's drug line includes exenatide |
+| Conflict | The rows and the written criterion disagree. This was not noticed when the first exenatide row was entered, and it is recorded here on the day it was noticed, before any class contrast involving exenatide rows was interpreted |
+| Rule adopted | Exenatide and dulaglutide are admitted as GLP1_mono interventions. The plan's own principle decides it: "class assignment follows the molecule's receptor pharmacology, not the trial's framing or indication", and both are selective GLP-1 receptor agonists. The original exclusion rested on indication and era, not pharmacology |
+| Disclosure | This is a post hoc widening of a published eligibility criterion, made after three exenatide trials had been read. It is reported as such in the Methods |
+| Sensitivity | `pool_biomarkers.R` re-pools every marker touched by an exenatide or dulaglutide row without those rows on every run and writes `analysis/output/table2_sensitivity_eligibility_R4.csv`, so the reader sees Table 2 under the criterion as originally written |
+| Still excluded | Nothing changes for lixisenatide or albiglutide, which no row carries; a trial of either would need its own entry here |
