@@ -124,7 +124,7 @@ DIR <- c(hsCRP=-1, IL6=-1, YKL40=-1, GDF15=-1, ICAM1=-1, GGT=-1,
          liver_fat_pdff=-1, leptin=-1, HOMA_IR=-1, NTproBNP=-1,
          lean_mass=1, adiponectin=1, HOMA_beta=1, fasting_glucose=-1,
          fasting_insulin=-1, C_peptide=-1, glucagon=-1, ALT=-1, AST=-1,
-         fatty_liver_index=-1)
+         fatty_liver_index=-1, TNF_alpha=-1, MR_proANP=-1)
 INCLUDED <- c("hsCRP","IL6","YKL40","GDF15","ICAM1","GGT",
               "liver_fat_pdff","leptin","HOMA_IR","NTproBNP","lean_mass")
 

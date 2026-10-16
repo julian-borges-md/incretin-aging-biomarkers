@@ -88,6 +88,9 @@ numeric_cols <- c("yi_reported", "ci_lb_reported", "ci_ub_reported",
                   "se_reported", "p_reported",
                   "mean_tx", "sd_tx", "sem_tx", "n_tx",
                   "mean_ctrl", "sd_ctrl", "sem_ctrl", "n_ctrl",
+                  "base_mean_tx", "base_sd_tx", "final_mean_tx", "final_sd_tx",
+                  "base_mean_ctrl", "base_sd_ctrl", "final_mean_ctrl", "final_sd_ctrl",
+                  "corr_assumed",
                   "events_tx", "events_ctrl",
                   "aging_direction", "clinical_weight",
                   "pct_weight_change", "duration_weeks", "year")
@@ -107,8 +110,21 @@ for (cl in intersect(numeric_cols, names(raw))) {
 optional <- c("yi_reported", "ci_lb_reported", "ci_ub_reported", "se_reported",
               "p_reported", "p_is_bound", "measure",
               "mean_tx", "sd_tx", "sem_tx", "mean_ctrl", "sd_ctrl", "sem_ctrl",
+              "base_mean_tx", "base_sd_tx", "final_mean_tx", "final_sd_tx",
+              "base_mean_ctrl", "base_sd_ctrl", "final_mean_ctrl", "final_sd_ctrl",
+              "corr_assumed", "comparator_type",
               "n_tx", "n_ctrl", "clinical_weight")
 for (cl in setdiff(optional, names(raw))) raw[[cl]] <- NA
+
+# p_is_bound arrives as text because every column is read as character.
+# resolve_effect tests it with isTRUE(), and isTRUE("TRUE") is FALSE, so a
+# bound flagged in a file would have been converted to a standard error from
+# the threshold value, the exact error the flag exists to prevent. No row had
+# used a p value route before 2026-10-15, so this never fired. Coerced here,
+# with the counterexample asserted.
+to_flag <- function(x) toupper(trimws(as.character(x))) %in% c("TRUE", "T", "1", "YES")
+stopifnot(isTRUE(to_flag("TRUE")), !isTRUE(to_flag("FALSE")), !isTRUE(to_flag(NA)))
+raw$p_is_bound <- to_flag(raw$p_is_bound)
 
 ## ---------------------------------------------------------------------------
 ## Resolve every row

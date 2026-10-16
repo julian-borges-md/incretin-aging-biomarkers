@@ -39,3 +39,17 @@ Operational items that need the Lab Director: the Anholm supplementary file (Wor
 ## What this changes for Q2
 
 With R1 to R3 settled, hsCRP would hold placebo controlled mono class data from SELECT, Derosa, Wu and Wägner (Anholm pending its supplement), which is the replication the class contrast needs on the mono side; the GIP side still rests on Wilson alone. The contrast therefore moves from "not computable" to "computable on the mono side, unreplicated on the GIP side" and stays confounded by one trial per class on that side until a second GIP trial reports hsCRP.
+
+## Status update, 21:45 local: rules written, rows entered
+
+R1 to R3 are recorded in `prespecification/amendment_2026-10-15_rules_R1_R2_R3.md` and implemented. The Anholm supplementary file was retrieved (Table SA2: CRP paired difference −0.43 (IQR −1.5; 0.21), p = 0.2; TNF-alpha +0.3 (−0.4; 0.5), p = 0.3). Twenty rows entered the master from the five trials:
+
+| Trial | Rows | Route | On the percent scale |
+|---|---|---|---|
+| Derosa 2012 | 9 (hsCRP, TNF-alpha, HOMA-IR, HOMA-beta, C-peptide, glucagon, adiponectin, fasting glucose, fasting insulin) | arm_change_imputed_r, r = 0.5 | yes, Table 3 baselines |
+| Wu 2011 | 4 (hsCRP, HOMA-IR, fasting glucose, fasting insulin) | arm_change_imputed_r, r = 0.5 | yes, Table 1 and 3 baselines |
+| Wägner 2019 | 3 (hsCRP, NT-proBNP, fasting glucose) | arm_change_imputed_r, r = 0.5 | yes, Table 4 and 5 baselines |
+| von Scholten 2017 | 2 (TNF-alpha, MR-proANP) | ci_95 on reported percent differences | yes, reported as percent |
+| Anholm 2019 | 2 (hsCRP, TNF-alpha) | exact_p on paired median differences | no, baseline medians only |
+
+Executed after entry: 68 rows, 12 trial analyses, 21 biomarkers, 61 convertible; Q2 replicated class contrasts 3 of 17 (HOMA-IR, fasting glucose, fasting insulin: mono versus GCGR); hsCRP now 4 mono trials against 1 GIP trial, still one trial per class on the GIP side; hsCRP Table 2 −26.4% (−57.5 to 4.6), k = 5, I2 80%, prediction interval −77.6 to 24.7.

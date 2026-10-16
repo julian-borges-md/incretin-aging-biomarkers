@@ -112,6 +112,62 @@ log_ratio_ci <- function(estimate, lb, ub) {
 }
 
 ## ---------------------------------------------------------------------------
+## Change score contrast when a trial reports baseline and final arm means
+## with SDs but no SD of change (amendment R1, 2026-10-15)
+##
+## Several parallel group trials in this literature (Derosa 2012, Wu 2011,
+## Wägner 2019) tabulate each arm at baseline and at end of study, mean (SD),
+## and report nothing about the within patient change. Two things go wrong if
+## final values are used directly. First, in a 24 patient trial a chance
+## baseline imbalance (Wägner: CRP 0.37 against 0.66 mg/dL at entry) becomes
+## the "treatment effect" at exit. Second, the schema defines mean_tx and
+## sd_tx as CHANGE quantities, so entering final values there would be a
+## silent redefinition of the column.
+##
+## The change score SD is therefore imputed from the two reported SDs and an
+## assumed pre post correlation r (Cochrane Handbook 6.5.2.8):
+##
+##   sd_change = sqrt(sd_base^2 + sd_final^2 - 2 r sd_base sd_final)
+##
+## and the contrast is the difference of mean changes, with the pooled SD
+## formula of the arm_sds route. r must be RECORDED on the row (corr_assumed);
+## the primary analysis uses 0.5 and the sensitivity analyses rerun with 0.3
+## and 0.7. Direction of the assumption: a smaller r gives a larger sd_change
+## and a wider interval, so if 0.5 overstates the true correlation the primary
+## result is anticonservative, which is why the 0.3 rerun is mandatory.
+## ---------------------------------------------------------------------------
+sd_change_imputed <- function(sd_base, sd_final, r) {
+  if (!is.finite(r) || r <= -1 || r >= 1) stop("corr_assumed must lie strictly between -1 and 1")
+  sqrt(sd_base^2 + sd_final^2 - 2 * r * sd_base * sd_final)
+}
+
+change_contrast_imputed <- function(base_mean_tx, base_sd_tx, final_mean_tx, final_sd_tx, n_tx,
+                                    base_mean_ctrl, base_sd_ctrl, final_mean_ctrl, final_sd_ctrl,
+                                    n_ctrl, r) {
+  sd_tx   <- sd_change_imputed(base_sd_tx,   final_sd_tx,   r)
+  sd_ctrl <- sd_change_imputed(base_sd_ctrl, final_sd_ctrl, r)
+  s_p <- sqrt(((n_tx - 1) * sd_tx^2 + (n_ctrl - 1) * sd_ctrl^2) / (n_tx + n_ctrl - 2))
+  tibble(
+    yi = (final_mean_tx - base_mean_tx) - (final_mean_ctrl - base_mean_ctrl),
+    se = s_p * sqrt(1 / n_tx + 1 / n_ctrl)
+  )
+}
+
+# Counterexamples run at source time, so the formula cannot drift silently.
+# Equal SDs of 1 and r = 0.5 give a change SD of exactly 1; r = 0 gives
+# sqrt(2); a lower r must always give a larger SE (the direction of bias
+# stated above); and a baseline imbalance must not enter the contrast when
+# the within arm changes are equal.
+stopifnot(
+  abs(sd_change_imputed(1, 1, 0.5) - 1) < 1e-12,
+  abs(sd_change_imputed(1, 1, 0.0) - sqrt(2)) < 1e-12,
+  sd_change_imputed(1, 1, 0.3) > sd_change_imputed(1, 1, 0.7),
+  abs(change_contrast_imputed(0.37, 0.24, 0.31, 0.29, 12,
+                              0.66, 0.30, 0.64, 0.30, 12, 0.5)$yi - (-0.04)) < 1e-12,
+  abs(change_contrast_imputed(10, 2, 8, 2, 20, 10, 2, 8, 2, 20, 0.5)$yi) < 1e-12
+)
+
+## ---------------------------------------------------------------------------
 ## Resolve a row to yi and vi, by whichever route its reported form allows
 ##
 ## Routes are tried in order of how much information they preserve. A
@@ -157,7 +213,27 @@ resolve_effect <- function(row) {
     return(list(yi = cc$yi, se = cc$se, route = "arm_sems"))
   }
 
-  # Route 6: arm level means with standard deviations, the original schema.
+  # Route 6: baseline and final arm means with SDs, change score SD imputed
+  # through the recorded pre post correlation (amendment R1). The correlation
+  # is mandatory on the row; a row that reaches this route without it stops
+  # the build rather than silently taking a default.
+  if (has(row$base_mean_tx) && has(row$base_sd_tx) && has(row$final_mean_tx) &&
+      has(row$final_sd_tx) && has(row$n_tx) &&
+      has(row$base_mean_ctrl) && has(row$base_sd_ctrl) && has(row$final_mean_ctrl) &&
+      has(row$final_sd_ctrl) && has(row$n_ctrl)) {
+    if (!has(row$corr_assumed)) {
+      stop("corr_assumed must be recorded on every row that uses the change score ",
+           "imputation route: ", row$trial_id, " / ", row$biomarker)
+    }
+    cc <- change_contrast_imputed(row$base_mean_tx, row$base_sd_tx,
+                                  row$final_mean_tx, row$final_sd_tx, row$n_tx,
+                                  row$base_mean_ctrl, row$base_sd_ctrl,
+                                  row$final_mean_ctrl, row$final_sd_ctrl, row$n_ctrl,
+                                  row$corr_assumed)
+    return(list(yi = cc$yi, se = cc$se, route = "arm_change_imputed_r"))
+  }
+
+  # Route 7: arm level CHANGE means with standard deviations, the original schema.
   if (has(row$mean_tx) && has(row$sd_tx) && has(row$n_tx) &&
       has(row$mean_ctrl) && has(row$sd_ctrl) && has(row$n_ctrl)) {
     s_p <- sqrt(((row$n_tx - 1) * row$sd_tx^2 + (row$n_ctrl - 1) * row$sd_ctrl^2) /

@@ -49,3 +49,12 @@ rob_selective_reporting,factor,yes,low some_concerns high
 rob_overall,factor,yes,low some_concerns high
 prespecified_endpoint,logical,yes,TRUE if outcome was pre-specified rather than post hoc
 coi_declared,string,no,Conflict of interest statement summary
+base_mean_tx,numeric,conditional,Baseline mean in treatment arm (change score imputation route only)
+base_sd_tx,numeric,conditional,Baseline SD in treatment arm (change score imputation route only)
+final_mean_tx,numeric,conditional,End of study mean in treatment arm (change score imputation route only)
+final_sd_tx,numeric,conditional,End of study SD in treatment arm (change score imputation route only)
+base_mean_ctrl,numeric,conditional,Baseline mean in control arm (change score imputation route only)
+base_sd_ctrl,numeric,conditional,Baseline SD in control arm (change score imputation route only)
+final_mean_ctrl,numeric,conditional,End of study mean in control arm (change score imputation route only)
+final_sd_ctrl,numeric,conditional,End of study SD in control arm (change score imputation route only)
+corr_assumed,numeric,conditional,Assumed pre post correlation used to impute the SD of change when only baseline and final SDs are reported; 0.5 primary with 0.3 and 0.7 sensitivity (amendment R1 2026-10-15)

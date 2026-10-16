@@ -58,7 +58,8 @@ pool_one <- function(d) {
   k <- nrow(d)
   if (k == 1) {
     return(tibble(k = 1L,
-                  est = d$yi_pct, lo = d$yi_pct - 1.96 * sqrt(d$vi_pct),
+                  est = d$yi_pct, se = sqrt(d$vi_pct),
+                  lo = d$yi_pct - 1.96 * sqrt(d$vi_pct),
                   hi = d$yi_pct + 1.96 * sqrt(d$vi_pct),
                   pi_lo = NA_real_, pi_hi = NA_real_,
                   tau2 = NA_real_, i2 = NA_real_, p = NA_real_,
@@ -69,12 +70,15 @@ pool_one <- function(d) {
                  test = if (k < 10) "knha" else "z"),
     error = function(e) NULL)
   if (is.null(m)) {
-    return(tibble(k = k, est = NA_real_, lo = NA_real_, hi = NA_real_,
+    return(tibble(k = k, est = NA_real_, se = NA_real_, lo = NA_real_, hi = NA_real_,
                   pi_lo = NA_real_, pi_hi = NA_real_, tau2 = NA_real_,
                   i2 = NA_real_, p = NA_real_, note = "model failed to converge"))
   }
   pi <- if (k >= 3) tryCatch(predict(m), error = function(e) NULL) else NULL
-  tibble(k = k, est = as.numeric(m$beta),
+  # se is the model's standard error of the pooled estimate (the Hartung Knapp
+  # adjusted one when knha is in force). compute_composite.R takes est and se
+  # from here, so the composite is built on the plan's primary estimator.
+  tibble(k = k, est = as.numeric(m$beta), se = as.numeric(m$se),
          lo = m$ci.lb, hi = m$ci.ub,
          pi_lo = if (!is.null(pi)) pi$pi.lb else NA_real_,
          pi_hi = if (!is.null(pi)) pi$pi.ub else NA_real_,

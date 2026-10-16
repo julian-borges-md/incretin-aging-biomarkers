@@ -88,11 +88,35 @@ dat <- readr::read_csv(IN, show_col_types = FALSE, progress = FALSE)
 #
 # To populate: add a row only with a baseline mean read from a named table in
 # a named source, with the locator in baseline_source.
-BASELINE <- tibble(
-  biomarker       = character(),
-  baseline_mean   = numeric(),
-  baseline_source = character()
+# KEYED BY TRIAL AND BIOMARKER (2026-10-15). The first version was keyed by
+# biomarker alone, which would have applied one trial's baseline to every
+# trial's absolute rows. A denominator is a property of the trial population
+# it was measured in. Every entry below is a value read from a named table,
+# or the n weighted mean of the two arms' reported baselines, with the
+# arithmetic stated; nothing is estimated from outside the paper.
+BASELINE <- tibble::tribble(
+  ~trial_id,     ~biomarker,        ~baseline_mean, ~baseline_source,
+  # Derosa 2012, Table 3, baseline columns at randomisation, n 85 placebo and 86 exenatide
+  "Derosa-2012", "hsCRP",             2.0,    "Derosa 2012 Table 3: 2.0 mg/l in both arms at randomisation",
+  "Derosa-2012", "TNF_alpha",         2.30,   "Derosa 2012 Table 3: (2.4*85 + 2.2*86)/171 ng/ml",
+  "Derosa-2012", "HOMA_IR",           7.152,  "Derosa 2012 Table 3: (6.9*85 + 7.4*86)/171",
+  "Derosa-2012", "HOMA_beta",         96.61,  "Derosa 2012 Table 3: (95.0*85 + 98.2*86)/171",
+  "Derosa-2012", "C_peptide",         2.850,  "Derosa 2012 Table 3: (2.8*85 + 2.9*86)/171 nmol/l",
+  "Derosa-2012", "glucagon",          63.20,  "Derosa 2012 Table 3: (62.5*85 + 63.9*86)/171 pmol/l",
+  "Derosa-2012", "adiponectin",       4.801,  "Derosa 2012 Table 3: (4.7*85 + 4.9*86)/171 ug/ml",
+  "Derosa-2012", "fasting_glucose",   7.701,  "Derosa 2012 Table 3: (7.6*85 + 7.8*86)/171 mmol/l",
+  "Derosa-2012", "fasting_insulin",   143.77, "Derosa 2012 Table 3: (139.6*85 + 147.9*86)/171 pmol/l",
+  # Wu 2011, Table 1 and Table 3, n 12 exenatide and 11 placebo
+  "Wu-2011",     "hsCRP",             0.496,  "Wu 2011 Table 3: (0.4*12 + 0.6*11)/23 mg/L",
+  "Wu-2011",     "HOMA_IR",           2.757,  "Wu 2011 Results text: (2.9*12 + 2.6*11)/23",
+  "Wu-2011",     "fasting_glucose",   8.004,  "Wu 2011 Table 1: (8.1*12 + 7.9*11)/23 mmol/L",
+  "Wu-2011",     "fasting_insulin",   7.813,  "Wu 2011 Table 1: (8.1*12 + 7.5*11)/23 uU/mL",
+  # Wägner 2019 (LIPER2), Tables 4 and 5, n 12 per arm; CRP converted from mg/dL to mg/L
+  "LIPER2",      "hsCRP",             5.15,   "Wägner 2019 Table 5: (0.37*12 + 0.66*12)/24 mg/dL = 0.515 mg/dL = 5.15 mg/L",
+  "LIPER2",      "NTproBNP",          46.0,   "Wägner 2019 Table 5: (53.7*12 + 38.3*12)/24 pg/mL",
+  "LIPER2",      "fasting_glucose",   176.35, "Wägner 2019 Table 4: (162.8*12 + 189.9*12)/24 mg/dL"
 )
+stopifnot(!any(duplicated(BASELINE[c("trial_id", "biomarker")])))
 
 LOG_RATIO_ROUTES <- c("log_RR_ci", "log_OR_ci")
 PCT_BIOMARKERS   <- c("hsCRP", "IL6", "GDF15", "YKL40", "ICAM1", "leptin",
@@ -118,6 +142,7 @@ PCT_BIOMARKERS   <- c("hsCRP", "IL6", "GDF15", "YKL40", "ICAM1", "leptin",
 classify_unit <- function(se_route, measure, biomarker, baseline_mean) {
   dplyr::case_when(
     se_route %in% LOG_RATIO_ROUTES                             ~ "log_ratio",
+    !is.na(measure) & measure == "PCT"                         ~ "percent_change",
     !is.na(measure) & measure == "MD" & !is.na(baseline_mean)  ~ "absolute",
     !is.na(measure) & measure == "MD"                          ~ "unknown",
     biomarker %in% PCT_BIOMARKERS                              ~ "percent_change",
@@ -135,7 +160,9 @@ unit_tests <- tibble::tribble(
   "SELECT hsCRP, percent change, CI",      "ci_95",     NA,       "hsCRP",    NA_real_,       "percent_change",
   "SELECT ALT, MD in U/L, no baseline",    "ci_95",     "MD",     "ALT",      NA_real_,       "unknown",
   "ALT, MD in U/L, baseline supplied",     "ci_95",     "MD",     "ALT",      28,             "absolute",
-  "survodutide HOMA_IR, log ratio",        "log_RR_ci", "RR",     "HOMA_IR",  NA_real_,       "log_ratio"
+  "survodutide HOMA_IR, log ratio",        "log_RR_ci", "RR",     "HOMA_IR",  NA_real_,       "log_ratio",
+  "von Scholten TNF_alpha, PCT with CI",   "ci_95",     "PCT",    "TNF_alpha", NA_real_,      "percent_change",
+  "Derosa hsCRP, MD with trial baseline",  "arm_change_imputed_r", "MD", "hsCRP", 2.0,       "absolute"
 )
 unit_tests$got <- classify_unit(unit_tests$se_route, unit_tests$measure,
                                 unit_tests$biomarker, unit_tests$baseline_mean)
@@ -153,7 +180,7 @@ message(sprintf("UNIT FAMILY SELF TEST: %d of %d row shapes classified as expect
 if (!"measure" %in% names(dat)) dat$measure <- NA_character_
 
 dat <- dat |>
-  left_join(BASELINE, by = "biomarker") |>
+  left_join(BASELINE, by = c("trial_id", "biomarker")) |>
   mutate(
     se_native = sqrt(vi),
     unit_family = classify_unit(se_route, measure, biomarker, baseline_mean),
