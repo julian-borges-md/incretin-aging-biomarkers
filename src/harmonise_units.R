@@ -114,7 +114,20 @@ BASELINE <- tibble::tribble(
   # Wägner 2019 (LIPER2), Tables 4 and 5, n 12 per arm; CRP converted from mg/dL to mg/L
   "LIPER2",      "hsCRP",             5.15,   "Wägner 2019 Table 5: (0.37*12 + 0.66*12)/24 mg/dL = 0.515 mg/dL = 5.15 mg/L",
   "LIPER2",      "NTproBNP",          46.0,   "Wägner 2019 Table 5: (53.7*12 + 38.3*12)/24 pg/mL",
-  "LIPER2",      "fasting_glucose",   176.35, "Wägner 2019 Table 4: (162.8*12 + 189.9*12)/24 mg/dL"
+  "LIPER2",      "fasting_glucose",   176.35, "Wägner 2019 Table 4: (162.8*12 + 189.9*12)/24 mg/dL",
+  # Simo 2015 (EUREXA companion paper, Cardiovasc Diabetol, open access), Table 1, ITT safety
+  # population n 511 exenatide and 508 glimepiride; read 2026-10-16 from the Europe PMC full text
+  # (work/fulltext/companion/simo2015_eurexa_hscrp.txt). The hsCRP row was extracted earlier from a
+  # capture that lacked this table.
+  "EUREXA",      "hsCRP",  (4.8*511 + 4.2*508)/1019, "Simo 2015 Table 1: (4.8*511 + 4.2*508)/1019 mg/L",
+  # Fan 2013 (group 253, SciELO full text, all four tables captured as thumbnails): the baseline
+  # table is not in the text, but the Results text prints the 12 week mean per arm (Table 2) and
+  # the mean reduction per arm (Table 3) for the same completers (n 49 exenatide, 68 metformin),
+  # so the baseline per arm is the 12 week mean plus the reduction, both as printed; n weighted.
+  # Adiponectin has no printed 12 week mean, so it has no denominator and stays unconvertible.
+  "Fan 2013",    "ALT",    ((39.82 + 27.32)*49 + (51.48 + 12.85)*68)/117, "Fan 2013 Results text citing Tables 2 and 3: ((39.82+27.32)*49 + (51.48+12.85)*68)/117 U/L",
+  "Fan 2013",    "GGT",    ((47.53 + 26.48)*49 + (53.44 + 10.26)*68)/117, "Fan 2013 Results text citing Tables 2 and 3: ((47.53+26.48)*49 + (53.44+10.26)*68)/117 U/L",
+  "Fan 2013",    "hsCRP",  ((2.18 + 0.89)*49 + (2.69 + 0.61)*68)/117,     "Fan 2013 Results text citing Tables 2 and 3: ((2.18+0.89)*49 + (2.69+0.61)*68)/117 mg/L"
 )
 stopifnot(!any(duplicated(BASELINE[c("trial_id", "biomarker")])))
 

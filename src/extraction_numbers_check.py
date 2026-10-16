@@ -13,8 +13,11 @@ positive magnitudes and the extraction records them as signed changes. Numbers b
 decimals (n of 5, dose of 1) match too easily and are reported as "weak" rather than found.
 
 Usage
-  python3 -I src/extraction_numbers_check.py GROUP [EXTRACTOR]      (default extractor A)
+  python3 -I src/extraction_numbers_check.py GROUP [EXTRACTOR] [--text FILE ...]   (default extractor A)
   exit 1 when any number is missing
+
+--text adds a text outside the packet (a companion paper fetched by epmc_fetch_one.py, a baseline
+table) to the texts searched; the files used are printed so the provenance is on record.
 """
 import csv
 import json
@@ -47,14 +50,29 @@ def main(argv):
     if not argv:
         sys.exit(__doc__)
     group = argv[0]
-    ext = argv[1] if len(argv) > 1 else "A"
+    extra = []
+    rest = []
+    i = 1
+    while i < len(argv):
+        if argv[i] == "--text" and i + 1 < len(argv):
+            extra.append(argv[i + 1])
+            i += 2
+        else:
+            rest.append(argv[i])
+            i += 1
+    ext = rest[0] if rest else "A"
     d = os.path.join(ROOT, "work", "extraction", "staging", group)
     pk = json.load(open(os.path.join(ROOT, "work", "extraction", "packets", group, "packet.json")))
     text = ""
-    for t in pk["texts"]:
-        p = os.path.join(ROOT, t["file"])
+    files = [t["file"] for t in pk["texts"]] + extra
+    for f in files:
+        p = os.path.join(ROOT, f)
         if os.path.exists(p):
             text += open(p, errors="replace").read() + "\n"
+        else:
+            print(f"  text not found: {f}")
+    if extra:
+        print("texts searched: " + ", ".join(files))
     text = text.replace("−", "-").replace("–", "-")
     rows = list(csv.DictReader(open(os.path.join(d, f"{ext}.csv"), newline="")))
     missing = 0
