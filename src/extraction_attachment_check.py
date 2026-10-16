@@ -100,15 +100,29 @@ def ident_numbers(row):
         if "." not in v and f < 10:
             continue  # too common to identify a line
         out.append(v)
-    return sorted(set(out), key=len, reverse=True)
+    # Sorted by length descending and then lexically. The second key is not cosmetic: sorting a set
+    # by length alone leaves ties in set iteration order, which varies with the interpreter's string
+    # hash seed, so two runs of this gate on identical data printed different numbers as the
+    # evidence for the same verdict. The verdicts themselves never depended on the order, because
+    # the line search counts matches over every number and every line rather than stopping at the
+    # first, but an audit record that changes between runs is not an audit record.
+    return sorted(set(out), key=lambda v: (-len(v), v))
 
 
 def line_has(num, line):
     return re.search(r"(?<![\d.])" + re.escape(num) + r"(?![\d])", line) is not None
 
 
-def main(argv):
-    want = argv[0] if argv else None
+def make_source_lines():
+    """
+    Build and return the trial to source lines lookup used by this gate.
+
+    Exposed at module level rather than nested inside main() because gate fifteen needs exactly the
+    same lookup, and a second copy of it is the defect that has already bitten this chain twice: the
+    middle dot normalisation and the trial notes union both had to be applied in two places, and the
+    second place was found only after rows had read as unverifiable for a day. One definition, two
+    callers.
+    """
     gm = {}
     with open(LEDGER, newline="") as fh:
         for r in csv.DictReader(fh):
@@ -164,6 +178,12 @@ def main(argv):
         cache[key] = txt
         return txt
 
+    return lines_for
+
+
+def main(argv):
+    want = argv[0] if argv else None
+    lines_for = make_source_lines()
     rows = list(csv.DictReader(open(MASTER, newline="")))
     if want:
         rows = [r for r in rows if want.lower() in r["trial_id"].lower()]
