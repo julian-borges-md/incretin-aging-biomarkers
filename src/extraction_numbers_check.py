@@ -90,6 +90,19 @@ def main(argv):
             vs = variants(v)
             found = any(re.search(r"(?<![\d.])" + re.escape(x) + r"(?![\d])", text) for x in vs)
             if not found:
+                # A derived value is not expected to appear in the source, and reporting it as
+                # missing teaches the reader to ignore this tool. The weight covariate is the
+                # standing case: amendment A2 requires percent, so whenever a paper reports
+                # kilograms the percent has to be computed, and the computed number is printed
+                # nowhere. It is exempt only when the row's own notes name the field, which is the
+                # extractor's record of how it was derived, and the note is printed so that the
+                # arithmetic is checked by reading rather than taken on trust.
+                note = (r.get("notes") or "")
+                if c == "pct_weight_change" and c in note:
+                    frag = note[max(0, note.find(c)):][:150]
+                    print(f"  DERIVED  {r['biomarker']:16} dose {r.get('dose_mg', ''):>5}  "
+                          f"{c:16} = {v}\n             {frag}")
+                    continue
                 try:
                     weak = float(v.replace(",", ".")) < 10 and "." not in v
                 except ValueError:

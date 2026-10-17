@@ -115,6 +115,13 @@ if (!ok) {
   if (length(rc_line) != 1) fail("RECEPTOR_CLASSES not found in pipeline")
   eval(parse(text = src[rc_line]))
 
+  # The integrity function also closes over CONTINUOUS_TYPES, added when the pipeline was ported
+  # onto the harmonised master. Extracted from the pipeline for the same reason as the line above:
+  # restating it here would let the gate and the pipeline drift apart silently.
+  ct_line <- grep("^CONTINUOUS_TYPES <- ", src)
+  if (length(ct_line) != 1) fail("CONTINUOUS_TYPES not found in pipeline")
+  eval(parse(text = src[ct_line]))
+
   start <- grep("^check_integrity <- function", src)
   if (length(start) != 1) fail("check_integrity not found in pipeline")
   # Function body runs to the first line that closes it at column zero.
@@ -122,10 +129,16 @@ if (!ok) {
   stop_at <- min(ends[ends > start])
   eval(parse(text = paste(src[start:stop_at], collapse = "\n")))
 
+  # The fixture follows the contract the pipeline actually enforces since the port of 16 October:
+  # a continuous row needs an effect and a variance on the percent change scale, not arm level
+  # means and standard deviations, which this literature mostly does not publish. The arm columns
+  # are kept because real rows carry them when the source prints them, and their presence must not
+  # by itself make a row acceptable or unacceptable.
   good <- data.frame(
     receptor_class = "GLP1_mono", outcome_type = "continuous",
     mean_tx = 1, sd_tx = 1, n_tx = 10,
     mean_ctrl = 0, sd_ctrl = 1, n_ctrl = 10,
+    yi_pct = -10, vi_pct = 4,
     aging_direction = 1, pct_weight_change = -10,
     stringsAsFactors = FALSE
   )
@@ -136,12 +149,18 @@ if (!ok) {
   }
   pass("accepts well formed input")
 
+  # Each case is a failure mode the protocol names, restated against the ported contract. The three
+  # that tested arm level completeness were replaced rather than deleted: the protocol's concern was
+  # never arm standard deviations as such but that a row reach the estimator without a usable effect
+  # or with a weight that is not a weight, and these cases test that concern on the scale the
+  # pipeline now pools.
   cases <- list(
-    "unknown receptor class"   = transform(good, receptor_class = "GLP1_BOGUS"),
-    "missing standard deviation" = transform(good, sd_tx = NA_real_),
-    "non-positive variance"    = transform(good, sd_ctrl = 0),
+    "unknown receptor class"     = transform(good, receptor_class = "GLP1_BOGUS"),
+    "harmonised columns absent"  = good[, setdiff(names(good), c("yi_pct", "vi_pct"))],
+    "no usable continuous row"   = transform(good, yi_pct = NA_real_),
+    "non-positive variance"      = transform(good, vi_pct = 0),
     "undeclared aging direction" = transform(good, aging_direction = 0),
-    "missing weight covariate" = transform(good, pct_weight_change = NA_real_)
+    "weight covariate absent throughout" = transform(good, pct_weight_change = NA_real_)
   )
   for (nm in names(cases)) {
     rejected <- tryCatch({ check_integrity(cases[[nm]]); FALSE },
