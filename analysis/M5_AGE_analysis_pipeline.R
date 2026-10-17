@@ -353,9 +353,58 @@ readr::write_csv(table2_pipeline, file.path(OUT_DIR, "table2_pipeline.csv"))
 # attenuation is visible, and the adjusted estimate is read as a conservative
 # lower bound on the total receptor class effect.
 
+# Fisher scoring for restricted maximum likelihood does not always converge on a moderator model.
+# It failed here on the second biomarker of the loop the first time this pipeline ever executed,
+# which stopped the whole weight adjusted analysis, because models one to three carried no error
+# handling and one non convergence therefore destroyed the inferential core rather than one row of
+# it. Wrapping every fit in tryCatch and moving on would be worse: it would drop biomarkers from
+# the analysis silently.
+#
+# So the fallback is explicit, ordered, and recorded. It first retries the prespecified estimator
+# with a halved step size and a raised iteration cap, which is a numerical remedy and not a change
+# of method. Only if that fails does it fall back to Paule and Mandel and then DerSimonian and
+# Laird, both of which the protocol already names as sensitivity estimators, so a fallback stays
+# inside the registered plan. The estimator actually used is returned on the fit and reported per
+# biomarker, so the manuscript can state where the primary estimator did not converge instead of
+# presenting a mixture as though it were uniform. A biomarker on which none converge is reported
+# with that status, never omitted.
+ESTIMATOR_ATTEMPTS <- list(
+  list(method = "REML", control = list(),                            label = "REML"),
+  list(method = "REML", control = list(stepadj = 0.5, maxiter = 1000), label = "REML (stepadj 0.5)"),
+  list(method = "PM",   control = list(),                            label = "PM fallback"),
+  list(method = "DL",   control = list(),                            label = "DL fallback")
+)
+
+fit_rma <- function(formula_mods, data) {
+  for (a in ESTIMATOR_ATTEMPTS) {
+    fit <- tryCatch(
+      suppressWarnings(
+        if (is.null(formula_mods)) {
+          metafor::rma(yi = data$yi, vi = data$vi, method = a$method, control = a$control)
+        } else {
+          metafor::rma(yi = data$yi, vi = data$vi, mods = formula_mods, data = data,
+                       method = a$method, control = a$control)
+        }
+      ),
+      error = function(e) NULL
+    )
+    if (!is.null(fit)) {
+      attr(fit, "estimator_used") <- a$label
+      return(fit)
+    }
+  }
+  NULL
+}
+
+
 run_weight_adjusted_metareg <- function(bm, n_perm = 10000) {
 
   d <- dplyr::filter(es_continuous, biomarker == bm)
+  # The covariate is required by this model and not by the review, so rows without it are dropped
+  # here with the count carried into the output rather than silently.
+  n_all <- nrow(d)
+  d <- dplyr::filter(d, !is.na(pct_weight_change))
+  n_no_cov <- n_all - nrow(d)
 
   # Require the number of trials to exceed the estimated parameters by at least
   # three, otherwise the model is not identifiable and a fit would be spurious.
@@ -367,31 +416,38 @@ run_weight_adjusted_metareg <- function(bm, n_perm = 10000) {
   }
 
   # Model 1: weight loss alone. How much heterogeneity weight explains on its own.
-  m_weight <- metafor::rma(yi, vi, mods = ~ pct_weight_change,
-                           data = d, method = "REML")
+  m_weight <- fit_rma(~ pct_weight_change, d)
 
   # Model 2: receptor class alone, unadjusted.
-  m_class <- metafor::rma(yi, vi, mods = ~ receptor_class,
-                          data = d, method = "REML")
+  m_class <- fit_rma(~ receptor_class, d)
 
   # Model 3: both. The receptor class coefficients here are the adjusted
   # estimates reported in the manuscript.
-  m_adj <- metafor::rma(yi, vi, mods = ~ receptor_class + pct_weight_change,
-                        data = d, method = "REML")
+  m_adj <- fit_rma(~ receptor_class + pct_weight_change, d)
+
+  if (is.null(m_weight) || is.null(m_class) || is.null(m_adj)) {
+    return(tibble::tibble(
+      biomarker = bm,
+      status = "no_estimator_converged",
+      k = nrow(d),
+      n_dropped_no_covariate = n_no_cov
+    ))
+  }
 
   # Model 4: interaction. Tests whether the slope relating weight loss to the
   # biomarker differs by receptor class, which would mean the same amount of
   # weight loss buys different biomarker benefit depending on receptors engaged.
-  m_int <- tryCatch(
-    metafor::rma(yi, vi, mods = ~ receptor_class * pct_weight_change,
-                 data = d, method = "REML"),
-    error = function(e) NULL
-  )
+  m_int <- fit_rma(~ receptor_class * pct_weight_change, d)
 
-  perm_adj <- metafor::permutest(m_adj, iter = n_perm, seed = 20261013)
+  perm_adj <- tryCatch(metafor::permutest(m_adj, iter = n_perm, seed = 20261013),
+                       error = function(e) NULL)
 
   # Proportion of between-study variance explained, relative to intercept only.
-  m_null <- metafor::rma(yi, vi, data = d, method = "REML")
+  m_null <- fit_rma(NULL, d)
+  if (is.null(m_null)) {
+    return(tibble::tibble(biomarker = bm, status = "no_estimator_converged_null",
+                          k = nrow(d), n_dropped_no_covariate = n_no_cov))
+  }
   r2_adj <- max(0, (m_null$tau2 - m_adj$tau2) / m_null$tau2) * 100
 
   tibble::tibble(
@@ -407,13 +463,24 @@ run_weight_adjusted_metareg <- function(bm, n_perm = 10000) {
     R2_adjusted        = r2_adj,
     beta_weight        = as.numeric(m_adj$b["pct_weight_change", ]),
     se_weight          = m_adj$se[which(rownames(m_adj$b) == "pct_weight_change")],
-    p_weight_perm      = perm_adj$pval[which(rownames(m_adj$b) == "pct_weight_change")],
+    # Permutation inference is the protocol's reported p value. Where the permutation test itself
+    # cannot run, the field is left empty rather than quietly filled with the Wald p value, which
+    # the plan rejects as anticonservative at these sample sizes.
+    p_weight_perm      = if (!is.null(perm_adj))
+                           perm_adj$pval[which(rownames(m_adj$b) == "pct_weight_change")]
+                         else NA_real_,
     QM_adjusted        = m_adj$QM,
-    QM_p_perm          = perm_adj$QMp,
+    QM_p_perm          = if (!is.null(perm_adj)) perm_adj$QMp else NA_real_,
+    permutation_run    = !is.null(perm_adj),
     I2_residual        = m_adj$I2,
     interaction_fitted = !is.null(m_int),
     QM_interaction     = if (!is.null(m_int)) m_int$QM else NA_real_,
-    QM_interaction_p   = if (!is.null(m_int)) m_int$QMp else NA_real_
+    QM_interaction_p   = if (!is.null(m_int)) m_int$QMp else NA_real_,
+    # Which estimator actually produced the adjusted model, so that a fallback is disclosed per
+    # biomarker instead of a mixture being presented as uniform REML.
+    estimator_adjusted = attr(m_adj, "estimator_used"),
+    estimator_null     = attr(m_null, "estimator_used"),
+    n_dropped_no_covariate = n_no_cov
   )
 }
 
