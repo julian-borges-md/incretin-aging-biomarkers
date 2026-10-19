@@ -473,9 +473,24 @@ run_weight_adjusted_metareg <- function(bm, n_perm = 10000) {
     QM_p_perm          = if (!is.null(perm_adj)) perm_adj$QMp else NA_real_,
     permutation_run    = !is.null(perm_adj),
     I2_residual        = m_adj$I2,
-    interaction_fitted = !is.null(m_int),
-    QM_interaction     = if (!is.null(m_int)) m_int$QM else NA_real_,
-    QM_interaction_p   = if (!is.null(m_int)) m_int$QMp else NA_real_,
+    # The interaction model is only reported as fitted when its interaction terms SURVIVED. At these
+    # sample sizes metafor routinely drops them as redundant and returns a model whose moderator
+    # test is identical to the adjusted model's, and the first run did exactly that for liver fat:
+    # QM_interaction equalled QM_adjusted to fifteen digits while QM_interaction_p read 4.3e-10
+    # against a permutation p of 0.320 on the same statistic. Reported as it stood, that would have
+    # become a claim of a highly significant weight by class interaction in the hepatic domain,
+    # which is the opposite of what the data support. Survival is detected by coefficient count, and
+    # the p value is the permutation p the protocol requires rather than the Wald p, which is
+    # anticonservative at this k and is what produced the nine order of magnitude discrepancy.
+    interaction_fitted = !is.null(m_int) && nrow(m_int$b) > nrow(m_adj$b),
+    QM_interaction     = if (!is.null(m_int) && nrow(m_int$b) > nrow(m_adj$b))
+                           m_int$QM else NA_real_,
+    QM_interaction_p   = if (!is.null(m_int) && nrow(m_int$b) > nrow(m_adj$b)) {
+                           pi <- tryCatch(metafor::permutest(m_int, iter = n_perm, seed = 20261013),
+                                          error = function(e) NULL)
+                           if (!is.null(pi)) pi$QMp else NA_real_
+                         } else NA_real_,
+    interaction_terms_dropped = !is.null(m_int) && nrow(m_int$b) == nrow(m_adj$b),
     # Which estimator actually produced the adjusted model, so that a fallback is disclosed per
     # biomarker instead of a mixture being presented as uniform REML.
     estimator_adjusted = attr(m_adj, "estimator_used"),
@@ -695,8 +710,47 @@ run_nma <- function(bm, node_var = "receptor_class") {
   )
 }
 
-nma_class <- purrr::compact(purrr::map(biomarkers, ~ run_nma(.x, "receptor_class")))
-nma_drug  <- purrr::compact(purrr::map(biomarkers, ~ run_nma(.x, "drug")))
+# The network block is GATED OFF, and not because it fails to run. It does fail: netmeta is called
+# with treat1 as a vector of class labels and treat2 as the scalar string "placebo", so the two
+# arguments have different lengths and the call errors, which is what halted the pipeline before the
+# figures and the manifest on 16 October. But making the lengths agree would produce a worse outcome
+# than an error, because it would force every comparator in this corpus into a single placebo node.
+# The corpus is 217 placebo controlled rows against 240 ACTIVE controlled rows across 36 distinct
+# comparators: insulin glargine, insulin degludec, metformin, glimepiride, gliclazide, sitagliptin,
+# lifestyle. A contrast of tirzepatide against insulin degludec and one of semaglutide against
+# placebo do not share a reference treatment, and pooling them as though they did would be a
+# methodological error that the numbers would not reveal.
+#
+# A network meta-analysis needs a connected graph over the real comparators, which would mean nodes
+# for each comparator class and enough closed loops to estimate inconsistency. Whether this corpus
+# supports one is an open question and the Lab Director's standing instruction is that the method is
+# NOT described as a network meta-analysis; the registered title against the method is his decision
+# and is unresolved. So the block is gated rather than repaired, the reason is recorded as an output
+# the Methods can cite, and nothing downstream silently depends on a network that was never fitted.
+RUN_NMA <- FALSE
+
+if (RUN_NMA) {
+  nma_class <- purrr::compact(purrr::map(biomarkers, ~ run_nma(.x, "receptor_class")))
+  nma_drug  <- purrr::compact(purrr::map(biomarkers, ~ run_nma(.x, "drug")))
+} else {
+  nma_class <- list()
+  nma_drug  <- list()
+  readr::write_csv(
+    tibble::tibble(
+      analysis = "network meta-analysis, class level and drug level",
+      status = "not run",
+      reason = paste("Comparators are not a single node: 217 placebo controlled rows against 240",
+                     "active controlled rows over 36 distinct comparators. A connected network over",
+                     "the real comparators has not been established, and the method is not described",
+                     "as a network meta-analysis pending the registered title decision."),
+      placebo_rows = sum(dat$comparator_type == "placebo", na.rm = TRUE),
+      active_rows = sum(dat$comparator_type == "active", na.rm = TRUE),
+      distinct_comparators = length(unique(dat$comparator))
+    ),
+    file.path(OUT_DIR, "table7_network_not_run.csv")
+  )
+  message("  network block gated off; reason written to table7_network_not_run.csv")
+}
 
 readr::write_csv(
   purrr::map_dfr(nma_class, function(x) {
