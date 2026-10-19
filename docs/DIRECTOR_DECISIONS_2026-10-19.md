@@ -335,7 +335,7 @@ pipeline section and removes a predictable reviewer request.
 
 | Item | Resolution |
 | --- | --- |
-| SURPASS-3 MRI appendix | Checked. Adiponectin and leptin appear only in the statistical plan's biomarker list and the schedule of assessments, so they are unreported rather than missing. Table S6 supplied the body weight row, which brought six rows into the weight adjusted regression. The Results decision table still lists this as open and is being corrected |
+| SURPASS-3 MRI appendix | Checked. Adiponectin and leptin appear only in the statistical plan's biomarker list and the schedule of assessments, so they are unreported rather than missing. Table S6 supplied the body weight row, which brought six rows into the weight adjusted regression. The Results decision table listed this as open and has been corrected |
 | The composite interval defect | Fixed. Both intervals computed, a gate added, the figure redrawn |
 | The figure set | Produced, versioned, hashed and mapped |
 | Both reference lists | Verified against Europe PMC and Crossref, with the corrections recorded |
