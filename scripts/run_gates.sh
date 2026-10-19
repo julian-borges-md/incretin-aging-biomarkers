@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Twenty one gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
+# Twenty two gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
 #
 # This file is the tracked copy and the one to edit. The chain lived at work/run_gates.sh until
 # 16 October, where the gitignore keeps it out of version control: the script that validates the
@@ -80,14 +80,15 @@ echo "exit $rc" >> "$log"
 # reproduces the gate scripts' own pooling to the last decimal; whether every composite interval
 # contains its own estimate; whether the committed reference record still describes the committed
 # corpus; and whether every figure the manuscript will submit exists, is hashed in the manifest and
-# is mapped to a submission number.
+# is mapped to a submission number; and whether every digest in the result manifest still matches
+# the file beside it, which turns the manifest from a list into a check.
 #
 # The last three check artefacts that `make analysis` produces rather than this chain: the analysis
 # pipeline is a separate command because it costs ten minutes of permutation and bootstrap work.
 # They are in the chain because the committed output is part of the repository, and an output that
 # disagrees with the data beside it is a defect whether or not the run that made it is in scope.
 #
-# Three run with their self tests, for the same reason gate fourteen does: a gate that reports
+# Four run with their self tests, for the same reason gate fourteen does: a gate that reports
 # nothing has not thereby shown that it works. The three self tests inject the defects these gates
 # were written for, including the one that prompted each.
 for g in prisma_check table1_inventory table2_reproduction_check; do
@@ -96,7 +97,7 @@ for g in prisma_check table1_inventory table2_reproduction_check; do
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
 done
-for g in composite_interval_check citation_record_check figure_check; do
+for g in composite_interval_check citation_record_check figure_check manifest_check; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" --self-test > "work/gate_$g.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"
