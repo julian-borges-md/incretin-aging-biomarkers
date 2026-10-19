@@ -785,9 +785,26 @@ sensitivity_estimator <- function() {
     purrr::map_dfr(biomarkers, function(bm) {
       purrr::map_dfr(RECEPTOR_CLASSES, function(rc) {
         d <- dplyr::filter(es_continuous, biomarker == bm, receptor_class == rc)
-        r <- pool_effect(d, estimator = est)
+        # One estimator failing on one cell must not destroy the sweep. The sweep exists to show
+        # how much a pooled estimate moves when the between study variance estimator changes, so a
+        # cell that cannot be fitted is itself part of the answer and is recorded as such. The first
+        # complete run stopped here on "Value of tau2.max too low", which is Paule and Mandel or
+        # Sidik and Jonkman reaching its search bound on a cell whose heterogeneity is extreme.
+        # Raising tau2.max to make the error disappear would change the estimator's behaviour
+        # silently and make the sweep agree with itself by construction, so the bound is left alone
+        # and the failure is reported against the cell and the estimator that produced it.
+        r <- tryCatch(suppressWarnings(pool_effect(d, estimator = est)),
+                      error = function(e) {
+                        structure(list(message = conditionMessage(e)), class = "pool_failure")
+                      })
+        if (inherits(r, "pool_failure")) {
+          return(tibble::tibble(biomarker = bm, receptor_class = rc, k = nrow(d),
+                                estimator = est, status = "did_not_converge",
+                                failure = r$message))
+        }
         if (is.null(r)) return(NULL)
-        dplyr::mutate(r, biomarker = bm, receptor_class = rc, .before = 1)
+        dplyr::mutate(r, biomarker = bm, receptor_class = rc, status = "fitted",
+                      failure = NA_character_, .before = 1)
       })
     })
   })
@@ -798,10 +815,22 @@ sensitivity_subgroup <- function(filter_expr, label) {
   purrr::map_dfr(unique(d_sub$biomarker), function(bm) {
     purrr::map_dfr(RECEPTOR_CLASSES, function(rc) {
       d <- dplyr::filter(d_sub, biomarker == bm, receptor_class == rc)
-      r <- pool_effect(d)
+      # Same guard as the estimator sweep above, and more necessary here: a subgroup cell holds
+      # fewer trials than the whole, so an estimator is likelier to fail on it. A subgroup analysis
+      # that stops on its first unfittable cell reports nothing about any of the others.
+      r <- tryCatch(suppressWarnings(pool_effect(d)),
+                    error = function(e) {
+                      structure(list(message = conditionMessage(e)), class = "pool_failure")
+                    })
+      if (inherits(r, "pool_failure")) {
+        return(tibble::tibble(biomarker = bm, receptor_class = rc, k = nrow(d),
+                              sensitivity = label, status = "did_not_converge",
+                              failure = r$message))
+      }
       if (is.null(r)) return(NULL)
       dplyr::mutate(r, biomarker = bm, receptor_class = rc,
-                    sensitivity = label, .before = 1)
+                    sensitivity = label, status = "fitted", failure = NA_character_,
+                    .before = 1)
     })
   })
 }
