@@ -210,8 +210,14 @@ dat <- tibble(
   clinical_weight = 1
 )
 
-s_wide   <- compute_nbais(wide,   "inverse_variance")
-s_narrow <- compute_nbais(narrow, "inverse_variance")
+# The admitted marker set is passed explicitly. compute_nbais gained a filter on 19 October, when
+# the per class composite was found to be averaging every marker that pooled rather than the eleven
+# that prespecification/nbais_inclusion_rule.md admits; its default is that rule, and this test's
+# markers are synthetic, so the test states its own set. Without it the filter removes every
+# synthetic marker and the invariance test compares NA with NA, which is how a load bearing test
+# stops testing anything. This gate caught exactly that on the first run after the change.
+s_wide   <- compute_nbais(wide,   "inverse_variance", included = wide$biomarker)
+s_narrow <- compute_nbais(narrow, "inverse_variance", included = narrow$biomarker)
 
 # The weighted sum the protocol rejects, computed here for contrast.
 sum_wide   <- sum(1 * wide$estimate   * (1 / wide$se^2))
@@ -235,7 +241,7 @@ if (abs(s_wide - EFFECT) > 1e-9) {
   fail(sprintf("composite %.6f does not equal the per biomarker effect %.3f",
                s_wide, EFFECT))
 }
-ok("composite equals the per biomarker effect, so it stays on the g scale")
+ok("composite equals the per biomarker effect, so it stays on the scale of a single pooled estimate")
 
 if (sum_wide / sum_narrow < 2) {
   fail("the rejected weighted sum did not inflate, so this test is vacuous")
@@ -268,7 +274,11 @@ dat <- tibble(
   clinical_weight = 1
 )
 
-score_mixed <- compute_nbais(mixed, "inverse_variance")
+# included is stated for the same reason as in TEST 3: this test is about the direction
+# convention, not about which markers the composite admits, and adiponectin is one the inclusion
+# rule excludes. Left to the default the frame would lose a row and the hand calculation below
+# would be compared against a mean of two markers rather than three.
+score_mixed <- compute_nbais(mixed, "inverse_variance", included = mixed$biomarker)
 
 # By hand: hsCRP -1*-0.40 = +0.40 favorable; adiponectin +1*+0.30 = +0.30
 # favorable; lean mass +1*-0.50 = -0.50 unfavorable. Equal SEs, equal weights.
@@ -292,10 +302,10 @@ ok("composite matches the hand calculation exactly")
 # up to that point was lower-is-better, making the inversion uniform.
 fell_good <- compute_nbais(
   tibble(biomarker = "hsCRP", estimate = -0.40, se = 0.08, receptor_class = "X"),
-  "inverse_variance")
+  "inverse_variance", included = "hsCRP")
 rose_good <- compute_nbais(
   tibble(biomarker = "adiponectin", estimate = 0.30, se = 0.08, receptor_class = "X"),
-  "inverse_variance")
+  "inverse_variance", included = "adiponectin")
 
 message(sprintf("\n  lower-is-better marker falling   %+.3f", fell_good))
 message(sprintf("  higher-is-better marker rising   %+.3f", rose_good))
@@ -320,7 +330,7 @@ dominant <- tibble(
   se             = c( 0.08,    0.08,           0.08),
   receptor_class = "X"
 )
-score_dom <- compute_nbais(dominant, "inverse_variance")
+score_dom <- compute_nbais(dominant, "inverse_variance", included = dominant$biomarker)
 message(sprintf("  with a dominant unfavorable axis   %.6f", score_dom))
 if (score_dom >= 0) {
   fail("a dominant unfavorable axis did not drive the composite negative")

@@ -98,3 +98,40 @@ the Fan 2013 question still in the manuscript. The constraint is not throughput.
 A complete internal draft for the Director's own revision is a different and achievable target, and
 is what "close it today" can honestly mean. It would carry the gaps above as a marked register rather
 than as silence.
+
+---
+
+## Addendum, 19 October 2026
+
+This audit is kept as written, dated to the sixteenth. The live status document is
+`manuscript/DRAFT_STATUS.md`, rewritten on the nineteenth to a rule that stops it asserting work
+that is not on disk. Four rows of the tables above have changed, and three of the changes are
+defects this audit did not find because it accepted a claim rather than checking it.
+
+| Row above | State on 19 October |
+| --- | --- |
+| Gate chain, fifteen gates, all green | Twenty one gates, all green. Six were added: PRISMA reconciliation, biomarker inventory coverage, Table 2 reproduction, composite interval coherence, the citation record, and the figure set. The first three existed and were reachable only by being remembered |
+| Every figure does not exist | Figures 1 to 6 and S1 exist and are version controlled. They had never existed because the pipeline requested a graphics device that cannot load on this machine and warns instead of failing; the three it drew went into one overwritten file in the repository root. `docs/FIGURES.md` records the failure and the three changes that prevent it |
+| Anchor references, 29, each PubMed verified with a resolvable DOI | This was the claim, not the fact. The check now exists, `src/anchor_references_check.py`. Seven of the 29 recorded an issue or page range that points at the wrong article in the right journal, two of those also a wrong year and volume, one a wrong author initial. All 29 rows have been rebuilt from the registry and all 29 now verify |
+| Included studies reference list does not exist | It exists, 76 trials, 73 identifiers verified and 3 with no identifier to resolve, each written up. Eight wrong first authors and one wrong year were corrected at the extraction spec level |
+
+Two findings of the nineteenth are not in the tables above at all, because neither was visible to a
+reader of the outputs.
+
+The composite interval was built around a quantity other than the estimate it qualified. For one
+receptor class under equal weighting the table printed an estimate outside its own confidence
+interval. The cause was a bias corrected and accelerated interval computed for a statistic that is
+not a deterministic function of its resample. Both intervals are now computed and reported, the
+percentile interval as primary and the registered BCa alongside, and a gate fails the chain on an
+interval that does not contain its estimate.
+
+The per class composite was computed over every biomarker that pooled in the class, which is the set
+`prespecification/nbais_inclusion_rule.md` was written on 15 October to prevent: it names eleven
+markers and excludes ten, among them glucagon by name, "because most of the defective markers are
+ones the drug moves strongly". Applying the rule changes what the review can say about question 4.
+Of the four receptor classes, one supports a composite over nine of the eleven markers, one over
+three, one over a single marker and one over none, and one of the six pairwise class contrasts
+remains computable. That is a narrower claim than the figures of the sixteenth implied, and it is
+the claim the prespecification licenses.
+
+The schedule above still holds: the constraint is the Director's decisions, not throughput.

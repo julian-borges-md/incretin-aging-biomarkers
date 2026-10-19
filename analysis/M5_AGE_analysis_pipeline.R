@@ -38,6 +38,7 @@ required_packages <- c(
   "tidyverse",    # >= 2.0.0  data manipulation
   "boot",         # >= 1.3    bootstrap for the composite metric
   "ggplot2",      # >= 3.5.0  figures
+  "ragg",         # >= 1.3    raster figure device that does not depend on cairo or X11
   "patchwork",    # >= 1.2.0  multi-panel figure assembly
   "knitr",        # >= 1.45   table rendering
   "openssl",      # >= 2.2    SHA-256 for the output manifest
@@ -163,11 +164,16 @@ dat$receptor_class <- factor(dat$receptor_class, levels = RECEPTOR_CLASSES)
 ## ---------------------------------------------------------------------------
 ## 2. EFFECT SIZE COMPUTATION
 ## ---------------------------------------------------------------------------
-# Continuous outcomes use Hedges' g, the standardized mean difference with the
-# small sample correction applied, because biomarker measurement scales differ
-# across trials: hsCRP in mg/L, GDF-15 in pg/mL, lean mass in kg. Where every
-# trial for a biomarker uses an identical scale the raw mean difference is also
-# computed and reported alongside, since it is more interpretable clinically.
+# SUPERSEDED, retained as the registered description. The plan read: continuous outcomes use
+# Hedges' g, the standardized mean difference with the small sample correction applied, because
+# biomarker measurement scales differ across trials: hsCRP in mg/L, GDF-15 in pg/mL, lean mass in
+# kg. Where every trial for a biomarker uses an identical scale the raw mean difference is also
+# computed and reported alongside, since it is more interpretable clinically. The second half of
+# that rule stands and is implemented below as yi_md. The first half does not: the pooling scale
+# is percent change, for the reason given in the next paragraph and declared as a protocol
+# deviation at the top of this file. The paragraph is kept rather than deleted so that the
+# registered wording and its replacement sit side by side, and so that no reader of this file can
+# conclude that g was pooled.
 #
 # Binary outcomes, meaning MASH resolution and fibrosis improvement, use the
 # log odds ratio, which is the appropriate scale for pooling proportions and is
@@ -545,20 +551,87 @@ readr::write_csv(dplyr::filter(metareg_results, biomarker %in% hepatic_biomarker
 # number of biomarkers measured, so a receptor class studied with a broader
 # panel would score higher purely as an artifact of measurement coverage rather
 # than of biological effect. Dividing by the total weight keeps the score on the
-# standardized effect size scale regardless of how many biomarkers contribute,
+# scale of a single pooled estimate regardless of how many biomarkers contribute,
 # which is what makes classes with unequal coverage comparable. This matters
 # concretely here: the triple agonist node carries far fewer measured
 # biomarkers than the GLP-1 mono node.
 #
-# A score of 0.40 reads directly as an average favorable shift of 0.40 standard
-# deviations across the aging biomarkers measured for that class.
+# The score carries the units of the pooled estimates it averages, which in this pipeline is
+# percent change in the biomarker relative to the comparator, not a standardised mean difference.
+# A score of 8.5 therefore reads as an average favorable shift of 8.5 percent across the aging
+# biomarkers measured for that class. The original comment here read "0.40 standard deviations",
+# which belonged to the registered Hedges' g scale and was left behind by the scale deviation
+# recorded at the top of this file; a score read on the wrong scale is wrong by a factor of
+# roughly twenty in this corpus.
 
+# AMENDMENT 2026-10-19, inclusion rule. This function averaged every biomarker that pooled within a
+# class. prespecification/nbais_inclusion_rule.md, written on 15 October and before any composite was
+# computed, names eleven markers and excludes ten of the twenty originally specified: glucagon as
+# pharmacological target engagement rather than an aging process, derived indices that share inputs
+# with markers already in the set, markers whose assumed favourable direction is contradicted by
+# outcome evidence, and markers that restate adiposity. The rule states its own reason for existing:
+# a composite over the unfiltered set "would have produced a number, and the number would have been
+# uninterpretable. Worse, it would have been uninterpretable in ways that favour the review's
+# hypothesis, because most of the defective markers are ones the drug moves strongly."
+#
+# The per class composite in this pipeline was computed over the unfiltered set: 28 markers for
+# GLP-1 mono against the rule's eleven, including glucagon, which the rule excludes by name, and
+# both HOMA indices, which share inputs with fasting insulin and fasting glucose, also included. The
+# figure built from it would have presented exactly the quantity the prespecification forbids, under
+# the name the prespecification gives the compliant one.
+#
+# The marker set is read from src/compute_composite.R, where it is declared, rather than restated
+# here. A rule stated twice is the defect that has bitten this repository three times, and this is
+# the same rule. Reading a declaration out of a sibling script is the pattern src/verify.R already
+# uses for CONTINUOUS_TYPES and src/pin_environment.R for the package set. The right end state is
+# one declaration in a data file that both scripts read; that is recorded as a next action rather
+# than done here, because moving it touches a gate script in the same pass as a statistical change.
+
+read_included_markers <- function(path = "src/compute_composite.R") {
+  src <- readLines(path, warn = FALSE)
+  start <- grep("^INCLUDED <- c\\(", src)
+  if (length(start) != 1) {
+    stop("could not find exactly one INCLUDED declaration in ", path,
+         "; the composite inclusion rule must be readable from where it is declared",
+         call. = FALSE)
+  }
+  i <- start
+  txt <- character(0)
+  repeat {
+    txt <- c(txt, src[i])
+    if (grepl("\\)\\s*$", src[i])) break
+    i <- i + 1
+    if (i > length(src)) stop("unterminated INCLUDED declaration in ", path, call. = FALSE)
+  }
+  v <- eval(parse(text = sub("^INCLUDED\\s*<-\\s*", "", paste(txt, collapse = "\n"))))
+  if (!is.character(v) || length(v) < 2) {
+    stop("the INCLUDED declaration in ", path, " did not evaluate to a marker vector", call. = FALSE)
+  }
+  v
+}
+
+NBAIS_INCLUDED <- read_included_markers()
+# The floor is the one this pipeline already uses for a composite comparison: nbais_contrast
+# requires three shared biomarkers before it will report a difference. A mean of one or two markers
+# is not a composite, and a bar drawn from one marker invites a comparison the data cannot support.
+NBAIS_MIN_MARKERS <- 3L
+message(sprintf("  composite inclusion rule: %d markers read from src/compute_composite.R (%s)",
+                length(NBAIS_INCLUDED), paste(NBAIS_INCLUDED, collapse = ", ")))
+
+# The admitted set is a parameter with the rule as its default, not a global this function reaches
+# for. src/validate_pipeline.R extracts this function and calls it on synthetic markers named bm01
+# to bm16 to prove the composite is a weighted mean rather than a weighted sum; a function that
+# silently filtered against the real marker names would have returned an empty set for every
+# synthetic panel and the invariance test would have compared zero with zero. The validator passes
+# its own set explicitly, which is also the honest contract: the caller says which markers it means.
 compute_nbais <- function(res_df, weighting = c("inverse_variance",
                                                 "equal",
-                                                "clinical")) {
+                                                "clinical"),
+                          included = NBAIS_INCLUDED) {
   weighting <- match.arg(weighting)
 
   d <- res_df |>
+    dplyr::filter(biomarker %in% included) |>
     dplyr::left_join(
       dplyr::distinct(dat, biomarker, aging_direction, clinical_weight),
       by = "biomarker"
@@ -585,29 +658,99 @@ compute_nbais <- function(res_df, weighting = c("inverse_variance",
 # happened to be measured at all. An interval built from the point estimates
 # alone would understate the true uncertainty by ignoring the second source.
 
+#
+# AMENDMENT 2026-10-19, interval method. The first implementation of this function passed the
+# two level statistic to boot::boot and asked for the bias corrected and accelerated interval,
+# which the registered plan names. That combination is not computable and its output was wrong,
+# demonstrably so: for GLP1_GCGR under equal weighting it printed 15.97 (19.51 to 39.73), an
+# estimate outside its own interval. The cause is that BCa is defined for a statistic that is a
+# deterministic function of the resample, and this statistic is not one. The inner rnorm draw
+# makes t0, the statistic on the unresampled data, a single random draw rather than the estimate,
+# so the bias correction constant z0 = qnorm(mean(t < t0)) is computed against a random reference
+# point; and the acceleration constant a comes from empirical influence values that, for a random
+# statistic, are dominated by the draw rather than by the data. The reported point estimate,
+# compute_nbais on the unperturbed frame, was a third quantity again. Nothing reconciled.
+#
+# Rather than choose between the registered interval and the two level design, both are computed
+# and both are reported, because the choice is the Director's and not this script's:
+#
+#   primary    percentile interval of the two level bootstrap. Well defined for a stochastic
+#              statistic, propagates both sources of uncertainty, and refers to the same quantity
+#              as the reported point estimate. Columns ci_lb, ci_ub, ci_type.
+#   registered BCa on the deterministic statistic, biomarker resampling only, no inner draw. This
+#              is the interval the plan names, computable because the statistic is now a function
+#              of the resample alone, and narrower because it ignores the uncertainty in each
+#              pooled biomarker estimate. Columns bca_lb, bca_ub, bca_status.
+#
+# boot::boot is used only for the second, where t0 means what boot assumes it means. The first is
+# written out explicitly so that the two levels are legible to a reader of the Methods, and so
+# that nothing depends on a t0 this design cannot supply.
+#
+# point_inside_ci records the check whose failure exposed the original defect. It is a column
+# rather than a stop so that a run still produces its outputs for inspection; src/composite_
+# interval_check.py fails the gate chain on a FALSE, which is where a number that cannot be
+# reported must be caught.
+
 nbais_boot <- function(res_df, weighting, R = 10000) {
 
-  stat <- function(d, idx) {
-    dd <- d[idx, ]
-    dd$estimate <- rnorm(nrow(dd), mean = dd$estimate, sd = dd$se)
-    compute_nbais(dd, weighting = weighting)
+  # The resample is over the markers the inclusion rule admits, which is also the set the point
+  # estimate averages. Resampling the unfiltered frame would have drawn excluded markers into the
+  # interval of a filtered estimate.
+  res_df <- dplyr::filter(res_df, biomarker %in% NBAIS_INCLUDED,
+                          !is.na(estimate), !is.na(se), se > 0)
+  n <- nrow(res_df)
+
+  if (n < NBAIS_MIN_MARKERS) {
+    return(tibble::tibble(
+      nbais = NA_real_, boot_mean = NA_real_, boot_se = NA_real_, boot_bias = NA_real_,
+      ci_lb = NA_real_, ci_ub = NA_real_, ci_type = "not_computed",
+      point_inside_ci = NA, bca_lb = NA_real_, bca_ub = NA_real_,
+      bca_status = sprintf("not_computable: %d included marker(s), floor is %d",
+                           n, NBAIS_MIN_MARKERS),
+      n_markers = n, weighting = weighting, R = 0L,
+      status = sprintf("not_computed: %d of the %d markers named by the inclusion rule pool in this class",
+                       n, length(NBAIS_INCLUDED))))
   }
 
-  bt <- boot::boot(res_df, statistic = stat, R = R)
-  ci <- tryCatch(boot::boot.ci(bt, type = "bca"),
-                 error = function(e) boot::boot.ci(bt, type = "perc"))
+  point <- compute_nbais(res_df, weighting)
 
-  lohi <- if (!is.null(ci$bca)) ci$bca[4:5] else ci$percent[4:5]
+  # Primary: two level bootstrap, percentile interval.
+  reps <- replicate(R, {
+    dd <- res_df[sample.int(n, n, replace = TRUE), , drop = FALSE]
+    dd$estimate <- rnorm(nrow(dd), mean = dd$estimate, sd = dd$se)
+    compute_nbais(dd, weighting = weighting)
+  })
+  lo <- unname(quantile(reps, 0.025, na.rm = TRUE))
+  hi <- unname(quantile(reps, 0.975, na.rm = TRUE))
+
+  # Registered: BCa on the deterministic statistic. Fails by design at small marker counts, which
+  # is recorded rather than worked around; the primary interval does not depend on it.
+  det_stat <- function(d, idx) compute_nbais(d[idx, , drop = FALSE], weighting = weighting)
+  bca <- tryCatch({
+    bt <- boot::boot(res_df, statistic = det_stat, R = R)
+    ci <- boot::boot.ci(bt, type = "bca")
+    list(lb = ci$bca[4], ub = ci$bca[5], status = "computed")
+  }, error = function(e) list(lb = NA_real_, ub = NA_real_,
+                              status = paste("not_computable:", conditionMessage(e))),
+     warning = function(w) list(lb = NA_real_, ub = NA_real_,
+                                status = paste("not_computable:", conditionMessage(w))))
 
   tibble::tibble(
-    nbais     = compute_nbais(res_df, weighting),
-    boot_mean = mean(bt$t, na.rm = TRUE),
-    boot_se   = sd(bt$t, na.rm = TRUE),
-    ci_lb     = lohi[1],
-    ci_ub     = lohi[2],
-    n_markers = nrow(res_df),
-    weighting = weighting,
-    R         = R
+    nbais           = point,
+    boot_mean       = mean(reps, na.rm = TRUE),
+    boot_se         = sd(reps, na.rm = TRUE),
+    boot_bias       = mean(reps, na.rm = TRUE) - point,
+    ci_lb           = lo,
+    ci_ub           = hi,
+    ci_type         = "percentile_two_level",
+    point_inside_ci = !is.na(point) && point >= lo && point <= hi,
+    bca_lb          = bca$lb,
+    bca_ub          = bca$ub,
+    bca_status      = bca$status,
+    n_markers       = n,
+    weighting       = weighting,
+    R               = R,
+    status          = "computed"
   )
 }
 
@@ -629,11 +772,16 @@ readr::write_csv(nbais_results, file.path(OUT_DIR, "table5_nbais.csv"))
 
 nbais_contrast <- function(rc_a, rc_b, weighting = "inverse_variance",
                            R = 10000) {
-  a <- dplyr::filter(primary_results, receptor_class == rc_a)
-  b <- dplyr::filter(primary_results, receptor_class == rc_b)
+  # The inclusion rule is applied before the shared set is counted, not after. Counting first
+  # reported "n_shared 14, computed" for a pair whose computation rested on one marker, because
+  # thirteen of the fourteen are excluded by the rule and compute_nbais drops them: the contrast was
+  # a difference of two single marker means carrying a fourteen marker label. n_shared now counts
+  # the markers that enter the arithmetic.
+  a <- dplyr::filter(primary_results, receptor_class == rc_a, biomarker %in% NBAIS_INCLUDED)
+  b <- dplyr::filter(primary_results, receptor_class == rc_b, biomarker %in% NBAIS_INCLUDED)
 
   shared <- intersect(a$biomarker, b$biomarker)
-  if (length(shared) < 3) {
+  if (length(shared) < NBAIS_MIN_MARKERS) {
     return(tibble::tibble(comparison = paste(rc_a, "vs", rc_b),
                           status   = "insufficient_shared_biomarkers",
                           n_shared = length(shared)))
@@ -922,6 +1070,116 @@ readr::write_csv(diagnostics, file.path(OUT_DIR, "table_diagnostics.csv"))
 ## ---------------------------------------------------------------------------
 ## 10. FIGURES
 ## ---------------------------------------------------------------------------
+# AMENDMENT 2026-10-19, figure devices. Every figure in this section was written with
+# device = cairo_pdf and no figure had ever existed. capabilities()["cairo"] reports TRUE on the
+# analysis machine, and the cairo shared object then fails to load at run time because the X11
+# libraries it links against are absent. cairo_pdf emitted a warning rather than an error, ggsave
+# returned normally, no file was created, and the script went on to print "Pipeline complete. 35
+# output files written". A device chosen for its font handling cost the manuscript its figures for
+# five days, and the run reported success each time.
+#
+# Two consequences are built in here. First, figures are written with grDevices::pdf, which has no
+# external dependency, and with ragg::agg_png, which rasterises without cairo; both are checked in
+# by the repository, so a clone reproduces the figures rather than the warning. Second,
+# save_figure verifies that each file exists and is larger than a plausible empty device before it
+# reports anything, and stops the run when a figure produced no file on any device. A capability
+# that a library reports is a claim; a file on disk is evidence.
+#
+# Colour follows the data visualisation standard in use: one hue for a single series, hue order
+# fixed and never cycled, a diverging ramp only for a signed quantity with a neutral midpoint, and
+# identity never carried by colour alone. The four receptor classes cannot be separated by colour
+# in a scatter: no four hue set from the reference palette clears the all pairs colour vision
+# deficiency and normal vision floors, which was measured rather than judged, so Figure 4 carries
+# class by point shape and spends no colour on it. Figure 5 needs no class colour at all, since the
+# axis names each class. The heatmap keeps the ColorBrewer RdBu poles, a published diverging scheme
+# with balanced arms that is standard in biomedical journals.
+
+FIG_SERIES    <- "#2a78d6"   # single series hue
+FIG_INK       <- "#0b0b0b"   # primary ink
+FIG_INK_SOFT  <- "#52514e"   # secondary ink
+FIG_MUTED     <- "#898781"   # axis and annotation
+FIG_GRID      <- "#e1e0d9"   # hairline grid
+FIG_RIBBON    <- "#dfe9f7"   # model interval band, a light step of the series hue
+FIG_DIV_LOW   <- "#b2182b"   # RdBu negative pole
+FIG_DIV_MID   <- "#f7f7f7"   # RdBu neutral midpoint
+FIG_DIV_HIGH  <- "#2166ac"   # RdBu positive pole
+FIG_NA_FILL   <- "#d9d9d6"   # not estimable, distinguishable from the midpoint and glyph marked
+
+# Display vocabulary. The analysis keys are snake case because they index data; a printed figure
+# is read by a person, and `body_fat_pct` and `GLP1_GIP_GCGR` are keys rather than names. The
+# biomarker names come from the inventory's own table1_name column, which Table 1 already prints,
+# so the figures and Table 1 cannot drift apart into two spellings of one marker.
+CLASS_LABELS <- c(GLP1_mono     = "GLP-1 mono",
+                  GLP1_GIP      = "GLP-1 / GIP",
+                  GLP1_GCGR     = "GLP-1 / GCG",
+                  GLP1_GIP_GCGR = "GLP-1 / GIP / GCG")
+WEIGHTING_LEVELS <- c("inverse_variance", "equal", "clinical")
+WEIGHTING_LABELS <- c(inverse_variance = "Inverse variance weighted",
+                      equal            = "Equally weighted",
+                      clinical         = "Clinically weighted")
+
+biomarker_inventory <- readr::read_csv("analysis/data/biomarker_inventory.csv",
+                                       show_col_types = FALSE)
+BIOMARKER_LABELS <- stats::setNames(biomarker_inventory$table1_name,
+                                    biomarker_inventory$biomarker)
+label_biomarker <- function(x) ifelse(is.na(BIOMARKER_LABELS[x]), x, BIOMARKER_LABELS[x])
+label_domain <- function(x) sub("^(.)", "\\U\\1", gsub("_", " ", x), perl = TRUE)
+
+# A rounded value of zero prints as "-0" for any small negative, which reads as a quantity that does
+# not exist. Values that round to zero print as 0 with no sign.
+fmt_signed <- function(v) {
+  r <- round(v)
+  ifelse(is.na(r), NA_character_, ifelse(r == 0, "0", sprintf("%+d", as.integer(r))))
+}
+
+ROB_LEVELS <- c("low", "some_concerns", "high")
+ROB_LABELS <- c(low = "Low risk", some_concerns = "Some concerns", high = "High risk")
+ROB_FILL   <- c(low = "#0ca30c", some_concerns = "#fab219", high = "#d03b3b")
+ROB_GLYPH  <- c(low = "+", some_concerns = "?", high = "x")
+
+# Each figure is recorded as it is written, and the index is an output of the run rather than a
+# document kept in step by hand. docs/FIGURES.md maps these files to the submission numbering.
+FIGURE_INDEX <- list()
+
+save_figure <- function(name, plot, width, height, caption) {
+  written <- character(0)
+  attempts <- list(
+    list(ext = "pdf", dev = "pdf",            args = list(useDingbats = FALSE)),
+    list(ext = "png", dev = ragg::agg_png,    args = list(dpi = 300))
+  )
+  for (a in attempts) {
+    path <- file.path(OUT_DIR, paste0(name, ".", a$ext))
+    if (file.exists(path)) unlink(path)
+    ok <- tryCatch({
+      do.call(ggplot2::ggsave,
+              c(list(filename = path, plot = plot, device = a$dev,
+                     width = width, height = height, units = "in", bg = "white"),
+                a$args))
+      TRUE
+    }, error = function(e) {
+      message("  figure ", name, " device ", a$ext, " failed: ", conditionMessage(e))
+      FALSE
+    })
+    if (ok && file.exists(path) && file.size(path) > 1024) {
+      written <- c(written, path)
+    } else {
+      message("  FIGURE NOT WRITTEN: ", path)
+      if (file.exists(path)) unlink(path)
+    }
+  }
+  if (length(written) == 0) {
+    stop("figure ", name, " produced no file on any device; the run is stopped rather than ",
+         "reporting a figure that does not exist", call. = FALSE)
+  }
+  FIGURE_INDEX[[name]] <<- tibble::tibble(
+    name = name, caption = caption,
+    files = paste(basename(written), collapse = "; "),
+    width_in = width, height_in = height,
+    bytes = paste(file.size(written), collapse = "; ")
+  )
+  message("  figure ", name, ": ", paste(basename(written), collapse = ", "))
+  invisible(written)
+}
 
 # Figure 1: the signature heatmap. Rows are the biomarkers grouped by aging
 # hallmark domain, columns are the four receptor classes, and cell fill is the
@@ -935,27 +1193,89 @@ fig1_data <- primary_results |>
     by = "biomarker") |>
   dplyr::mutate(signed_effect = aging_direction * estimate)
 
+# The grid is completed to every biomarker by class cell, so that a cell with no pooled estimate is
+# drawn as an absent cell rather than omitted, which would otherwise let a reader take a short row
+# for a narrow panel. Absence is marked by a glyph as well as by fill, because the former fill for
+# missing cells, grey90, is three per cent away from the neutral midpoint of the diverging ramp:
+# "no estimate" and "no effect" were the same colour.
+# The completion is over the declared receptor classes, not over the classes that happen to appear
+# in the results. The triple agonist node has no pooled estimate for any biomarker, because within
+# that class every biomarker is carried by a single trial after the dose collapse and pool_effect
+# requires two. Completing over the observed classes drops that column entirely and the figure then
+# shows a three class signature without saying that the fourth class was studied and pooled nowhere,
+# which is a coverage finding in its own right and the first thing a reader of this figure should
+# see. Completed to the declared four, the column is present and empty.
+fig1_data <- tidyr::complete(
+    fig1_data,
+    biomarker,
+    receptor_class = factor(RECEPTOR_CLASSES, levels = RECEPTOR_CLASSES)) |>
+  dplyr::group_by(biomarker) |>
+  dplyr::mutate(hallmark_domain = dplyr::first(stats::na.omit(hallmark_domain))) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(
+    biomarker_label = label_biomarker(biomarker),
+    # complete() combines a character column with the factor it is completed against and the result
+    # is character, so the declared order is lost and the columns come out alphabetical. The factor
+    # is reapplied here, after the completion rather than before it.
+    receptor_class = factor(as.character(receptor_class), levels = RECEPTOR_CLASSES))
+
+fig1_empty_classes <- fig1_data |>
+  dplyr::group_by(receptor_class) |>
+  dplyr::summarise(n = sum(!is.na(signed_effect)), .groups = "drop") |>
+  dplyr::filter(n == 0) |>
+  dplyr::pull(receptor_class)
+fig1_empty_note <- if (length(fig1_empty_classes) > 0) {
+  sprintf(" No biomarker pools within %s, so that column is empty throughout.",
+          paste(CLASS_LABELS[as.character(fig1_empty_classes)], collapse = " or "))
+} else ""
+
 fig1 <- ggplot2::ggplot(
   fig1_data,
-  ggplot2::aes(x = receptor_class, y = forcats::fct_rev(biomarker),
+  ggplot2::aes(x = receptor_class, y = forcats::fct_rev(biomarker_label),
                fill = signed_effect)
 ) +
   ggplot2::geom_tile(color = "white", linewidth = 0.4) +
-  ggplot2::scale_fill_gradient2(
-    low = "#B2182B", mid = "#F7F7F7", high = "#2166AC", midpoint = 0,
-    name = "Direction adjusted\npooled effect (g)",
-    na.value = "grey90"
+  # The value is printed in every estimable cell. The pooled effects here run from about minus 5 to
+  # plus 50 per cent, so a diverging ramp centred on zero spends almost all of its range on one arm
+  # and most cells read as a pale blue that cannot be told from its neighbour. Printing the number
+  # makes the figure exact and leaves colour to do what colour is good at, which is sorting the
+  # cells at a glance rather than carrying the quantity.
+  ggplot2::geom_text(
+    data = dplyr::filter(fig1_data, !is.na(signed_effect)),
+    ggplot2::aes(label = fmt_signed(signed_effect)),
+    size = 2.2, color = FIG_INK, na.rm = TRUE
   ) +
-  ggplot2::facet_grid(hallmark_domain ~ ., scales = "free_y", space = "free_y") +
-  ggplot2::labs(x = "Receptor class", y = NULL) +
+  ggplot2::geom_text(
+    data = dplyr::filter(fig1_data, is.na(signed_effect)),
+    ggplot2::aes(label = "n/e"), size = 2.1, color = FIG_INK_SOFT, na.rm = TRUE
+  ) +
+  ggplot2::scale_fill_gradient2(
+    low = FIG_DIV_LOW, mid = FIG_DIV_MID, high = FIG_DIV_HIGH, midpoint = 0,
+    name = "Pooled % change,\ndirection adjusted\n(+ = younger)",
+    na.value = FIG_NA_FILL
+  ) +
+  ggplot2::scale_x_discrete(drop = FALSE, labels = CLASS_LABELS) +
+  ggplot2::facet_grid(hallmark_domain ~ ., scales = "free_y", space = "free_y",
+                      labeller = ggplot2::as_labeller(label_domain)) +
+  ggplot2::labs(x = "Receptor class", y = NULL,
+                caption = paste0("Cell values are the pooled percent change multiplied by the ",
+                                 "biomarker's aging direction, so a positive value is a shift\n",
+                                 "toward a younger profile whether the marker should rise or fall. ",
+                                 "n/e, not estimable: fewer than two\ntrials for that biomarker in ",
+                                 "that class.", fig1_empty_note)) +
   ggplot2::theme_minimal(base_size = 10) +
   ggplot2::theme(
     strip.text.y = ggplot2::element_text(angle = 0, hjust = 0),
-    panel.grid = ggplot2::element_blank()
+    panel.grid = ggplot2::element_blank(),
+    plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8),
+    axis.text = ggplot2::element_text(color = FIG_INK)
   )
 
-ggplot2::ggsave(file.path(OUT_DIR, "figure1_signature_heatmap.pdf"), fig1,
-                width = 9, height = 12, device = cairo_pdf)
+save_figure("figure1_signature_heatmap", fig1, width = 9.5, height = 12,
+            caption = paste0("Receptor class signature across aging biomarkers, grouped by ",
+                             "hallmark domain. Cell fill and the printed value are the direction ",
+                             "adjusted pooled percent change, positive toward a younger biomarker ",
+                             "profile. Cells marked n/e were not estimable.", fig1_empty_note))
 
 # Figure 4: weight adjusted meta-regression bubble plot for hepatic outcomes.
 # Bubble area is inverse variance, so the visually dominant points are the
@@ -963,48 +1283,345 @@ ggplot2::ggsave(file.path(OUT_DIR, "figure1_signature_heatmap.pdf"), fig1,
 
 fig4_data <- dplyr::filter(es_continuous, biomarker == "liver_fat_pdff")
 
-fig4 <- ggplot2::ggplot(
-  fig4_data,
-  ggplot2::aes(x = pct_weight_change, y = yi,
-               size = 1 / vi, color = receptor_class)
-) +
-  ggplot2::geom_point(alpha = 0.7) +
-  ggplot2::geom_smooth(method = "lm", se = TRUE,
-                       ggplot2::aes(weight = 1 / vi), linewidth = 0.6) +
-  ggplot2::scale_size_continuous(name = "Precision (1/variance)") +
+# Two corrections of 2026-10-19. The fitted line was geom_smooth with method "lm", grouped by the
+# colour aesthetic, so the figure drew one ordinary least squares line per receptor class, one of
+# them through a single point, and none of them the random effects meta-regression that Table 4a
+# reports. The line now comes from that model: fit_rma on this biomarker with the weight covariate,
+# with its own confidence band from predict. A figure whose line is fitted by a different method
+# from the table beneath it is an unforced disagreement inside one manuscript. The y axis was
+# labelled "Hedges' g vs placebo", which is the registered scale and not the scale pooled here; on
+# the percent change scale the printed numbers are roughly twenty times the g values a reader would
+# infer from that label.
+fig4_fit <- fit_rma(~ pct_weight_change, fig4_data)
+fig4_line <- if (!is.null(fig4_fit) && nrow(fig4_fit$b) == 2) {
+  xs <- seq(min(fig4_data$pct_weight_change, na.rm = TRUE),
+            max(fig4_data$pct_weight_change, na.rm = TRUE), length.out = 100)
+  p <- predict(fig4_fit, newmods = xs)
+  tibble::tibble(pct_weight_change = xs, yi = p$pred, lo = p$ci.lb, hi = p$ci.ub)
+} else NULL
+
+# Two of the nine pooled liver fat arms carry no body weight covariate, so the model and the figure
+# both rest on seven. ggplot dropped them with a warning that the run buried among 35 others, which
+# is how a figure comes to show less data than its caption claims. The counts are computed and
+# printed, and the geom is told to drop them on purpose rather than by default.
+fig4_n_all <- nrow(fig4_data)
+fig4_n_cov <- sum(!is.na(fig4_data$pct_weight_change) & !is.na(fig4_data$vi))
+fig4_coverage <- sprintf("%d of the %d pooled liver fat arms carry the body weight covariate and are plotted; %d are not.",
+                         fig4_n_cov, fig4_n_all, fig4_n_all - fig4_n_cov)
+
+fig4_slope <- if (!is.null(fig4_line)) {
+  sprintf("Meta-regression slope %.2f per cent liver fat per per cent body weight (95%% CI %.2f to %.2f), p = %.3f, k = %d, estimator %s",
+          fig4_fit$b[2], fig4_fit$ci.lb[2], fig4_fit$ci.ub[2], fig4_fit$pval[2],
+          fig4_fit$k, attr(fig4_fit, "estimator_used"))
+} else "Meta-regression not estimable on this subset"
+
+fig4 <- ggplot2::ggplot(fig4_data,
+                        ggplot2::aes(x = pct_weight_change, y = yi)) +
+  {if (!is.null(fig4_line))
+    ggplot2::geom_ribbon(data = fig4_line,
+                         ggplot2::aes(ymin = lo, ymax = hi),
+                         fill = FIG_RIBBON, alpha = 0.8, inherit.aes = TRUE)} +
+  {if (!is.null(fig4_line))
+    ggplot2::geom_line(data = fig4_line, linewidth = 0.7, color = FIG_SERIES)} +
+  ggplot2::geom_point(ggplot2::aes(size = 1 / vi, shape = receptor_class),
+                      fill = FIG_SERIES, color = FIG_INK, stroke = 0.3, alpha = 0.85,
+                      na.rm = TRUE) +
+  ggplot2::scale_shape_manual(values = c(GLP1_mono = 21, GLP1_GIP = 22,
+                                         GLP1_GCGR = 23, GLP1_GIP_GCGR = 24),
+                              drop = FALSE, name = "Receptor class",
+                              labels = CLASS_LABELS) +
+  ggplot2::scale_size_continuous(name = "Precision (1/variance)", range = c(2, 9)) +
+  ggplot2::guides(
+    shape = ggplot2::guide_legend(override.aes = list(size = 3.5, fill = FIG_SERIES)),
+    # The size key drew black circles beside blue points, so the legend named a colour the figure
+    # does not use.
+    size = ggplot2::guide_legend(override.aes = list(shape = 21, fill = FIG_SERIES,
+                                                     color = FIG_INK))) +
   ggplot2::labs(
     x = "Mean body weight change (%)",
-    y = "Liver fat change (Hedges' g vs placebo)",
-    color = "Receptor class"
+    y = "Liver fat change (% vs comparator)",
+    caption = paste(fig4_slope, fig4_coverage, sep = "\n")
   ) +
-  ggplot2::theme_minimal(base_size = 11)
+  ggplot2::theme_minimal(base_size = 11) +
+  ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
+                 panel.grid.major = ggplot2::element_line(color = FIG_GRID),
+                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
 
-ggplot2::ggsave(file.path(OUT_DIR, "figure4_weight_adjusted_liverfat.pdf"),
-                fig4, width = 8, height = 6, device = cairo_pdf)
+save_figure("figure4_weight_adjusted_liverfat", fig4, width = 8, height = 6,
+            caption = paste("Liver fat percent change against mean body weight change, one point",
+                            "per pooled trial arm that carries the body weight covariate.", fig4_coverage,
+                            "Point area is inverse variance and point shape is receptor class. The",
+                            "line and band are the random effects meta-regression reported in",
+                            "Table 4a."))
 
 # Figure 5: the composite score by receptor class with bootstrap intervals,
 # faceted by weighting scheme so the reader sees immediately whether the
 # ranking is a property of the drugs or an artifact of the weighting choice.
 # The ranking is reported as a finding only where it is stable across all three.
 
+# The fill was mapped to receptor class with the legend suppressed, which spends the identity
+# channel on something the x axis already names and leaves four hues on the page carrying nothing.
+# One series, one hue. The interval is the percentile interval of the two level bootstrap, which is
+# the quantity the point estimate belongs to; the registered BCa interval is reported in
+# table5_nbais.csv alongside and is not drawn, because an interval that excluded its own estimate
+# is what prompted the amendment above and the reader is owed the one that does not.
+# Both orderings were alphabetical, which put the clinically weighted panel first and sorted the
+# receptor classes as strings. The weighting panels now run in the order the protocol states them,
+# inverse variance first as the primary, and the classes in the declared receptor order, with the
+# class that has no composite kept as an empty position rather than dropped: a reader of a three bar
+# figure cannot tell that a fourth class was studied.
+fig5_all <- nbais_results |>
+  dplyr::mutate(
+    receptor_class = factor(receptor_class, levels = RECEPTOR_CLASSES),
+    weighting = factor(weighting, levels = WEIGHTING_LEVELS))
+fig5_data <- dplyr::filter(fig5_all, status == "computed")
+
+# A class is absent from this figure for one of two reasons, and the caption distinguishes them,
+# because "no composite" and "a composite over too few markers" are different facts about the
+# evidence. The counts come from the table rather than from prose.
+fig5_no_pool <- setdiff(RECEPTOR_CLASSES, as.character(unique(fig5_all$receptor_class)))
+fig5_too_few <- fig5_all |>
+  dplyr::filter(status != "computed") |>
+  dplyr::distinct(receptor_class, n_markers)
+
+fig5_absent_note <- ""
+if (length(fig5_no_pool) > 0) {
+  fig5_absent_note <- paste0(
+    fig5_absent_note,
+    sprintf("\n%s: no biomarker pools within the class, so there is nothing to average.",
+            paste(CLASS_LABELS[fig5_no_pool], collapse = " and ")))
+}
+if (nrow(fig5_too_few) > 0) {
+  fig5_absent_note <- paste0(
+    fig5_absent_note,
+    sprintf("\n%s: fewer than %d of the %d markers named by the composite inclusion rule pool within the class, so no composite is computed.",
+            paste(sprintf("%s (%d)", CLASS_LABELS[as.character(fig5_too_few$receptor_class)],
+                          fig5_too_few$n_markers), collapse = "; "),
+            NBAIS_MIN_MARKERS, length(NBAIS_INCLUDED)))
+}
+
 fig5 <- ggplot2::ggplot(
-  nbais_results,
-  ggplot2::aes(x = receptor_class, y = nbais, fill = receptor_class)
+  fig5_data,
+  ggplot2::aes(x = receptor_class, y = nbais)
 ) +
-  ggplot2::geom_col(width = 0.65) +
-  ggplot2::geom_errorbar(ggplot2::aes(ymin = ci_lb, ymax = ci_ub), width = 0.2) +
-  ggplot2::geom_hline(yintercept = 0, linewidth = 0.4) +
-  ggplot2::facet_wrap(~ weighting, nrow = 1) +
+  ggplot2::geom_col(width = 0.65, fill = FIG_SERIES) +
+  ggplot2::geom_errorbar(ggplot2::aes(ymin = ci_lb, ymax = ci_ub), width = 0.2,
+                         linewidth = 0.4, color = FIG_INK) +
+  ggplot2::geom_hline(yintercept = 0, linewidth = 0.4, color = FIG_INK) +
+  # The value sat just above the bar top, which is exactly where the error bar runs, so every
+  # number was struck through by its own interval. It goes above the upper bound instead.
+  ggplot2::geom_text(ggplot2::aes(y = ci_ub,
+                                  label = sprintf("%.1f (k = %d)", nbais, n_markers)),
+                     vjust = -0.7, size = 2.6, color = FIG_INK_SOFT) +
+  ggplot2::scale_x_discrete(drop = FALSE, labels = CLASS_LABELS) +
+  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.02, 0.12))) +
+  ggplot2::facet_wrap(~ weighting, nrow = 1,
+                      labeller = ggplot2::as_labeller(WEIGHTING_LABELS)) +
   ggplot2::labs(
     x = NULL,
-    y = "Net Biological Age Impact Score\n(weighted mean direction adjusted g)"
+    y = "Net Biological Age Impact Score\n(weighted mean direction adjusted % change)",
+    caption = paste0("Computed over the ", length(NBAIS_INCLUDED), " markers named by ",
+                     "prespecification/nbais_inclusion_rule.md; k is how many of them pool within ",
+                     "the class.\nError bars are the 2.5th to 97.5th percentiles of the two level ",
+                     "bootstrap (10 000 resamples, seed 20261013). Positive values indicate a shift ",
+                     "toward a younger biomarker profile.", fig5_absent_note)
   ) +
   ggplot2::theme_minimal(base_size = 11) +
   ggplot2::theme(legend.position = "none",
-                 axis.text.x = ggplot2::element_text(angle = 30, hjust = 1))
+                 panel.grid.major.x = ggplot2::element_blank(),
+                 panel.grid.minor = ggplot2::element_blank(),
+                 panel.grid.major.y = ggplot2::element_line(color = FIG_GRID),
+                 axis.text.x = ggplot2::element_text(angle = 30, hjust = 1, color = FIG_INK),
+                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
 
-ggplot2::ggsave(file.path(OUT_DIR, "figure5_nbais.pdf"), fig5,
-                width = 10, height = 5, device = cairo_pdf)
+save_figure("figure5_nbais", fig5, width = 10, height = 5.4,
+            caption = paste0("Net Biological Age Impact Score by receptor class under three ",
+                             "weighting schemes, computed over the ", length(NBAIS_INCLUDED),
+                             " markers of the prespecified inclusion rule. Bars are the weighted ",
+                             "mean direction adjusted percent change; error bars are the percentile ",
+                             "interval of the two level bootstrap.", fig5_absent_note))
+
+
+# Figure 2: the forest plot of the overall pooled effect per biomarker, which is the primary result
+# the manuscript reports. Table 2 is the table of these numbers; this is the same numbers seen at
+# once. There was no forest plot in this pipeline: a systematic review of 76 trials reported its
+# primary synthesis in a table only, and a reader could not see which markers move together or how
+# wide the intervals are relative to each other without reconstructing the figure by hand.
+#
+# The favourable direction differs by biomarker, so each label carries it. Printing it in the label
+# rather than colouring the point by it keeps the identity channel free and keeps the figure
+# readable in print and under colour vision deficiency, where a red and blue point are the same
+# point.
+
+fig2_data <- table2_pipeline |>
+  dplyr::left_join(
+    dplyr::distinct(dat, biomarker, aging_direction, hallmark_domain),
+    by = "biomarker") |>
+  dplyr::mutate(
+    favourable = ifelse(aging_direction < 0, "lower", "higher"),
+    label = sprintf("%s (%s better; k = %d)", label_biomarker(biomarker), favourable, k),
+    label = forcats::fct_reorder(label, estimate),
+    annotation = paste0(
+      sprintf("%.1f (%.1f to %.1f)", estimate, ci_lb, ci_ub),
+      dplyr::if_else(is.na(I2), ", I2 not estimable", sprintf(", I2 %.0f%%", I2)))
+  )
+
+# The annotation column sits at a fixed x, not at each row's own upper bound. Placed at ci_ub it
+# started wherever the interval happened to end, so the text crossed the zero line on the rows with
+# negative effects and ran over the interval it was describing; in a column the numbers align and
+# the plotting area stays clear. The axis is extended to hold the column rather than the column
+# being allowed to overflow the panel, which is what clipped the caption on the first draft.
+fig2_x_min <- min(fig2_data$ci_lb, na.rm = TRUE) - 4
+fig2_x_max <- max(fig2_data$ci_ub, na.rm = TRUE) + 4
+fig2_text_x <- fig2_x_max + 4
+
+fig2 <- ggplot2::ggplot(fig2_data,
+                        ggplot2::aes(x = estimate, y = label)) +
+  ggplot2::geom_vline(xintercept = 0, linewidth = 0.4, color = FIG_MUTED) +
+  ggplot2::geom_linerange(ggplot2::aes(xmin = ci_lb, xmax = ci_ub),
+                          linewidth = 0.6, color = FIG_SERIES) +
+  ggplot2::geom_point(size = 2.2, shape = 22, fill = FIG_SERIES, color = FIG_INK,
+                      stroke = 0.3) +
+  ggplot2::geom_text(ggplot2::aes(x = fig2_text_x, label = annotation),
+                     hjust = 0, size = 2.5, color = FIG_INK_SOFT) +
+  ggplot2::scale_x_continuous(
+    name = "Pooled change vs comparator (%)",
+    # Breaks are taken from the data range, not the panel range: an automatic break at 150 would
+    # put an axis tick underneath the annotation column, where there are no data.
+    breaks = Filter(function(b) b >= fig2_x_min && b <= fig2_x_max,
+                    pretty(c(fig2_x_min, fig2_x_max), n = 6)),
+    limits = c(fig2_x_min, fig2_text_x + 62),
+    expand = c(0, 0)) +
+  ggplot2::labs(y = NULL,
+                caption = paste0("Random effects pooling across all receptor classes, percent ",
+                                 "change relative to comparator. k, contributing trial arms after\n",
+                                 "dose collapse; I2, heterogeneity. Estimator, prediction interval ",
+                                 "and heterogeneity statistics per biomarker are in\n",
+                                 "table2_pipeline.csv.")) +
+  ggplot2::theme_minimal(base_size = 10) +
+  ggplot2::theme(panel.grid.major.y = ggplot2::element_blank(),
+                 panel.grid.minor = ggplot2::element_blank(),
+                 panel.grid.major.x = ggplot2::element_line(color = FIG_GRID),
+                 axis.text = ggplot2::element_text(color = FIG_INK),
+                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
+
+save_figure("figure2_forest_overall", fig2, width = 9.5, height = 8,
+            caption = paste("Forest plot of the overall pooled percent change per aging biomarker",
+                            "across all incretin receptor classes, ordered by effect. Squares are",
+                            "pooled estimates, bars 95 per cent confidence intervals."))
+
+
+# Figure 6 and its supplement: risk of bias. The RoB-2 assessment of every trial existed in
+# analysis/data/risk_of_bias.csv and had never been drawn, so a reviewer could read the judgement
+# only by opening the data file. Two figures are produced, which is the convention the Cochrane
+# tool itself uses: the domain summary for the main text, and the per trial traffic light for the
+# supplement, since 77 rows do not belong in a printed results section.
+#
+# Risk of bias is a status scale, not a series, so it takes the reserved status palette and ships
+# with a glyph and a label in every cell. Colour alone never carries the judgement: a monochrome
+# print of this figure remains readable.
+
+rob <- readr::read_csv("analysis/data/risk_of_bias.csv", show_col_types = FALSE)
+
+# The assessed set is larger than the contributing set by exactly the trials held under amendment
+# A6 pending the Director's eligibility decision, whose extractions stay in staging. The counts are
+# computed here and printed in the caption rather than written into it, so that a figure cannot go
+# on claiming 77 contributing trials after a held trial is admitted or dropped.
+rob_contributing <- sum(rob$trial_id %in% unique(dat$trial_id))
+rob_held <- nrow(rob) - rob_contributing
+rob_held_note <- if (rob_held == 1) {
+  "\nOne of them contributes no pooled estimate, being held pending an eligibility decision."
+} else if (rob_held > 1) {
+  sprintf("\n%d of them contribute no pooled estimate, being held pending an eligibility decision.",
+          rob_held)
+} else ""
+
+rob_long <- rob |>
+  dplyr::select(trial_id, first_author, year,
+                D1 = d1_randomisation, D2 = d2_deviations, D3 = d3_missing,
+                D4 = d4_measurement, D5 = d5_selection, Overall = overall) |>
+  tidyr::pivot_longer(c(D1, D2, D3, D4, D5, Overall),
+                      names_to = "domain", values_to = "judgement") |>
+  dplyr::mutate(
+    domain = factor(domain, levels = c("D1", "D2", "D3", "D4", "D5", "Overall")),
+    judgement = factor(judgement, levels = ROB_LEVELS))
+
+rob_unknown <- dplyr::filter(rob_long, is.na(judgement))
+if (nrow(rob_unknown) > 0) {
+  stop("risk_of_bias.csv carries ", nrow(rob_unknown), " judgement(s) outside ",
+       paste(ROB_LEVELS, collapse = ", "), "; the figure will not invent a level for them",
+       call. = FALSE)
+}
+
+rob_summary <- rob_long |>
+  dplyr::count(domain, judgement) |>
+  dplyr::group_by(domain) |>
+  dplyr::mutate(share = n / sum(n)) |>
+  dplyr::ungroup()
+
+fig6 <- ggplot2::ggplot(rob_summary,
+                        ggplot2::aes(x = share, y = forcats::fct_rev(domain),
+                                     fill = judgement)) +
+  # reverse = TRUE puts low risk at the left. position_stack stacks in the reverse of the factor
+  # order, so the first draft ran high risk first and read right to left against the convention the
+  # Cochrane tool itself prints, which costs a reader a second look at every bar.
+  ggplot2::geom_col(width = 0.7, color = "white", linewidth = 0.6,
+                    position = ggplot2::position_stack(reverse = TRUE)) +
+  # Every segment carries its glyph and count, including the three and four trial segments that the
+  # first draft left blank because they fell under a six per cent threshold: a status colour with no
+  # label beside it is the one thing the status palette may not do.
+  ggplot2::geom_text(ggplot2::aes(label = sprintf("%s %d", ROB_GLYPH[as.character(judgement)], n)),
+                     position = ggplot2::position_stack(vjust = 0.5, reverse = TRUE),
+                     size = 2.7, color = FIG_INK) +
+  ggplot2::scale_fill_manual(values = ROB_FILL, labels = ROB_LABELS, name = NULL,
+                             drop = FALSE) +
+  ggplot2::scale_x_continuous(labels = function(x) paste0(round(100 * x), "%"),
+                              expand = ggplot2::expansion(mult = c(0, 0.02)),
+                              name = "Trials") +
+  ggplot2::scale_y_discrete(labels = c(D1 = "D1 randomisation", D2 = "D2 deviations",
+                                       D3 = "D3 missing outcome data",
+                                       D4 = "D4 outcome measurement",
+                                       D5 = "D5 selective reporting",
+                                       Overall = "Overall")) +
+  ggplot2::labs(y = NULL,
+                caption = paste0("RoB-2 judgements for all ", nrow(rob), " assessed trials.",
+                                 rob_held_note, "\nSegment labels give the glyph and the trial ",
+                                 "count: + low, ? some concerns, x high.")) +
+  ggplot2::theme_minimal(base_size = 11) +
+  ggplot2::theme(panel.grid = ggplot2::element_blank(),
+                 legend.position = "bottom",
+                 axis.text = ggplot2::element_text(color = FIG_INK),
+                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
+
+save_figure("figure6_rob_summary", fig6, width = 8, height = 4,
+            caption = paste("Risk of bias across the five RoB-2 domains and the overall",
+                            "judgement, as the share of assessed trials. Glyphs accompany every",
+                            "colour so the judgement does not depend on colour."))
+
+fig6s <- ggplot2::ggplot(rob_long,
+                         ggplot2::aes(x = domain,
+                                      y = forcats::fct_rev(factor(trial_id)),
+                                      fill = judgement)) +
+  ggplot2::geom_tile(color = "white", linewidth = 0.5) +
+  ggplot2::geom_text(ggplot2::aes(label = ROB_GLYPH[as.character(judgement)]),
+                     size = 2.4, color = FIG_INK) +
+  ggplot2::scale_fill_manual(values = ROB_FILL, labels = ROB_LABELS, name = NULL,
+                             drop = FALSE) +
+  ggplot2::scale_x_discrete(position = "top") +
+  ggplot2::labs(x = NULL, y = NULL,
+                caption = "+ low, ? some concerns, x high. Domains D1 to D5 of RoB-2 and the overall judgement.") +
+  ggplot2::theme_minimal(base_size = 7) +
+  ggplot2::theme(panel.grid = ggplot2::element_blank(),
+                 legend.position = "bottom",
+                 axis.text = ggplot2::element_text(color = FIG_INK),
+                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 7))
+
+save_figure("figureS1_rob_traffic_light", fig6s, width = 7.5, height = 13,
+            caption = paste("Per trial RoB-2 traffic light for all", nrow(rob),
+                            "assessed trials, supplementary to Figure 6."))
+
+readr::write_csv(dplyr::bind_rows(FIGURE_INDEX),
+                 file.path(OUT_DIR, "figure_index.csv"))
 
 
 ## ---------------------------------------------------------------------------
