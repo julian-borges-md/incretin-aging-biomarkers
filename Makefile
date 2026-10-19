@@ -4,7 +4,9 @@
 #   make verify     run the integrity gates on the extraction contract
 #   make selftest   prove that verify fails on perturbed input
 #   make validate   prove the statistics recover known truth on simulated data
+#   make gates      run the full fifteen gate provenance chain
 #   make analysis   run the full pipeline (needs analysis/data/extraction_master.csv)
+#   make pin        record the exact package versions this run used
 #   make clean      remove generated artefacts
 #
 # verify and selftest need no data and no network. Both run in CI.
@@ -12,10 +14,21 @@
 
 RS := Rscript
 
-.PHONY: install verify selftest validate extract analysis clean
+.PHONY: install pin gates verify selftest validate extract analysis clean
 
 install:
 	$(RS) requirements.R
+
+# Pin the exact package versions a run used, with the R version and platform, to
+# analysis/output/environment_pinned.csv. requirements.R claimed renv.lock did this and renv.lock
+# has never existed; see that file's header.
+pin:
+	$(RS) src/pin_environment.R
+
+# The full provenance chain, fifteen gates. It was reachable only as scripts/run_gates.sh, so the
+# one command that validates the whole pipeline was the one command the Makefile did not offer.
+gates:
+	bash scripts/run_gates.sh
 
 verify:
 	$(RS) src/verify.R
@@ -93,6 +106,21 @@ fulltext-adjudicate:
 fulltext-summary:
 	python3 -I src/fulltext_screen.py summarise
 
+# analysis/output became version controlled on 19 October, so the old recipe, `rm -rf
+# analysis/output/*`, would now delete tracked results: every pooled estimate the manuscript quotes
+# and every figure, recoverable only by `git checkout`. A clean target that silently destroys
+# committed work is worse than no clean target. This one removes only untracked and ignored files
+# there, which is what cleaning a build directory should mean, and `git clean` refuses to touch
+# anything committed. `make clean-all` remains available for the destructive version, named so that
+# nobody reaches it by accident.
 clean:
+	git clean -fdX analysis/output/
+	@echo "Removed ignored files from analysis/output/. Tracked results untouched."
+	@echo "To discard tracked results as well: make clean-all"
+
+.PHONY: clean-all
+clean-all:
+	@echo "This deletes VERSION CONTROLLED results in analysis/output/."
+	@echo "Recover with: git checkout -- analysis/output/"
 	rm -rf analysis/output/*
 	touch analysis/output/.gitkeep

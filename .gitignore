@@ -5,8 +5,17 @@ renv/library/
 renv/staging/
 .DS_Store
 work/
-analysis/output/*
-!analysis/output/.gitkeep
+# analysis/output is TRACKED, on the Lab Director's instruction of 19 October that every
+# visualization, table and diagram be versioned and reproducible from the repository. It previously
+# read "analysis/output/*", which excluded every pooled estimate the manuscript quotes and every
+# figure the pipeline draws: a reader could clone this repository and find the code that produces
+# the numbers but not the numbers themselves, which is the opposite of what the other rules in this
+# file are for. Those rules exclude licensed database exports and screening rows carrying export
+# titles, none of which applies here. The directory is 104 KB of derived statistics across 17 files.
+#
+# Two exclusions remain inside it, both for things that are not results.
+analysis/output/*.tmp
+analysis/output/*.log
 *.pdf.aux
 
 # Exported bibliographic records: large, and licensed database content.
