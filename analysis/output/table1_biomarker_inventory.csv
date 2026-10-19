@@ -1,0 +1,37 @@
+number,biomarker,key,hallmark_domain,direction_of_aging,clinical_weight,weight_status,inventory_status,in_composite,trials,contrasts,contrasts_on_percent_scale
+1,hsCRP,hsCRP,inflammaging,higher is older,3,prespecified,table1,yes,40,46,42
+2,IL-6,IL6,inflammaging,higher is older,3,prespecified,table1,yes,6,7,6
+4,YKL-40,YKL40,inflammaging,higher is older,2,prespecified,table1,yes,1,3,3
+,TNF-alpha,TNF_alpha,inflammaging,higher is older,3,prespecified,added_R2_2026-10-15,no,13,14,11
+6,Leptin,leptin,adipose_senescence,higher is older,2,prespecified,table1,yes,8,14,14
+22,Body fat percentage,body_fat_pct,adipose_senescence,higher is older,2,provisional_2026-10-16,table1,no,2,2,2
+23,Visceral adipose tissue,VAT,adipose_senescence,higher is older,3,provisional_2026-10-16,table1,no,7,10,10
+,Adiponectin,adiponectin,adipose_senescence,lower is older,3,prespecified,opportunistic_pre_amendment,no,22,29,25
+11,SBP,SBP,vascular_aging,higher is older,3,provisional_2026-10-16,table1,no,30,35,32
+12,DBP,DBP,vascular_aging,higher is older,2,provisional_2026-10-16,table1,no,28,33,30
+,NT-proBNP,NTproBNP,cardiac_aging,higher is older,2,prespecified,opportunistic_pre_amendment,yes,4,5,5
+,MR-proANP,MR_proANP,cardiac_aging,higher is older,2,prespecified,added_R2_2026-10-15,no,1,1,1
+25,eGFR,eGFR,renal_aging,lower is older,3,provisional_2026-10-16,table1,no,3,3,3
+21,Total lean mass,lean_mass,musculoskeletal_aging,lower is older,4,provisional_2026-10-16,table1,yes,2,3,3
+24,BMD,BMD,musculoskeletal_aging,lower is older,3,provisional_2026-10-16,table1,no,1,2,2
+26,Resting heart rate,resting_heart_rate,autonomic_aging,higher is older,3,provisional_2026-10-16,table1,no,11,14,13
+5,ICAM-1,ICAM1,endothelial_aging,higher is older,2,prespecified,table1,yes,1,3,3
+,Epigenetic clocks,epigenetic_age,epigenetic_aging,higher is older,,not_applicable,not_admitted_descriptive_only,no,0,0,0
+16,MASH resolution,MASH_resolution,hepatic_age_reversal,lower is older,4,provisional_2026-10-16,table1,no,1,1,1
+17,Fibrosis improvement,fibrosis_improvement,hepatic_age_reversal,lower is older,5,provisional_2026-10-16,table1,no,2,2,2
+13,Liver fat (MRI-PDFF),liver_fat_pdff,hepatocellular_senescence,higher is older,3,prespecified,table1,yes,9,18,18
+14,ALT,ALT,hepatocellular_senescence,higher is older,3,prespecified,table1,no,12,15,13
+15,AST,AST,hepatocellular_senescence,higher is older,3,prespecified,table1,no,8,9,7
+,GGT,GGT,hepatocellular_senescence,higher is older,2,prespecified,opportunistic_pre_amendment,yes,7,8,7
+,Fatty liver index,fatty_liver_index,hepatocellular_senescence,higher is older,3,prespecified,opportunistic_pre_amendment,no,1,1,0
+18,Triglycerides,TG,lipid_aging,higher is older,2,provisional_2026-10-16,table1,no,30,35,33
+19,LDL cholesterol,LDL,lipid_aging,higher is older,3,provisional_2026-10-16,table1,no,27,31,30
+20,Total cholesterol,TC,lipid_aging,higher is older,2,provisional_2026-10-16,table1,no,27,31,30
+3,GDF-15,GDF15,mitochondrial_stress,higher is older,5,prespecified,table1,yes,3,5,5
+7,Fasting insulin,fasting_insulin,nutrient_sensing,higher is older,3,prespecified,table1,no,19,24,20
+8,HOMA-IR,HOMA_IR,nutrient_sensing,higher is older,4,prespecified,table1,yes,10,12,12
+9,HbA1c,HbA1c,nutrient_sensing,higher is older,4,provisional_2026-10-16,table1,no,38,44,44
+10,Fasting glucose,fasting_glucose,nutrient_sensing,higher is older,4,prespecified,table1,no,35,40,35
+,HOMA-beta,HOMA_beta,nutrient_sensing,lower is older,3,prespecified,opportunistic_pre_amendment,no,7,9,9
+,C-peptide,C_peptide,nutrient_sensing,higher is older,2,prespecified,opportunistic_pre_amendment,no,6,8,8
+,Glucagon,glucagon,nutrient_sensing,higher is older,2,prespecified,opportunistic_pre_amendment,no,5,7,7
