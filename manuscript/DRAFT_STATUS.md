@@ -47,7 +47,7 @@ ABSENT however complete the text once was.
 | 1. Extraction into `analysis/data/extraction_master.csv` | Done, 524 rows, 76 trials |
 | 2. Run `analysis/M5_AGE_analysis_pipeline.R` | Done, 19 October, 48 outputs including the figures |
 | 3. Reconcile the Results narrative against the rerun | Done, 19 October: 22 pooled figures cited, none mismatching, and figure callouts added |
-| 4. Director decisions D-S1 to D-S7, D-X1, D-X6, D-X7, A6 and the 2.12 deviations | Outstanding, reserved to the Director |
+| 4. Director decisions, fifteen of them | Outstanding, reserved to the Director. Consolidated into one sheet with evidence, options and a recommendation per decision: `docs/DIRECTOR_DECISIONS_2026-10-19.md` |
 | 5. Write 4.1 to 4.9, Conclusions, Abstract, title page | Blocked on 3 and 4 |
 | 6. Self critique, three passes | Not started |
 | 7. Submit | Not started |
