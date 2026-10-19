@@ -46,7 +46,30 @@ MASTER = os.path.join(ROOT, "analysis", "data", "extraction_master.csv")
 OUT_CSV = os.path.join(ROOT, "analysis", "output", "included_studies.csv")
 OUT_MD = os.path.join(ROOT, "analysis", "output", "included_studies.md")
 API = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+CROSSREF = "https://api.crossref.org/works/"
 BATCH = 20
+# Europe PMC is one registry, not the registry. A DOI it does not index is not thereby a bad DOI, so
+# a second source is consulted before anything is called unresolved. Yu 2015 is the standing case:
+# Journal of Endocrinology and Metabolism is outside Europe PMC coverage and the DOI resolves at
+# Crossref with a matching author, year and title.
+UA = {"User-Agent": "M5-AGE-reference-check/1.0 (mailto:jyborges@bu.edu)"}
+
+
+def crossref(doi):
+    url = CROSSREF + urllib.parse.quote(doi, safe="")
+    req = urllib.request.Request(url, headers=UA)
+    with urllib.request.urlopen(req, timeout=30) as fh:
+        m = json.load(fh)["message"]
+    auth = m.get("author") or []
+    parts = (m.get("issued", {}).get("date-parts") or [[None]])[0]
+    return {
+        "authorString": ", ".join(f"{a.get('family','')}" for a in auth[:8]),
+        "pubYear": str(parts[0]) if parts and parts[0] else "",
+        "doi": (m.get("DOI") or "").lower(),
+        "title": (m.get("title") or [""])[0],
+        "journal": (m.get("container-title") or [""])[0],
+        "_source": "Crossref",
+    }
 
 
 def fold(s):
@@ -117,15 +140,35 @@ def main(argv):
         r["verdict"], r["note"] = "not_checked", ""
         if offline:
             continue
+        if r["doi"].upper() == "NA":
+            r["doi"] = ""
+        if r["pmid"].upper() == "NA":
+            r["pmid"] = ""
         hit = None
+        r["verified_against"] = "Europe PMC"
         if r["pmid"].isdigit():
             hit = found.get(r["pmid"])
         if hit is None and r["doi"]:
             hit = found.get("doi:" + r["doi"].lower())
+        if hit is None and r["doi"]:
+            try:
+                hit = crossref(r["doi"])
+                r["verified_against"] = "Crossref"
+            except Exception:                           # noqa: BLE001
+                hit = None
         if not hit:
+            # A trial with no identifier recorded at all has nothing to resolve, which is the normal
+            # state of a conference abstract or a journal that assigns no DOI. That is a different
+            # thing from an identifier that exists and fails, and conflating the two makes the report
+            # read as though the corpus were full of broken references.
+            if not r["doi"] and not r["pmid"].isdigit():
+                r["verdict"] = "no_identifier_exists"
+                r["note"] = ("no DOI or PMID recorded; citable by meeting and abstract number, or by "
+                             "journal volume, issue and pages")
+                continue
             r["verdict"] = "identifier_not_found"
-            problems.append((r["trial_id"], "neither PMID nor DOI resolved at Europe PMC",
-                             r["pmid"], r["doi"]))
+            problems.append((r["trial_id"], "identifier recorded but resolved at neither Europe PMC "
+                             "nor Crossref", r["pmid"], r["doi"]))
             continue
         # Where the master records NA for the PMID and the DOI resolved, report the PMID the registry
         # holds. It is NOT written back to the master: that is an extraction change and belongs to a
@@ -161,7 +204,8 @@ def main(argv):
 
     os.makedirs(os.path.dirname(OUT_CSV), exist_ok=True)
     fields = ["trial_id", "first_author", "year", "journal", "drug", "pmid", "pmid_from_api",
-              "doi", "rows", "verdict", "note", "title_from_api", "author_from_api"]
+              "doi", "rows", "verdict", "verified_against", "note", "title_from_api",
+              "author_from_api"]
     with open(OUT_CSV, "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=fields, extrasaction="ignore")
         w.writeheader()
@@ -186,7 +230,9 @@ def main(argv):
           f"{sum(1 for r in recs if r['verdict'] == 'mismatch')}")
     print(f"  author absent in the master, supplied by the registry: "
           f"{sum(1 for r in recs if r['verdict'] == 'author_absent_in_master')}")
-    print(f"  identifiers that did not resolve: "
+    print(f"  no identifier recorded, citable by other means: "
+          f"{sum(1 for r in recs if r['verdict'] == 'no_identifier_exists')}")
+    print(f"  identifier recorded but resolved nowhere: "
           f"{sum(1 for r in recs if r['verdict'] == 'identifier_not_found')}")
     backfilled = [r for r in recs if r.get("pmid_from_api")]
     print(f"  PMID recorded as NA in the master but found via the DOI: {len(backfilled)}"

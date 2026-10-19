@@ -5,7 +5,7 @@
   "trial_id": "Wang 2026 Xi'an DKD",
   "pmid": "",
   "doi": "10.36721/pjps.2026.39.7.204.1",
-  "first_author": "Wang",
+  "first_author": "Long",
   "year": "2026",
   "journal": "Pak J Pharm Sci",
   "phase": "4",
@@ -23,7 +23,7 @@
   "prespecified_endpoint": "FALSE",
   "industry_funded": "FALSE",
   "rob_overall": "high",
-  "notes": "STUDY: single centre randomised controlled trial (Xi'an Gem Flower Changqing Hospital, January 2022 to June 2023) in inpatients with type 2 diabetes and early diabetic kidney disease (UACR 30 to 300 mg/g, eGFR 60 or more): 120 randomised 1:1:1:1 (computer sequence, opaque envelopes) to canagliflozin 100 mg, semaglutide 0.25 mg weekly escalated to 1.0 mg after four weeks (dose_mg 1), the combination, or placebo, 30 per arm, 24 weeks; the semaglutide vs placebo contrast is entered, the canagliflozin and combination arms are not; Table 3 gives eGFR at baseline and 24 weeks as mean plus or minus SD for all four arms (route arm_change_imputed_r, correlation 0.5); Table 4 (glycaemic parameters) prints the three active arms only, so no placebo contrast exists for HbA1c or fasting glucose; HOMA-IR, lipids, TNF-alpha, IL-6 and CRP are described as numerically changed without values; primary endpoint UACR (not in the inventory), eGFR a secondary renal endpoint (prespecified FALSE); body weight not reported, pct_weight_change empty; no funding, no conflicts declared (industry_funded FALSE); rob_overall high"
+  "notes": "STUDY: single centre randomised controlled trial (Xi'an Gem Flower Changqing Hospital, January 2022 to June 2023) in inpatients with type 2 diabetes and early diabetic kidney disease (UACR 30 to 300 mg/g, eGFR 60 or more): 120 randomised 1:1:1:1 (computer sequence, opaque envelopes) to canagliflozin 100 mg, semaglutide 0.25 mg weekly escalated to 1.0 mg after four weeks (dose_mg 1), the combination, or placebo, 30 per arm, 24 weeks; the semaglutide vs placebo contrast is entered, the canagliflozin and combination arms are not; Table 3 gives eGFR at baseline and 24 weeks as mean plus or minus SD for all four arms (route arm_change_imputed_r, correlation 0.5); Table 4 (glycaemic parameters) prints the three active arms only, so no placebo contrast exists for HbA1c or fasting glucose; HOMA-IR, lipids, TNF-alpha, IL-6 and CRP are described as numerically changed without values; primary endpoint UACR (not in the inventory), eGFR a secondary renal endpoint (prespecified FALSE); body weight not reported, pct_weight_change empty; no funding, no conflicts declared (industry_funded FALSE); rob_overall high | BIBLIOGRAPHIC CORRECTION 2026-10-19: Europe PMC record for doi 10.36721/pjps.2026.39.7.204.1 (pmid 42170981) is 'Short-term comparative effects of semaglutide, either alone or in conjunction with canagliflozin, on early diabetic kidney disease', Long W, Ningning L, Weijun H, Pak J Pharm Sci 2026. The title, drug, comparator and population match this extraction; the first author was recorded as Wang and is corrected to Long. The tracked extraction file keeps its original name, which encodes the superseded surname; file names are opaque identifiers fixed at creation and the author identity is carried in the data columns."
  },
  "rows": [
   {

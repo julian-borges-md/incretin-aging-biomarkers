@@ -5,9 +5,9 @@
   "trial_id": "NCT01648582 dulaglutide vs glargine (Nanjing First)",
   "pmid": "",
   "doi": "10.1155/2019/2682657",
-  "first_author": "Shao",
+  "first_author": "Wang",
   "year": "2019",
-  "journal": "J Diabetes Res",
+  "journal": "Biomed Res Int",
   "phase": "4",
   "drug": "dulaglutide",
   "receptor_class": "GLP1_mono",
@@ -23,7 +23,7 @@
   "prespecified_endpoint": "FALSE",
   "industry_funded": "FALSE",
   "rob_overall": "some_concerns",
-  "notes": "STUDY: single centre randomised trial at Nanjing First Hospital (NCT01648582), 25 patients with type 2 diabetes inadequately controlled on oral agents assigned to once weekly dulaglutide (11 cases 0.75 mg, 5 cases 1.5 mg, patients and physicians blinded to the dose, n 16) or daily titrated insulin glargine (n 9) for 52 weeks; primary endpoint glucose fluctuation by continuous glucose monitoring. dose_mg empty because the dulaglutide arm pools the two doses. Tables 1 and 2 print baseline and 52 week values per arm as mean plus or minus SD with a between arm t and p at each timepoint, so the rows are taken by route arm_change_imputed_r with correlation 0.5; rows whose 52 week value is printed as a median with interquartile range (triglycerides, ALT, AST, fasting insulin, lipase, pancreatic enzymes, microalbumin) cannot be used, and fasting C peptide and HOMA-IR have no 52 week row at all. TNF alpha and IL-6 are printed as a median in one arm and a mean in the other at each timepoint, so neither yields a contrast. pct_weight_change from the Table 1 weight row, 68.97 to 69.06 kg equals plus 0.1 percent (glargine 62.56 to 64.67 kg, plus 3.4 percent; no contrast printed). Funded by the Scientific and Technological Development Program of Jiangsu Province, no conflicts declared (industry_funded FALSE); rob_overall some_concerns"
+  "notes": "STUDY: single centre randomised trial at Nanjing First Hospital (NCT01648582), 25 patients with type 2 diabetes inadequately controlled on oral agents assigned to once weekly dulaglutide (11 cases 0.75 mg, 5 cases 1.5 mg, patients and physicians blinded to the dose, n 16) or daily titrated insulin glargine (n 9) for 52 weeks; primary endpoint glucose fluctuation by continuous glucose monitoring. dose_mg empty because the dulaglutide arm pools the two doses. Tables 1 and 2 print baseline and 52 week values per arm as mean plus or minus SD with a between arm t and p at each timepoint, so the rows are taken by route arm_change_imputed_r with correlation 0.5; rows whose 52 week value is printed as a median with interquartile range (triglycerides, ALT, AST, fasting insulin, lipase, pancreatic enzymes, microalbumin) cannot be used, and fasting C peptide and HOMA-IR have no 52 week row at all. TNF alpha and IL-6 are printed as a median in one arm and a mean in the other at each timepoint, so neither yields a contrast. pct_weight_change from the Table 1 weight row, 68.97 to 69.06 kg equals plus 0.1 percent (glargine 62.56 to 64.67 kg, plus 3.4 percent; no contrast printed). Funded by the Scientific and Technological Development Program of Jiangsu Province, no conflicts declared (industry_funded FALSE); rob_overall some_concerns | BIBLIOGRAPHIC CORRECTION 2026-10-19: Europe PMC record for doi 10.1155/2019/2682657 (pmid 31950036) is 'The Effects of Once-Weekly Dulaglutide and Insulin Glargine on Glucose Fluctuation in Poorly Oral-Antidiabetic Controlled Patients with Type 2 Diabetes Mellitus', Wang J, Li HQ, Xu XH, Kong XC, Sun R, Jing T, Ye L, Su XF, Ma JH, Biomed Res Int 2019. The title names the dulaglutide versus insulin glargine comparison of NCT01648582 that this extraction describes. Two fields were wrong: the first author was recorded as Shao and is corrected to Wang, and the journal was recorded as J Diabetes Res, which is the journal of the companion trial in spec 188, and is corrected to Biomed Res Int. Shao appears nowhere in the author list of either paper. The tracked extraction file keeps its original name, which encodes the superseded surname."
  },
  "rows": [
   {

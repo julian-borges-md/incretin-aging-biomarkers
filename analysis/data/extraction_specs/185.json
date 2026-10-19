@@ -3,11 +3,11 @@
  "extractor": "S",
  "study": {
   "trial_id": "MDI-liraglutide study (Sweden)",
-  "pmid": "",
-  "doi": "",
-  "first_author": "not named in the capture",
+  "pmid": "31019730",
+  "doi": "10.1002/osp4.324",
+  "first_author": "Ahmadi",
   "year": "2019",
-  "journal": "Diabetes Obes Metab",
+  "journal": "Obes Sci Pract",
   "phase": "4",
   "drug": "liraglutide",
   "receptor_class": "GLP1_mono",
@@ -23,7 +23,7 @@
   "prespecified_endpoint": "FALSE",
   "industry_funded": "TRUE",
   "rob_overall": "low",
-  "notes": "STUDY: double blind placebo controlled trial of liraglutide added to multiple daily insulin injections in type 2 diabetes (the MDI-liraglutide study), 124 enrolled and 122 randomised with at least one valid follow up, 63 liraglutide and 59 placebo, 24 weeks; this report covers anthropometric measures and adiponectin. Table 2 prints baseline and 24 week values per arm as mean (SD) with the median and range beneath, the change per arm as mean (SD) with its 95 percent CI, and the baseline adjusted liraglutide minus placebo difference as mean (SD) with 95 percent CI and p. The adiponectin row is the only inventory marker and is taken from that baseline adjusted difference (route ci_95), with the Table 2 baseline arm means as the denominator. Sagittal abdominal diameter, waist and hip circumference and BMI are outside the inventory. pct_weight_change from the printed weight change, minus 3.8 kg on a baseline of 98.8 kg equals minus 3.8 percent (the placebo arm did not change). Liraglutide and placebo supplied by the manufacturer for an investigator initiated trial (industry_funded TRUE); rob_overall low"
+  "notes": "STUDY: double blind placebo controlled trial of liraglutide added to multiple daily insulin injections in type 2 diabetes (the MDI-liraglutide study), 124 enrolled and 122 randomised with at least one valid follow up, 63 liraglutide and 59 placebo, 24 weeks; this report covers anthropometric measures and adiponectin. Table 2 prints baseline and 24 week values per arm as mean (SD) with the median and range beneath, the change per arm as mean (SD) with its 95 percent CI, and the baseline adjusted liraglutide minus placebo difference as mean (SD) with 95 percent CI and p. The adiponectin row is the only inventory marker and is taken from that baseline adjusted difference (route ci_95), with the Table 2 baseline arm means as the denominator. Sagittal abdominal diameter, waist and hip circumference and BMI are outside the inventory. pct_weight_change from the printed weight change, minus 3.8 kg on a baseline of 98.8 kg equals minus 3.8 percent (the placebo arm did not change). Liraglutide and placebo supplied by the manufacturer for an investigator initiated trial (industry_funded TRUE); rob_overall low | BIBLIOGRAPHIC CORRECTION 2026-10-19: Identified 19 October from Europe PMC. Title: 'Effect of liraglutide on anthropometric measurements, sagittal abdominal diameter and adiponectin levels in people with type 2 diabetes treated with multiple daily insulin injections: evaluations from a randomized trial (MDI-liraglutide study 5)'. The abstract states 124 individuals with T2D on MDI randomised to liraglutide or placebo with measurements at 12 and 24 weeks, which matches this row's 63 and 59 arms, 24 weeks and placebo comparator, and adiponectin is in the title. The journal recorded here was Diabetes Obes Metab and is corrected to Obesity Science and Practice; doi and pmid were NA and are supplied; first_author was recorded as not named in the capture."
  },
  "rows": [
   {

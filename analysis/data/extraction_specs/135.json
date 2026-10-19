@@ -5,7 +5,7 @@
   "trial_id": "SURPASS-1",
   "pmid": "",
   "doi": "10.1210/jendso/bvad056",
-  "first_author": "not named in the capture",
+  "first_author": "Lee",
   "year": "2023",
   "journal": "J Endocr Soc",
   "phase": "3",
@@ -23,7 +23,7 @@
   "prespecified_endpoint": "FALSE",
   "industry_funded": "TRUE",
   "rob_overall": "low",
-  "notes": "STUDY: beta cell function and insulin sensitivity report of SURPASS-1 (NCT03954834), a 40 week multicentre randomised double blind placebo controlled parallel group trial of tirzepatide monotherapy 5, 10 or 15 mg once weekly versus volume matched placebo in type 2 diabetes, ITT efficacy analysis set 121, 121, 120 and 113. Table 2 prints the baseline and the change (or percent change) per arm with standard errors and, for each tirzepatide dose, the difference versus placebo with a 95 percent CI; those differences are the rows (route ci_95). Seven inventory markers are available at each of the three doses, 21 rows, and the pool keeps the highest dose per biomarker while the lower doses remain for a dose response analysis. Fasting glucose is an absolute difference in mg/dL and carries the Table 2 baselines as its denominator; the other six are percent changes and need none. Fasting proinsulin, the proinsulin to C-peptide ratio and IGFBP-2 are outside the inventory. The glucagon row is adjusted for fasting glucose, as the table states. This is the first placebo controlled GLP-1 and GIP dual agonist trial in the corpus to report the nutrient sensing panel, so it changes the class coverage for fasting insulin, C-peptide, glucagon, HOMA-IR and HOMA-beta. Eli Lilly sponsored (industry_funded TRUE); rob_overall low"
+  "notes": "STUDY: beta cell function and insulin sensitivity report of SURPASS-1 (NCT03954834), a 40 week multicentre randomised double blind placebo controlled parallel group trial of tirzepatide monotherapy 5, 10 or 15 mg once weekly versus volume matched placebo in type 2 diabetes, ITT efficacy analysis set 121, 121, 120 and 113. Table 2 prints the baseline and the change (or percent change) per arm with standard errors and, for each tirzepatide dose, the difference versus placebo with a 95 percent CI; those differences are the rows (route ci_95). Seven inventory markers are available at each of the three doses, 21 rows, and the pool keeps the highest dose per biomarker while the lower doses remain for a dose response analysis. Fasting glucose is an absolute difference in mg/dL and carries the Table 2 baselines as its denominator; the other six are percent changes and need none. Fasting proinsulin, the proinsulin to C-peptide ratio and IGFBP-2 are outside the inventory. The glucagon row is adjusted for fasting glucose, as the table states. This is the first placebo controlled GLP-1 and GIP dual agonist trial in the corpus to report the nutrient sensing panel, so it changes the class coverage for fasting insulin, C-peptide, glucagon, HOMA-IR and HOMA-beta. Eli Lilly sponsored (industry_funded TRUE); rob_overall low | AUTHOR SUPPLIED FROM REGISTRY 2026-10-19: the capture for this row did not print an author. Europe PMC record for doi 10.1210/jendso/bvad056 (pmid 37153701) is 'Tirzepatide as Monotherapy Improved Markers of Beta-cell Function and Insulin Sensitivity in Type 2 Diabetes (SURPASS-1)', Lee CJ, Mao H, Thieu VT, Lando LF, Thomas MK, J Endocr Soc 2023. first_author is set to Lee on registry evidence, not from the capture. This is the beta cell function report of SURPASS-1, not the parent trial report, and the row's numbers come from it."
  },
  "rows": [
   {
