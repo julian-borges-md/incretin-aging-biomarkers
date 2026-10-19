@@ -46,7 +46,7 @@ ABSENT however complete the text once was.
 | --- | --- |
 | 1. Extraction into `analysis/data/extraction_master.csv` | Done, 524 rows, 76 trials |
 | 2. Run `analysis/M5_AGE_analysis_pipeline.R` | Done, 19 October, 48 outputs including the figures |
-| 3. Reconcile the Results narrative against the rerun | Outstanding, gate `results_numbers_check` is the test |
+| 3. Reconcile the Results narrative against the rerun | Done, 19 October: 22 pooled figures cited, none mismatching, and figure callouts added |
 | 4. Director decisions D-S1 to D-S7, D-X1, D-X6, D-X7, A6 and the 2.12 deviations | Outstanding, reserved to the Director |
 | 5. Write 4.1 to 4.9, Conclusions, Abstract, title page | Blocked on 3 and 4 |
 | 6. Self critique, three passes | Not started |
@@ -59,7 +59,7 @@ ABSENT however complete the text once was.
 | Eight bibliographic corrections and four author names supplied, all at the spec level | The reference list now names the right paper for every trial that has one |
 | The composite interval method was corrected | `table5_nbais.csv` previously printed an estimate outside its own interval for one class; any Results sentence quoting a composite interval must be rewritten from the new table |
 | Three figure axis labels said Hedges' g on a percent change scale | Any figure callout or Discussion sentence describing composite or pooled effects in standard deviation units is wrong by roughly a factor of twenty and must be rewritten |
-| The figures exist for the first time | The Results narrative names no figure at all and needs callouts |
+| The figures exist for the first time | The Results narrative now carries callouts to Figures 1 to 6 and S1, added 19 October; the Discussion sections that are still to be written need them too |
 | The receptor class signature has no triple agonist node | Within that class every biomarker is carried by a single trial after the dose collapse, so nothing pools. The 14 October note claiming the triple agonist node is populated for four domains is true of the extraction and false of the pooled analysis, and the Discussion must say which |
 
 ## Retatrutide data position
