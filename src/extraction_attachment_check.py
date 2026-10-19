@@ -207,7 +207,69 @@ def make_source_lines():
     return lines_for
 
 
+def self_test():
+    """Exercise the three decisions this gate rests on.
+
+    The gate reports a verdict for every row on every run, so it is not silent; what had never been
+    shown is that its three decisions are the ones it describes. Each case below is a way the gate
+    could pass a row it should question, or question a row it should pass.
+    """
+    cases = []
+
+    # A number must match as a number, not as a substring of a longer one. Without the boundary
+    # guard, a row whose value is 5.7 would be located in any line that happens to print 15.73, and
+    # the gate would report an extraction as attached to a line it has nothing to do with.
+    cases.append(("5.7 does not match inside 15.73", line_has("5.7", "baseline 15.73 mg/dL") is False))
+    cases.append(("5.7 matches 5.7 in a table row", line_has("5.7", "HbA1c 5.7 (0.4)") is True))
+    cases.append(("5.7 does not match inside 5.78", line_has("5.7", "value 5.78") is False))
+    cases.append(("a negative value matches its printed form",
+                  line_has("4.72", "change -4.72 (1.1)") is True))
+
+    # Two numbers on ONE line is the rule. Numbers spread over several lines are not a source line,
+    # which is the whole reason the unlocated rows in this corpus are unlocated.
+    one_line = ["week 24: 2.31 vs 4.72 (p 0.03)", "unrelated 9.99"]
+    spread = ["treatment arm 2.31", "control arm 4.72"]
+    cases.append(("two numbers on one line locate the row",
+                  matching_lines(["2.31", "4.72"], one_line) == [0]))
+    cases.append(("the same two numbers on separate lines do not",
+                  matching_lines(["2.31", "4.72"], spread) == []))
+    cases.append(("a single number row needs only that number",
+                  matching_lines(["2.31"], spread) == [0]))
+
+    # Values too common to identify a line are dropped before the search, or every row would locate
+    # itself in any table that prints a small integer.
+    r = {c: "" for c in NUMERIC_COLS}
+    r[NUMERIC_COLS[0]] = "7"
+    cases.append(("a bare integer below ten identifies nothing", ident_numbers(r) == []))
+    r[NUMERIC_COLS[0]] = "7.0"
+    cases.append(("the same value with a decimal point is kept", ident_numbers(r) == ["7.0"]))
+    r[NUMERIC_COLS[0]] = "42"
+    cases.append(("an integer of ten or more is kept", ident_numbers(r) == ["42"]))
+
+    # The printed order of the evidence must not depend on the interpreter's hash seed.
+    r2 = {c: "" for c in NUMERIC_COLS}
+    for col, v in zip(NUMERIC_COLS[:4], ["1.23", "4.56", "7.89", "0.12"]):
+        r2[col] = v
+    cases.append(("the evidence order is deterministic",
+                  ident_numbers(r2) == sorted(set(["1.23", "4.56", "7.89", "0.12"]),
+                                              key=lambda v: (-len(v), v))))
+
+    print("SELF TEST")
+    ok = True
+    for name, passed in cases:
+        print("  %-52s %s" % (name, passed))
+        ok = ok and passed
+    print("  %s" % ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
+
+
 def main(argv):
+    if "--self-test" in argv:
+        rc = self_test()
+        if rc != 0:
+            return rc
+        print()
+        argv = [a for a in argv if a != "--self-test"]
     want = argv[0] if argv else None
     lines_for = make_source_lines()
     rows = list(csv.DictReader(open(MASTER, newline="")))

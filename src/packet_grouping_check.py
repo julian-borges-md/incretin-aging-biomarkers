@@ -68,7 +68,83 @@ def molecules_in(text):
     return {m for m in MOLECULES if m in low}
 
 
+def names_disjoint_studies(recs):
+    """True when two records of one packet name molecule sets that cannot belong to one study.
+
+    Extracted from main on 2026-10-19 so that the decision can be exercised on injected records. The
+    gate has reported no untriaged packet since the six known ones were written up, and a gate that
+    reports nothing has not thereby shown that it works. The self test below puts group 219, the case
+    this gate exists for, in front of it, together with the legitimate shapes it must not flag.
+
+    recs is a list of (source, title, molecules named in the title). A record whose title names no
+    molecule carries no evidence either way and is not compared: a registry entry titled by condition
+    rather than by drug is normal, and treating it as disjoint from everything would flag every
+    packet that contains one.
+    """
+    named = [r for r in recs if r[2]]
+    for i in range(len(named)):
+        for j in range(i + 1, len(named)):
+            if named[i][2].isdisjoint(named[j][2]):
+                return True
+    return False
+
+
+def self_test():
+    def rec(title):
+        return ("source", title, molecules_in(title))
+
+    cases = [
+        # The real case: group 219 bundled a liraglutide abstract with an unrelated exenatide one,
+        # and the second study left the review without being read.
+        ("two unrelated studies in one packet",
+         names_disjoint_studies([
+             rec("Title: Liraglutide for weight management in prediabetes, the SCALE 3 year results"),
+             rec("Title: Adipocytokine changes with exenatide, metformin and glibenclamide")]) is True),
+
+        # One study reported twice, which is what a packet is for.
+        ("one study reported in two records",
+         names_disjoint_studies([
+             rec("Title: Semaglutide 2.4 mg in obesity, the STEP 1 trial"),
+             rec("Title: Semaglutide and C reactive protein, a post hoc analysis of STEP 1")]) is False),
+
+        # A head to head trial names both molecules in both records.
+        ("a head to head trial naming both molecules",
+         names_disjoint_studies([
+             rec("Title: Tirzepatide versus semaglutide in type 2 diabetes"),
+             rec("Title: Tirzepatide versus semaglutide, body composition substudy")]) is False),
+
+        # A registry entry titled by condition names no molecule and must not flag the packet.
+        ("a record naming no molecule is not compared",
+         names_disjoint_studies([
+             rec("Title: A study of glycaemic control in adults with type 2 diabetes"),
+             rec("Title: Semaglutide in type 2 diabetes")]) is False),
+
+        # Three records where only one pair is disjoint is still a flag.
+        ("one disjoint pair among three records",
+         names_disjoint_studies([
+             rec("Title: Semaglutide in obesity"),
+             rec("Title: Semaglutide in obesity, extension"),
+             rec("Title: Dulaglutide and carotid intima media thickness")]) is True),
+
+        # An empty packet and a single record decide nothing.
+        ("a single record cannot be disjoint from itself",
+         names_disjoint_studies([rec("Title: Semaglutide in obesity")]) is False),
+    ]
+    print("SELF TEST")
+    ok = True
+    for name, passed in cases:
+        print("  %-46s %s" % (name, passed))
+        ok = ok and passed
+    print("  %s" % ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
+
+
 def main():
+    if "--self-test" in sys.argv[1:]:
+        rc = self_test()
+        if rc != 0:
+            sys.exit(rc)
+        print()
     status = {}
     titles = {}
     with open(LEDGER, newline="") as fh:
@@ -93,15 +169,7 @@ def main():
             m = TITLE.search(head)
             title = m.group(1).strip() if m else os.path.basename(p)
             recs.append((t["source"], title, molecules_in(title)))
-        named = [(s, ti, ms) for s, ti, ms in recs if ms]
-        if len(named) < 2:
-            continue
-        disjoint = False
-        for i in range(len(named)):
-            for j in range(i + 1, len(named)):
-                if named[i][2].isdisjoint(named[j][2]):
-                    disjoint = True
-        if disjoint:
+        if names_disjoint_studies(recs):
             flagged.append((g, status.get(g, "?"), recs))
     order = {"extracted": 0, "already_extracted": 1, "held_pending_decision": 2,
              "no_usable_contrast": 3, "excluded_at_extraction": 4}

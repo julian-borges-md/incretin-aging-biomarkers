@@ -76,8 +76,14 @@ def triaged_pairs():
     return out
 
 
-def main():
-    rows = list(csv.DictReader(open(MASTER, newline="")))
+def find_pairs(rows):
+    """Return (hard, soft), each a list of (trial_a, trial_b, marker, shared values, same n).
+
+    Extracted from main on 2026-10-19 so that the detection can be run on injected rows. A gate that
+    has reported nothing on every run has not thereby shown that it works, and this one has reported
+    no HARD pair since it was written; the self test below puts the defect in front of it, including
+    the real case that was found by reading rather than by this gate.
+    """
     by_marker = collections.defaultdict(list)
     for r in rows:
         by_marker[r["biomarker"]].append(r)
@@ -93,8 +99,9 @@ def main():
                       and (a.get("n_tx") or "").strip() not in ("", "NA"))
             rec = (a["trial_id"], b["trial_id"], marker, sorted(shared), same_n)
             (hard if (len(shared) >= 3 or same_n) else soft).append(rec)
-    done = triaged_pairs()
+
     seen = set()
+
     def dedupe(recs):
         out = []
         for t1, t2, mk, sh, sn in recs:
@@ -104,7 +111,78 @@ def main():
             seen.add(key)
             out.append((t1, t2, mk, sh, sn))
         return out
-    hard, soft = dedupe(hard), dedupe(soft)
+
+    return dedupe(hard), dedupe(soft), by_marker
+
+
+def row(trial, marker, **vals):
+    """A master row carrying only what this gate reads."""
+    r = {c: "" for c in FINGERPRINT_COLS}
+    r.update({"trial_id": trial, "biomarker": marker, "n_tx": "", "n_ctrl": ""})
+    r.update({k: str(v) for k, v in vals.items()})
+    return r
+
+
+def self_test():
+    cases = []
+
+    # The real case this gate was written for, found by reading and not by the gate: post treatment
+    # ALT means repeated to two decimals under two trial identifiers.
+    real = [row("TRIAL-2018", "ALT", final_mean_tx="39.82", final_mean_ctrl="51.48",
+                yi_reported="-11.66"),
+            row("TRIAL-2014", "ALT", final_mean_tx="39.82", final_mean_ctrl="51.48",
+                yi_reported="-11.66")]
+    h, s, _ = find_pairs(real)
+    cases.append(("three repeated values across two trials", len(h) == 1 and not s))
+
+    # Two values and the same n per arm is the other HARD route.
+    two_same_n = [row("A", "hsCRP", mean_tx="2.31", mean_ctrl="4.72", n_tx="40", n_ctrl="40"),
+                  row("B", "hsCRP", mean_tx="2.31", mean_ctrl="4.72", n_tx="40", n_ctrl="40")]
+    h, s, _ = find_pairs(two_same_n)
+    cases.append(("two repeated values with the same n per arm", len(h) == 1 and not s))
+
+    # Two values and a different n is SOFT, not HARD.
+    two_diff_n = [row("A", "hsCRP", mean_tx="2.31", mean_ctrl="4.72", n_tx="40", n_ctrl="40"),
+                  row("B", "hsCRP", mean_tx="2.31", mean_ctrl="4.72", n_tx="55", n_ctrl="52")]
+    h, s, _ = find_pairs(two_diff_n)
+    cases.append(("two repeated values with a different n is soft", not h and len(s) == 1))
+
+    # One trial legitimately repeats its own numbers across rows.
+    same_trial = [row("A", "hsCRP", mean_tx="2.31", mean_ctrl="4.72", yi_reported="-51.06"),
+                  row("A", "hsCRP", mean_tx="2.31", mean_ctrl="4.72", yi_reported="-51.06")]
+    h, s, _ = find_pairs(same_trial)
+    cases.append(("one trial repeating its own numbers is not a pair", not h and not s))
+
+    # Values too common to identify: integers and single significant digits are not fingerprints.
+    common = [row("A", "hsCRP", mean_tx="3", mean_ctrl="5", yi_reported="0.2"),
+              row("B", "hsCRP", mean_tx="3", mean_ctrl="5", yi_reported="0.2")]
+    h, s, _ = find_pairs(common)
+    cases.append(("integers and one digit values identify nothing", not h and not s))
+
+    # A different marker is a different group, however the numbers fall.
+    other_marker = [row("A", "hsCRP", mean_tx="2.31", mean_ctrl="4.72", yi_reported="-51.06"),
+                    row("B", "ALT", mean_tx="2.31", mean_ctrl="4.72", yi_reported="-51.06")]
+    h, s, _ = find_pairs(other_marker)
+    cases.append(("the same numbers under different markers do not pair", not h and not s))
+
+    print("SELF TEST")
+    ok = True
+    for name, passed in cases:
+        print("  %-52s %s" % (name, passed))
+        ok = ok and passed
+    print("  %s" % ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
+
+
+def main():
+    if "--self-test" in sys.argv[1:]:
+        rc = self_test()
+        if rc != 0:
+            sys.exit(rc)
+        print()
+    rows = list(csv.DictReader(open(MASTER, newline="")))
+    hard, soft, by_marker = find_pairs(rows)
+    done = triaged_pairs()
     untriaged = [h for h in hard if (h[0], h[1], h[2]) not in done]
     print(f"duplicate number check over {len(rows)} row(s) in {len(by_marker)} marker group(s)")
     print(f"  HARD pairs {len(hard)} ({len(hard) - len(untriaged)} triaged, {len(untriaged)} not)")

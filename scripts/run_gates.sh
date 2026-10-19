@@ -37,7 +37,19 @@ done
 # because a swapped arm leaves every number present, attached and self consistent. Each one fails
 # only on a case not yet written up in its triage document, so a new defect blocks the chain while
 # the known and judged ones do not.
-for g in packet_grouping_check extraction_attachment_check pvalue_reconcile duplicate_numbers_check; do
+# Three of these four now run with their self tests, added 2026-10-19. Gates ten, eleven and
+# thirteen had reported no untriaged case since the known ones were written up, which is the state a
+# gate is supposed to reach and also the state in which nobody can tell a working gate from a broken
+# one. Each self test injects the defect its gate exists for, group 219's bundled studies and the
+# repeated ALT means among them, and the legitimate shapes it must not flag. The twelfth, the p
+# value reconciler, reports a finding on every run and needs no such proof.
+for g in packet_grouping_check extraction_attachment_check duplicate_numbers_check; do
+  echo "== $g $(date +%H:%M:%S)" >> "$log"
+  python3 -I "src/$g.py" --self-test > "work/gate_$g.log" 2>&1; rc=$?
+  echo "exit $rc" >> "$log"
+  [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
+done
+for g in pvalue_reconcile; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" > "work/gate_$g.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"
