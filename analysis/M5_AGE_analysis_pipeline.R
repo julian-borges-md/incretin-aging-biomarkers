@@ -869,8 +869,22 @@ diagnostics <- purrr::map_dfr(biomarkers, function(bm) {
     d <- dplyr::filter(es_continuous, biomarker == bm, receptor_class == rc)
     if (nrow(d) < 3) return(NULL)
 
-    fit <- metafor::rma(yi, vi, data = d, method = "REML")
-    inf <- metafor::influence(fit)
+    # fit_rma rather than a bare rma call, for the same reason as the meta regression: one cell on
+    # which the prespecified estimator does not converge must not destroy the diagnostics for every
+    # other cell. A NULL means no estimator converged and the cell is skipped with that recorded.
+    fit <- fit_rma(NULL, d)
+    if (is.null(fit)) {
+      return(tibble::tibble(biomarker = bm, receptor_class = rc, k = nrow(d),
+                            n_influential = NA_integer_,
+                            influential_trials = "no estimator converged"))
+    }
+    # `metafor::influence` does not exist: influence() is the generic from stats and metafor supplies
+    # the influence.rma.uni method for it, so the namespaced call fails with "not an exported object"
+    # and halted the pipeline here the first time the diagnostics were ever reached. The generic is
+    # called instead. The protocol names leave one out as the influence analysis, and leave1out IS
+    # exported, so it carries the requirement; influence() adds metafor's own influential case flags
+    # on top and is wrapped because it is the optional part.
+    inf <- tryCatch(influence(fit), error = function(e) NULL)
     loo <- metafor::leave1out(fit)
 
     egger <- if (nrow(d) >= 10) {
@@ -888,8 +902,10 @@ diagnostics <- purrr::map_dfr(biomarkers, function(bm) {
       biomarker          = bm,
       receptor_class     = rc,
       k                  = nrow(d),
-      n_influential      = sum(inf$is.infl, na.rm = TRUE),
-      influential_trials = paste(d$trial_id[which(inf$is.infl)], collapse = "; "),
+      n_influential      = if (!is.null(inf)) sum(inf$is.infl, na.rm = TRUE) else NA_integer_,
+      influential_trials = if (!is.null(inf))
+                             paste(d$trial_id[which(inf$is.infl)], collapse = "; ")
+                           else "influence flags unavailable; leave one out range reported",
       loo_min            = min(loo$estimate, na.rm = TRUE),
       loo_max            = max(loo$estimate, na.rm = TRUE),
       egger_z            = egger$z,

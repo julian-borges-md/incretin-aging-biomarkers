@@ -1,0 +1,2 @@
+analysis,status,reason,placebo_rows,active_rows,distinct_comparators
+"network meta-analysis, class level and drug level",not run,"Comparators are not a single node: 217 placebo controlled rows against 240 active controlled rows over 36 distinct comparators. A connected network over the real comparators has not been established, and the method is not described as a network meta-analysis pending the registered title decision.",217,240,36

@@ -1,6 +1,6 @@
 comparison,status,n_shared,diff,ci_lb,ci_ub,p_two_sided
-GLP1_mono vs GLP1_GIP,computed,4,-13.599632677548126,-19.196038926492253,-8.00370887693859,0
-GLP1_mono vs GLP1_GCGR,computed,14,-4.180522746167059,-4.605134185356268,-3.759983761603112,0
+GLP1_mono vs GLP1_GIP,computed,4,-13.599632677548126,-19.17642811816649,-8.009084353577034,0
+GLP1_mono vs GLP1_GCGR,computed,14,-4.180522746167059,-4.602926494715646,-3.7734301474826557,0
 GLP1_mono vs GLP1_GIP_GCGR,insufficient_shared_biomarkers,0,NA,NA,NA,NA
 GLP1_GIP vs GLP1_GCGR,insufficient_shared_biomarkers,1,NA,NA,NA,NA
 GLP1_GIP vs GLP1_GIP_GCGR,insufficient_shared_biomarkers,0,NA,NA,NA,NA
