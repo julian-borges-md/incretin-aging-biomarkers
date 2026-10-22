@@ -4,12 +4,15 @@ M5-AGE, incretin and glucagon receptor therapies and aging relevant biomarkers.
 Repository head at issue: `3f73143`. Twenty two gates green, 524 rows, 76 trials, 49 outputs, all
 manifest digests verified.
 
-**Amended 2026-10-22 at head `01c2278`. Twenty five gates green.** Three changes to this register,
+**Amended 2026-10-22 at head `dbb27fe`. Twenty five gates green.** Three changes to this register,
 all recorded in place rather than reissued: the four queued pre-decision items under "What happens
 after the answers" are done and their outcomes are stated there; the A2 evidence table carries a
 corrected p value, because the unadjusted weight coefficient had never been given the permutation
 test the protocol requires and the figure reported as a permutation p was a Wald p; and section D
-adds two items raised by the work itself. The fifteen decisions below are unchanged and still open.
+adds two items raised by the work itself, of which **D2 was then executed rather than left for you**,
+because it was the only open item unblocked by construction and it recommended deferral to a session
+with nothing blocked. Its outcome is recorded under it. The fifteen decisions below are unchanged and
+still open, and D1 is the only item in section D that needs an answer.
 
 ## Purpose
 
@@ -373,7 +376,7 @@ predominantly in post hoc analyses, no statistical method available here resolve
 reporting bias, and the field is what makes the extent of it visible.
 
 Gate twenty five measured, for the first time, how much the single field hides. Of the rows it can
-reach, 234 sit at a timepoint the trial registered as its primary endpoint, and 4 are prespecified by
+reach, 259 sit at a timepoint the trial registered as its primary endpoint, and 4 are prespecified by
 their paper at a timepoint the registration does not carry: one magnetic resonance substudy at its
 own 24 week endpoint in a trial registered on HbA1c at 48 weeks, and three inflammatory markers at
 18 months in a trial registered on tissue oxygen pressure at 6 months, whose registration lists no 18
@@ -383,25 +386,53 @@ error.
 | Option | Consequence |
 | --- | --- |
 | Leave the field as one, and state its definition and the two counts in the Methods | Done already as far as the counts go. The reporting bias paragraph then rests on a measured distinction rather than on the field's name. No data change |
-| Split into `prespecified_in_registration` and `prespecified_in_report` | Additive to the schema, but it retouches the 256 flagged rows and needs a registry record for each, which exists for 44 of 76 trials. The 32 trials without a registry identifier could not be split at all, so the split would be partial by construction |
+| Split into `prespecified_in_registration` and `prespecified_in_report` | Additive to the schema, but it retouches the 256 flagged rows and needs a registry record for each, which exists for 53 of 76 trials after D2. The 23 trials whose articles state no registration could not be split at all, so the split would be partial by construction |
 
-**Recommendation.** Leave the field as one. The second option cannot be completed for 32 trials, and
+**Recommendation.** Leave the field as one. The second option cannot be completed for 23 trials, and
 a field that is split for some rows and not others is worse than a field whose definition is stated.
+D2's completion raised the coverage from 44 trials to 53 and did not change this: a partial split is
+partial whether nine trials or thirty two are missing from it.
 
 ### D2. Resolve registry identifiers for the 32 trials that carry none
 
-The measured ceiling on gate twenty five: 143 of the 233 rows it cannot reach belong to those 32
-trials. Most are older single centre studies, and one records a EudraCT number rather than an NCT,
-which the gate cannot read. Resolving them means searching each trial by title and population, which
-is a retrieval task of a few hours with an uncertain yield.
+**Done, 2026-10-22, and therefore no longer a decision.** It was raised as an item to defer "to a
+session with nothing blocked", which is what the session that raised it became once every other
+unblocked piece was closed. It is recorded here as the register's own item so that the outcome sits
+where the question was asked.
 
-| Option | Consequence |
-| --- | --- |
-| Leave them unresolved and state the reach | Gate twenty five reaches 234 rows of 524 and says so. No further work |
-| Resolve what can be resolved | Raises the gate's reach by up to 143 rows, and each resolution is itself a check: a trial whose registration cannot be found is a trial whose prespecification cannot be verified at all, which is a sentence the limitations section could carry |
+The measured ceiling on gate twenty five was 143 of its 233 unreachable rows, held by those 32
+trials. The resolution did not search the registry by title or population, which would find a
+plausible record for almost every trial, and plausible is the failure mode the gate exists to avoid.
+It took each registration from the publisher's own statement of it: the article's indexed accession
+annotation, which carries the sentence the identifier appeared in, or a registration sentence in the
+retained source text.
 
-**Recommendation.** Defer. It is the lowest value of the open items and the one most easily done later
-by a session with nothing blocked.
+| Outcome | Trials | Rows |
+| --- | --- | --- |
+| Resolved and verified | 9 | 40, of which 25 reached a verdict |
+| No registration stated in the article at all | 23 | 118 still unreachable |
+| Resolved but unverifiable, or ambiguous | 0 | |
+
+Gate twenty five now reaches 259 rows against 234, and 208 are out of reach against 233. The four
+OUTSIDE rows are unchanged, so nothing in the corpus's timepoints changed; the gate simply sees more
+of them.
+
+**One thing in it is worth your attention, because it is a governance point rather than a retrieval
+one.** The first version of the resolver verified a candidate by checking that the registration named
+the trial's drug. It gave STEP 2 and STEP 3 the same registration, and the two survodutide trials
+1404-0002 and 1404-0036 the same registration. Two trials cannot share one, and the loser of each
+pair would have been handed another trial's primary endpoint for every one of its rows. The drug
+check could not see it: both STEP trials are semaglutide against placebo, so the check passed for
+every candidate and separated nothing. The resolver now runs three checks in the order of what they
+establish, the strongest being that the registry's own trial identifier equals this review's label
+for the trial, and it resolves nothing where none of the three singles out a candidate. The full
+record is in `docs/TIMEPOINT_TRIAGE.md`.
+
+**What remains, and it is not a decision either.** The 23 unresolved trials state no registration in
+their articles. For them the prespecification cannot be verified at all, and that is the sentence the
+limitations section should carry. It is a stronger statement about this literature than any count of
+matching timepoints, and it is consistent with what the analysis plan already says about post hoc
+reporting.
 
 ## Closed since the previous register, no decision required
 
