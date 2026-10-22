@@ -5,14 +5,16 @@ Companion to `src/arm_attribution_check.py` and, since 22 October, to
 `python3 -I src/arm_attribution_check.py --self-test` and
 `python3 -I src/arm_header_attribution_check.py --self-test` from the repository root.
 
-**Status, amended 2026-10-22.** Both are now chain gates, twenty three and twenty four. Everything
-below the heading "Why the other 119 are unreadable" was written when the first gate stood alone and
-its reach of 3 rows did not justify a chain slot. The extension specified there has been built; it
-attributes 15 further rows, which took the pair to 18 of the 122 and the chain from twenty two gates
-to twenty four. The section "The extension, built 2026-10-22" records what it does, what it refuses,
-and the four false findings that building it produced and the guards that removed them. The earlier
-sections are left as written, because they are the record of a decision taken on the evidence then
-available.
+**Status, amended 2026-10-22.** Both are now chain gates, twenty three and twenty four, and the
+chain went from twenty two gates to twenty four. Everything below the heading "Why the other 119 are
+unreadable" was written when the first gate stood alone and its reach of 3 rows did not justify a
+chain slot. The extension specified there has been built and attributes 15 rows; building it also
+found and fixed a defect in the first gate's value locator, which took that gate from 3 rows to 8.
+The pair attributes 23 of the 122 derived rows and finds no swapped arm. The section "The extension,
+built 2026-10-22" records what the new gate does, what it refuses, the four false findings that
+building it produced and the guards that removed them, and the locator fix. The earlier sections are
+left as written where they are the record of a decision taken on the evidence then available, with
+the counts updated and both states shown where a count changed.
 
 ## The hole it was built for
 
@@ -45,12 +47,19 @@ two values it recorded.
 
 | Verdict | Rows | Meaning |
 | --- | --- | --- |
-| ALIGNED | 3 | the drug's name precedes the treatment value and the comparator's the control value |
+| ALIGNED | 8 | the drug's name precedes the treatment value and the comparator's the control value |
 | REVERSED | 0 | the opposite, which would be a swapped arm in the extraction |
-| UNCLEAR | 119 | no attribution available from the text |
+| UNCLEAR | 114 | no attribution available from the text |
 
-The self test swaps the arms of each ALIGNED row and the verdict flips to REVERSED on all three, so
+The self test swaps the arms of each ALIGNED row and the verdict flips to REVERSED on all eight, so
 the check does discriminate. No arm is reversed in any row it can read.
+
+**These were 3 and 119 until the locator was replaced on 22 October**, which is recorded in full
+under "A defect in the first gate" below. The string locator required the row's printed value to
+occur verbatim: a master value of `-4` did not match a source printing `-4.0`, and `+12.5` did not
+match `12.5`. Matching numbers rather than strings recovered five rows and, in the other direction,
+removed 25 rows from the same line reason into "the two values never share a line", because those
+25 had been matched on a digit inside another number.
 
 ## REVERSED rows
 
@@ -59,15 +68,31 @@ the check does discriminate. No arm is reversed in any row it can read.
 
 None.
 
-## The three rows it reads, with their evidence
+## The eight rows it reads, with their evidence
+
+The first three were the whole of its reach until 22 October; the last five arrived with the numeric
+locator. Each of the five was read against the row's own extraction notes to confirm that the
+sentence the gate matched is the source the row was taken from, or states the same values as it.
 
 | Trial | Marker | Line that attributes the values |
 | --- | --- | --- |
 | NCT01147627 Drum Tower MRS substudy | HbA1c | "...among three groups (exenatide delta = -2.9 +/- 0.4 % vs. insulin delta = -2.8 +/- 0.3 %..." |
 | NCT01147627 Drum Tower MRS substudy | TNF_alpha | "...significantly decreased plasma TNFalpha levels (exenatide delta = -62 +/- 19 %, P = 0.012; insulin delta = -60 +/- 17 %..." |
+| NCT01147627 Drum Tower MRS substudy | liver_fat_pdff | "...IHF significantly reduced with three treatments (exenatide delta = -68 %, insulin delta = -58 %, pioglit..." |
 | Dutour 2016 | liver_fat_pdff | "Exenatide induced significant reduction in EAT (-8.8+/-2.1%), and HTGC (-23.8+/-9.5%), compared to reference treated group, respectively (-1.2+/-1.6%... and +12.5+/-9.6%..." |
+| BELIEVE, semaglutide 2.4 mg | SBP | "...at week 48 (bimagrumab: -3.1 mmHg to -4.6 mmHg; semaglutide: -7.9 mmHg to -8.6 mmHg; combination: ...; placebo: -6.9 mmHg)" |
+| BELIEVE, semaglutide 1.0 mg | SBP | the same sentence, on the 1.0 mg value |
+| NCT04844918 SURMOUNT-J, 10 mg | hsCRP | "...at week 72 following tirzepatide 10 mg and 15 mg (-55.1% [4.7] and -65.3% [3.4], respectively) compared with placebo (-17.7% [8.0]..." |
+| NCT04844918 SURMOUNT-J, 15 mg | hsCRP | the same sentence, on the 15 mg value |
 
-A note on the third, because it cost a near miss. The capture holds that entire abstract as one line
+Three of the five sit in a sentence naming three or four arms, which the adjacent label rule handles
+correctly and the header order rule cannot: the name immediately to the left of a value attributes
+that value whatever else the sentence names. The BELIEVE rows were checked with particular care,
+because the sentence states a range for each arm and the extraction took its numbers from Table 2;
+the sentence's first value for each arm is the week 48 change the table reports, so the arm names in
+it are evidence for the assignment even though the numbers were read from the table.
+
+A note on the Dutour row, because it cost a near miss. The capture holds that entire abstract as one line
 of 1825 characters, and the first draft of the report printed the first 160 characters of the matching
 line as its evidence. That showed background prose beside a verdict drawn from text 1100 characters
 to the right, and on reading it the row looked like a false positive and was nearly discarded. The
@@ -77,12 +102,17 @@ trusted.
 
 ## Why the other 119 are unreadable, and why this is not wired into the chain
 
-| Reason | Rows |
-| --- | --- |
-| An arm name does not precede its value on the line | 80 |
-| The two values never share a line within 200 characters | 29 |
-| Both values are preceded by the same arm's name | 7 |
-| The two arms print the same value, so no attribution is possible | 3 |
+| Reason | Rows, as first measured | Rows, after the numeric locator |
+| --- | --- | --- |
+| An arm name does not precede its value on the line | 80 | 55 |
+| The two values never share a line within 200 characters | 29 | 50 |
+| Both values are preceded by the same arm's name | 7 | 6 |
+| The two arms print the same value, so no attribution is possible | 3 | 3 |
+
+The second column is the state since 22 October. The 25 rows that moved out of the first row of the
+table are rows whose two values appeared to share a line only because the string locator matched a
+digit inside another number; they share no line in fact. The first column is left in place because
+the paragraphs below, and the extension built from them, were reasoned from it.
 
 The 80 are the decisive group and they are not a tuning problem. They are table captures, where the
 line holds `marker  7.2 +/- 0.8  7.5 +/- 0.9` and the arm names live in a header line well above it.
@@ -153,7 +183,11 @@ arm named first owns the value that prints first.
 | --- | --- | --- | --- |
 | ALIGNED | 9 | 6 | 15 |
 | REVERSED | 0 | 0 | 0 |
-| UNCLEAR | | | 65 |
+| UNCLEAR | | | 40 |
+
+Scope is 55 rows, not the 80 of the first measurement, because the numeric locator moved 25 rows out
+of this gate's scope and into "the two values never share a line" above. All 15 attributions survived
+that change, so the gate's reach is unchanged in rows and higher as a fraction of what it examines.
 
 The self test injects a swapped pair into each of the 15 and the verdict flips on all 15, so the
 gate discriminates. The two provenance columns are not added together anywhere in the output, for
@@ -163,17 +197,17 @@ reproduces the capture. The 6 session rows are all Davies 2013.
 
 | Why a row is unclassifiable | Rows |
 | --- | --- |
-| One of the two values coincides with a dispersion or a count rather than a column value | 21 |
-| The two values are not adjacent columns on any line that carries both | 17 |
-| No retained line carries both values | 17 |
+| One of the two values coincides with a dispersion or a count rather than a column value | 15 |
+| The two values are not adjacent columns on any line that carries both | 14 |
 | The nearest line naming both arms names one of them more than once | 6 |
-| No line within 25 lines above the values names both arms | 3 |
+| No line within 25 lines above the values names both arms | 4 |
 | The nearest line naming both arms is prose rather than a row of column labels | 1 |
 
 ### The projection was wrong, and by how much
 
-This document projected that the extension would lift reach "from 3 rows to roughly 72 of 122". It
-reaches 18. The projection measured one thing, whether a header within 25 lines names both arms, and
+This document projected that the extension would lift reach "from 3 rows to roughly 72 of 122". The
+two gates reach 23: the header gate's 15 and, after the locator was replaced the same day, the
+adjacent gate's 8. The projection measured one thing, whether a header within 25 lines names both arms, and
 an order rule needs four more things to be true before it attributes anything. The first
 implementation, which measured only what the projection measured, reported **five REVERSED rows, and
 all five were artefacts of the rule rather than defects in the extraction.** Each is now a fixture in
@@ -187,27 +221,36 @@ the gate's self test.
 | Kelly 2012 triglycerides | Found while replacing the guard above. A length threshold of 110 characters admitted the paper's 101 character title, which names exenatide before metformin while the table prints metformin first, so the title inverted every verdict it attributed. Lowering the threshold to 90 then admitted a 78 character sentence that did the same | Length was the wrong test. The structural test above replaced it, and the row is now attributed from the real tab delimited header nine lines above it |
 | Several, silently | The first implementation chose the single line on which the two values sat closest together, which is the first gate's rule. A spuriously tight pair elsewhere in the same paper beats the true pair sixty characters apart | Every candidate is classified and they must agree. A disagreement is reported as unclassifiable, which is what an ambiguous attribution is |
 
-### A defect in the first gate, found by building the second, and not fixed here
+### A defect in the first gate, found by building the second, and resolved the same day
 
-`src/arm_attribution_check.py` locates a value as a **string**, and where the signed string misses it
-falls back to the unsigned one. On this corpus that fallback matches the row value -4 against the
+`src/arm_attribution_check.py` located a value as a **string**, and where the signed string missed it
+fell back to the unsigned one. On this corpus that fallback matches the row value -4 against the
 printed dispersion 4.5, because the digit 4 occurs in it standalone by the function's own test. The
-second gate therefore does not reuse that locator: it extracts numeric tokens with their positions
-and compares them as numbers, so 4.5 is the number 4.5 and nothing else.
+second gate could not reuse that locator and carried a numeric one of its own for the length of one
+commit: numeric tokens with their positions, compared as numbers, so 4.5 is the number 4.5 and
+nothing else.
 
-This is a divergence between two gates that should share one definition, and it is recorded rather
-than resolved. Changing the locator changes the first gate's output, which is in the record and in
-the Methods, so it is a numbered next action and not a side effect of building the second gate:
+Two gates differing in a definition they should share was recorded as a next action rather than
+fixed in the same pass, because the first gate's output was already in the commit record and in
+Methods 2.11. It was then done, in the next pass, in the order that record requires:
 
-| Next action | What it requires |
+| Step | Result |
 | --- | --- |
-| Port `arm_attribution_check` onto numeric token matching | Re-run both gates, confirm the three ALIGNED rows survive or record which do not and why, and update section 2.11 of the Methods if the count changes |
+| The locator moved into `arm_attribution_check`, which both gates now import | One definition, two callers, as the chain's standing rule requires |
+| Both gates rerun and their outputs compared against the previous run | The adjacent gate goes from 3 attributed rows to 8 and from 119 unclassifiable to 114. The header gate attributes the same 15 over a scope reduced from 80 rows to 55 |
+| The five new attributions read against their rows' extraction notes | All five genuine. Three sit in a sentence naming three or four arms, which the adjacent rule reads correctly; the two BELIEVE rows state in narrative the same week 48 values the extraction took from Table 2 |
+| Methods 2.11 updated | The paragraph now states 8 and 15 attributed of 122, 99 unattributable, and the six reasons with their counts over the header gate's 55 row scope |
+
+What the change did NOT do is report a new swapped arm. Both gates still find none, and the 25 rows
+that left the header gate's scope left it because their two values never shared a line in the first
+place.
 
 ### Why both now hold a chain slot
 
 The stated rule for this chain is that a gate people learn to ignore is worse than no gate, and 3 of
-122 did not clear it. Eighteen of 122 is still a minority, and the gate prints the reason for every
-row it cannot read, which is the form in which a partial reach is honest rather than misleading. What
-decides it is that the 18 are checked on every run rather than on the day someone remembers to look,
-and that both gates carry a self test that fails the chain if their discrimination stops working. The
-Methods state the 18 and the 104 explicitly, so the manuscript claims no more than this.
+122 did not clear it. Twenty three of 122 is still a minority, and each gate prints the reason for
+every row it cannot read, which is the form in which a partial reach is honest rather than
+misleading. What decides it is that the 23 are checked on every run rather than on the day someone
+remembers to look, and that both gates carry a self test that fails the chain if their discrimination
+stops working. The Methods state the 23 and the 99 explicitly, so the manuscript claims no more than
+this.

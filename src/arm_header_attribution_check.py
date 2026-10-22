@@ -119,6 +119,12 @@ _prov = _load("source_provenance")
 st = _arm.st
 arm_names = _arm.arm_names
 in_scope = _arm.in_scope
+# The numeric locator lives in the adjacent label gate and is imported here. It was written in this
+# file on 22 October, because that gate located a value as a string and the string locator cannot
+# serve this rule; the two were merged the same day, in that gate, where both now use it.
+numbers = _arm.numbers
+as_float = _arm.as_float
+TOL = _arm.TOL
 SESSION_CLASSES = _prov.SESSION
 INDEPENDENT_CLASSES = _prov.INDEPENDENT
 
@@ -128,41 +134,18 @@ PROVENANCE = os.path.join(ROOT, "analysis", "data", "source_provenance.csv")
 
 HEADER_LOOKBACK = 25     # lines above the value line; the reach the triage document measured
 CLUSTER_GAP = 12         # matches for one arm further apart than this are separate mentions
-TOL = 1e-9               # two printed numbers are the same number or they are not
 
 # The reason string the adjacent label gate returns for the rows this gate exists to reach. It is
 # compared rather than reimplemented, so that a change to that gate's wording shows up here as an
 # empty scope rather than as a silently different one.
 BLIND_SPOT = "an arm name does not precede its value on the line"
 
-# A signed decimal, optionally written with the word minus, not inside a word or a longer number.
-NUM = re.compile(r"(?<![A-Za-z0-9.])(minus\s+|[-+])?(\d+(?:\.\d+)?)(?![0-9.])", re.I)
 
 # What makes a number part of another number's cell rather than a column of its own: a dispersion
 # after a plus or minus sign, a count or an interval in brackets, a p value, an n, a percentage
 # after a comma. A number with none of these in front of it is a column.
 ATTACHED = re.compile(
     r"(?:±|\+/-|plus or minus|[(\[]|=|<|>|\bn\s*|\bSD\b|\bSE\b|\bCI\b|,)\s*$", re.I)
-
-
-def numbers(line):
-    """Every numeric token on a line as (start, value), in order of appearance."""
-    out = []
-    for m in NUM.finditer(line):
-        sign = (m.group(1) or "").strip().lower()
-        v = float(m.group(2))
-        if sign in ("minus", "-"):
-            v = -v
-        out.append((m.start(), v))
-    return out
-
-
-def as_float(s):
-    s = (s or "").strip().replace("−", "-")
-    try:
-        return float(s)
-    except ValueError:
-        return None
 
 
 def mentions(line, toks):

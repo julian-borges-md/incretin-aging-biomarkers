@@ -120,22 +120,27 @@ done
 # by construction.
 #
 # The adjacent label gate was written on 19 October and deliberately left out of this chain, on its
-# own measurement: it classifies 3 of the 122 and reports 119 unclassifiable, and a gate that
+# own measurement: it classified 3 of the 122 and reported 119 unclassifiable, and a gate that
 # prints 119 unknowns on every run is a green light that means almost nothing. The header order
-# gate is the extension docs/ARM_ATTRIBUTION_TRIAGE.md specified for the 80 rows whose arm names
-# sit in a table header rather than in front of the values. It classifies 15 of those 80 soundly,
-# which is far short of the 72 the document projected, because the projection counted headers that
-# name both arms and not the four conditions under which an order rule actually attributes: a
-# matched value must be a column value and not a dispersion, the two values must be adjacent
-# columns, the header must be a row of column labels and not prose, and every candidate line must
-# agree. The first version of that gate, without those conditions, reported five swapped arms and
-# all five were artefacts of the rule. The document records the measurement and the correction.
+# gate is the extension docs/ARM_ATTRIBUTION_TRIAGE.md specified for the rows whose arm names sit
+# in a table header rather than in front of the values. It classifies 15 of them soundly, which is
+# far short of the 72 the document projected, because the projection counted headers that name both
+# arms and not the four conditions under which an order rule actually attributes: a matched value
+# must be a column value and not a dispersion, the two values must be adjacent columns, the header
+# must be a row of column labels and not prose, and every candidate line must agree. The first
+# version of that gate, without those conditions, reported five swapped arms and all five were
+# artefacts of the rule. The document records the measurement and the correction.
 #
-# Together the pair classifies 18 of the 122, which is why both now hold a slot: the adjacent gate
-# alone did not justify one, and the extension changed the arithmetic. Both run with their self
-# tests, which inject a swap into every row each gate attributes, because neither reports a finding
-# on this corpus and a gate that reports nothing has not thereby shown that it works. The header
-# gate's self test also carries the four artefacts above as fixtures.
+# Building it also found that the adjacent gate located a value as a string, falling back to the
+# unsigned string, which matches the row value -4 against the printed dispersion 4.5. Both gates now
+# share one numeric locator, which took the adjacent gate from 3 attributed rows to 8 and moved 25
+# rows out of the header gate's scope whose values never shared a line to begin with.
+#
+# Together the pair classifies 23 of the 122, which is why both hold a slot: the adjacent gate alone
+# did not justify one, and the extension changed the arithmetic. Both run with their self tests,
+# which inject a swap into every row each gate attributes, because neither reports a finding on this
+# corpus and a gate that reports nothing has not thereby shown that it works. The header gate's self
+# test also carries the four artefacts above as fixtures.
 for g in arm_attribution_check arm_header_attribution_check; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" --self-test > "work/gate_$g.log" 2>&1; rc=$?

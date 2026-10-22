@@ -121,9 +121,41 @@ def arm_names(r):
     return d, c, ""
 
 
-def positions(line, num):
-    """Every standalone occurrence of a printed number on a line."""
-    return [m.start() for m in re.finditer(r"(?<![\d.])" + re.escape(num) + r"(?![\d])", line)]
+# A signed decimal, optionally written with the word minus, not inside a word or a longer number.
+# This gate located a value as a STRING until 22 October, and where the signed string missed it fell
+# back to the unsigned one. On this corpus that fallback matches the row value -4 against the printed
+# dispersion 4.5, because the digit 4 occurs in it standalone by the function's own test. A value is
+# now located as a NUMBER: the line's numeric tokens are extracted with their positions and compared
+# arithmetically, so 4.5 is the number 4.5 and nothing else. The header order gate, written on the
+# same day, could not reuse the string locator for exactly this reason and carried its own numeric
+# one for a commit; this is the merge, and the two gates share one locator again.
+NUM = re.compile(r"(?<![A-Za-z0-9.])(minus\s+|[-+])?(\d+(?:\.\d+)?)(?![0-9.])", re.I)
+TOL = 1e-9        # two printed numbers are the same number or they are not
+
+
+def numbers(line):
+    """Every numeric token on a line as (start, value), in order of appearance."""
+    out = []
+    for m in NUM.finditer(line):
+        sign = (m.group(1) or "").strip().lower()
+        v = float(m.group(2))
+        if sign in ("minus", "-"):
+            v = -v
+        out.append((m.start(), v))
+    return out
+
+
+def as_float(s):
+    s = (s or "").strip().replace("−", "-")
+    try:
+        return float(s)
+    except ValueError:
+        return None
+
+
+def positions(line, value):
+    """Every position on a line at which the given number is printed."""
+    return [at for at, v in numbers(line) if abs(v - value) <= TOL]
 
 
 def owner(line, at, drug, comp):
@@ -145,18 +177,20 @@ def owner(line, at, drug, comp):
 
 def classify(r, lines):
     """Return (verdict, detail). Verdicts: ALIGNED, REVERSED, UNCLEAR."""
-    tx, ct = st(r, "mean_tx").replace("−", "-"), st(r, "mean_ctrl").replace("−", "-")
-    if tx in ("", "NA") or ct in ("", "NA"):
+    tx, ct = as_float(st(r, "mean_tx")), as_float(st(r, "mean_ctrl"))
+    if tx is None or ct is None:
         return "UNCLEAR", "an arm value is absent"
-    if tx.lstrip("+-") == ct.lstrip("+-"):
+    # Compared as magnitudes, which is what the string test compared: two arms printing 4 and -4
+    # cannot be told apart by a number that appears twice, once per arm, in either order.
+    if abs(abs(tx) - abs(ct)) <= TOL:
         return "UNCLEAR", "the two arms print the same value, so no attribution is possible"
     drug, comp, why = arm_names(r)
     if why:
         return "UNCLEAR", why
     best = None
     for ln in lines:
-        p_tx = positions(ln, tx) or positions(ln, tx.lstrip("+-"))
-        p_ct = positions(ln, ct) or positions(ln, ct.lstrip("+-"))
+        p_tx = positions(ln, tx)
+        p_ct = positions(ln, ct)
         if not p_tx or not p_ct:
             continue
         for a in p_tx:
