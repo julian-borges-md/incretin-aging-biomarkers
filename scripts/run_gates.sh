@@ -19,10 +19,21 @@ for g in verify selftest validate_pipeline build_master harmonise_units pool_bio
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
 done
-for m in manuscript/RESULTS_*.md; do
+# Extended 2026-10-22 from manuscript/RESULTS_*.md to every manuscript file, and from prose to
+# table rows. A pooled quantity written into a table cell was invisible to this gate, because it
+# read prose only: the Discussion's summary table of the unfavourable axis cited five markers with
+# their estimates and intervals and no gate read any of them. A table is where a number is most
+# likely to be copied by hand and least likely to be reread. The self test runs first, because the
+# table pass misfired twice while being written, once on the receptor class tables and once on the
+# correlation sensitivity table, and both counterexamples are now in it.
+echo "== results_numbers_check --self-test $(date +%H:%M:%S)" >> "$log"
+python3 -I src/results_numbers_check.py --self-test > "work/gate_results_numbers_check.log" 2>&1; rc=$?
+echo "exit $rc" >> "$log"
+[ $rc -ne 0 ] && { echo "GATE FAILED: results_numbers_check self test (see work/gate_results_numbers_check.log)" >> "$log"; exit $rc; }
+for m in manuscript/*.md; do
   [ -e "$m" ] || continue
   echo "== results_numbers_check $m $(date +%H:%M:%S)" >> "$log"
-  python3 -I src/results_numbers_check.py "$m" > "work/gate_results_numbers_check.log" 2>&1; rc=$?
+  python3 -I src/results_numbers_check.py "$m" >> "work/gate_results_numbers_check.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: results_numbers_check $m (see work/gate_results_numbers_check.log)" >> "$log"; exit $rc; }
 done

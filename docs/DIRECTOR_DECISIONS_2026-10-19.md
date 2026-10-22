@@ -351,6 +351,7 @@ that run, independent of your answers:
 | Move the composite inclusion rule into one data file both scripts read | It is currently read out of `src/compute_composite.R` by the pipeline, which is one declaration read in two places rather than two declarations, but a shared file is the correct end state |
 | Hoist the inventory join out of `compute_nbais` | About 180,000 joins per run; the bootstrap phase costs eight of the twenty minutes |
 | Funnel panel, if C3 is approved | |
+| Set the inventory display name for BMD to Bone mineral density | `table1_name` is the abbreviation, so Table 1 and every manuscript table that uses the inventory's own names print BMD. Changing it regenerates Table 1, which the manifest gate ties to a pipeline run |
 
 Then the writing sequence, in order: Abstract results and conclusions, Discussion 4.1 and 4.2,
 Discussion 4.3 and 4.4 under the A2 answer, Section 5, title page under the A1 answer. Discussion 4.5

@@ -21,6 +21,7 @@ ABSENT however complete the text once was.
 | 1. Introduction | `INTRODUCTION_2026-10-19.md` | Rewritten from the repository, 1393 words |
 | 2.1 to 2.12 Methods, including the deviation register | `METHODS_2026-10-16.md` | Complete, 2.11 extended on 19 October to the twenty one gate chain |
 | 3. Results narrative | `RESULTS_2026-10-16.md` | Written against the 16 October pooling; numbers need the 19 October rerun reconciled through `src/results_numbers_check.py` |
+| 4.5 to 4.9 Discussion | `DISCUSSION_4.5_to_4.9_2026-10-22.md` | Drafted 22 October: the unfavourable axis, the hallmark framing and what it costs, the normalisation framework, geroscience trial design, and the triple agonist case. These five depend on none of the fifteen open decisions |
 | 4.10 Strengths and limitations | `DISCUSSION_4.10_limitations_2026-10-19.md` | Rewritten from the provenance record, 1675 words |
 | Tables 2 to 7 | `TABLES_2_to_7_2026-10-16.md` | Populated; Table 7 records that the network analysis was not run and why |
 | Table 1, the biomarker inventory | `analysis/output/table1_biomarker_inventory.md` | Generated, 36 entries over 14 hallmark domains |
@@ -36,7 +37,7 @@ ABSENT however complete the text once was.
 | Abstract: Results and Conclusions | The pooled numbers, which now exist, and the Director's H1 reporting decision |
 | 4.1 Summary of findings | The Results reconciliation and the H1 decision |
 | 4.2 Favourable to unfavourable ratio | Same |
-| 4.3 to 4.9 | Rewriting from the repository. The earlier text is not on disk. Three of these sections rested on claims that have since been withdrawn and may not be reinstated without new data: the retatrutide hepatic plateau, the GDF-15 class differential, and the answerability of Q2 |
+| 4.3 and 4.4 | Rewriting from the repository, after the A2 answer. 4.5 to 4.9 were drafted on 22 October. Three of these sections rested on claims that have since been withdrawn and may not be reinstated without new data: the retatrutide hepatic plateau, the GDF-15 class differential, and the answerability of Q2. The plateau is stated as withdrawn, with the arithmetic, in 4.9 |
 | 5. Conclusions | The Results and the Director's decisions |
 | Anchor reference list, 29 items | `docs/REFERENCES.md` exists and two of its annotations assert withdrawn claims; the list needs the same identifier check the 76 included studies have had |
 
