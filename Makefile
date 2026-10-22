@@ -6,6 +6,7 @@
 #   make validate   prove the statistics recover known truth on simulated data
 #   make gates      run the full twenty four gate provenance chain
 #   make analysis   run the full pipeline (needs analysis/data/extraction_master.csv)
+#   make table1     regenerate Table 1 from the biomarker inventory (the chain only checks it)
 #   make manifest   rehash analysis/output into MANIFEST.csv without a full run
 #   make pin        record the exact package versions this run used
 #   make clean      remove generated artefacts
@@ -15,7 +16,7 @@
 
 RS := Rscript
 
-.PHONY: install pin gates verify selftest validate extract analysis manifest clean
+.PHONY: install pin gates verify selftest validate extract analysis table1 manifest clean
 
 install:
 	$(RS) requirements.R
@@ -46,9 +47,15 @@ extract:
 analysis:
 	$(RS) analysis/M5_AGE_analysis_pipeline.R
 
+# Regenerate Table 1 from analysis/data/biomarker_inventory.csv joined to the harmonised master.
+# The chain only CHECKS this table (gate seventeen, --check), so regenerating it after an inventory
+# change is a deliberate step and is followed by `make manifest`.
+table1:
+	python3 -I src/table1_inventory.py
+
 # Rehash analysis/output without rerunning the pipeline. Needed when a generator other than the
-# pipeline rewrites an output, which gate seventeen does to Table 1 on every chain run. See the
-# header of src/write_manifest.R for why this does not weaken the manifest gate.
+# pipeline rewrites an output, which `make table1` does. See the header of src/write_manifest.R for
+# why this does not weaken the manifest gate.
 manifest:
 	$(RS) src/write_manifest.R
 

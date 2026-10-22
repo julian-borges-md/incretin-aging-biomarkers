@@ -102,12 +102,24 @@ echo "exit $rc" >> "$log"
 # Four run with their self tests, for the same reason gate fourteen does: a gate that reports
 # nothing has not thereby shown that it works. The three self tests inject the defects these gates
 # were written for, including the one that prompted each.
-for g in prisma_check table1_inventory table2_reproduction_check; do
+for g in prisma_check table2_reproduction_check; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" > "work/gate_$g.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
 done
+# Gate seventeen runs in --check mode, added 2026-10-22. It generates Table 1 from the biomarker
+# inventory joined to the harmonised master, and this chain ran it in its writing mode, so the gate
+# REGENERATED the artefact it was supposed to verify. A chain that writes to what it verifies cannot
+# fail on it. Nothing had gone wrong, because the table is a deterministic function of two tracked
+# inputs, but the gate established nothing, and it had one visible consequence: a display name
+# change in the inventory left the result manifest describing a Table 1 that no longer existed, and
+# the manifest gate failed on a file this one had correctly rewritten. Regeneration is now a
+# deliberate step, `make table1` followed by `make manifest`, and the chain compares.
+echo "== table1_inventory --check $(date +%H:%M:%S)" >> "$log"
+python3 -I src/table1_inventory.py --check > "work/gate_table1_inventory.log" 2>&1; rc=$?
+echo "exit $rc" >> "$log"
+[ $rc -ne 0 ] && { echo "GATE FAILED: table1_inventory (see work/gate_table1_inventory.log)" >> "$log"; exit $rc; }
 for g in composite_interval_check citation_record_check figure_check manifest_check; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" --self-test > "work/gate_$g.log" 2>&1; rc=$?
