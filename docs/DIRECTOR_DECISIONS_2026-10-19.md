@@ -4,6 +4,13 @@ M5-AGE, incretin and glucagon receptor therapies and aging relevant biomarkers.
 Repository head at issue: `3f73143`. Twenty two gates green, 524 rows, 76 trials, 49 outputs, all
 manifest digests verified.
 
+**Amended 2026-10-22 at head `01c2278`. Twenty five gates green.** Three changes to this register,
+all recorded in place rather than reissued: the four queued pre-decision items under "What happens
+after the answers" are done and their outcomes are stated there; the A2 evidence table carries a
+corrected p value, because the unadjusted weight coefficient had never been given the permutation
+test the protocol requires and the figure reported as a permutation p was a Wald p; and section D
+adds two items raised by the work itself. The fifteen decisions below are unchanged and still open.
+
 ## Purpose
 
 Every remaining piece of the manuscript is blocked on one of the fifteen decisions below. They were
@@ -350,6 +357,51 @@ ten or more, which is the threshold at which a funnel plot is informative.
 
 **Recommendation.** Include as a supplementary figure. The diagnostics exist; drawing them costs one
 pipeline section and removes a predictable reviewer request.
+
+## D. Raised 2026-10-22, by work done while the register was open
+
+Two items, both small, both from gate twenty five. Neither blocks any manuscript section; both are
+recorded because they are schema or retrieval decisions rather than analytical ones and the
+alternative is that a future session re-derives them.
+
+### D1. Should `prespecified_endpoint` be split into registration and report
+
+The field is TRUE when **the paper or its registration** names the biomarker as a prespecified
+endpoint, which is the definition in `docs/EXTRACTION_BRIEF.md`, and
+`prespecification/analysis_plan.md` says why it exists: aging biomarkers in this literature appear
+predominantly in post hoc analyses, no statistical method available here resolves the resulting
+reporting bias, and the field is what makes the extent of it visible.
+
+Gate twenty five measured, for the first time, how much the single field hides. Of the rows it can
+reach, 234 sit at a timepoint the trial registered as its primary endpoint, and 4 are prespecified by
+their paper at a timepoint the registration does not carry: one magnetic resonance substudy at its
+own 24 week endpoint in a trial registered on HbA1c at 48 weeks, and three inflammatory markers at
+18 months in a trial registered on tissue oxygen pressure at 6 months, whose registration lists no 18
+month outcome at all. All four are judged in `docs/TIMEPOINT_TRIAGE.md` and none is an extraction
+error.
+
+| Option | Consequence |
+| --- | --- |
+| Leave the field as one, and state its definition and the two counts in the Methods | Done already as far as the counts go. The reporting bias paragraph then rests on a measured distinction rather than on the field's name. No data change |
+| Split into `prespecified_in_registration` and `prespecified_in_report` | Additive to the schema, but it retouches the 256 flagged rows and needs a registry record for each, which exists for 44 of 76 trials. The 32 trials without a registry identifier could not be split at all, so the split would be partial by construction |
+
+**Recommendation.** Leave the field as one. The second option cannot be completed for 32 trials, and
+a field that is split for some rows and not others is worse than a field whose definition is stated.
+
+### D2. Resolve registry identifiers for the 32 trials that carry none
+
+The measured ceiling on gate twenty five: 143 of the 233 rows it cannot reach belong to those 32
+trials. Most are older single centre studies, and one records a EudraCT number rather than an NCT,
+which the gate cannot read. Resolving them means searching each trial by title and population, which
+is a retrieval task of a few hours with an uncertain yield.
+
+| Option | Consequence |
+| --- | --- |
+| Leave them unresolved and state the reach | Gate twenty five reaches 234 rows of 524 and says so. No further work |
+| Resolve what can be resolved | Raises the gate's reach by up to 143 rows, and each resolution is itself a check: a trial whose registration cannot be found is a trial whose prespecification cannot be verified at all, which is a sentence the limitations section could carry |
+
+**Recommendation.** Defer. It is the lowest value of the open items and the one most easily done later
+by a session with nothing blocked.
 
 ## Closed since the previous register, no decision required
 
