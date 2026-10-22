@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Twenty four gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
+# Twenty five gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
 #
 # This file is the tracked copy and the one to edit. The chain lived at work/run_gates.sh until
 # 16 October, where the gitignore keeps it out of version control: the script that validates the
@@ -159,4 +159,23 @@ for g in arm_attribution_check arm_header_attribution_check; do
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
 done
+# Gate twenty five, added 2026-10-22, is the last candidate from version 1.1 of the chain document
+# and the only one of the three it listed that was not struck. It asks, for a row the review marks
+# as the trial's prespecified endpoint, whether the timepoint it was read at is the timepoint the
+# trial REGISTERED as its primary endpoint. An unflagged row carries no expectation and gets no
+# verdict, because a week 24 reading in a week 48 trial is a fact about the paper.
+#
+# Its reach was measured twice. Against the registry records already on disk it reached 5 rows of
+# 524, and that number was a retrieval gap rather than a property of the data: those 38 records came
+# from the screening pool and exactly one was for an included trial. src/corpus_registry_harvest.py
+# retrieves the records of the corpus, and the reach is 291 rows, of which 234 reach a verdict.
+#
+# It reads work/fulltext/registry_corpus/, which is gitignored like every other retrieved source, so
+# a clone must run that harvester once before this gate can say anything. Its self test fails rather
+# than passes when the records are absent, because with nothing to compare it would otherwise report
+# a green light for a check it did not perform; the failure names the command.
+echo "== timepoint_check $(date +%H:%M:%S)" >> "$log"
+python3 -I src/timepoint_check.py --self-test > "work/gate_timepoint_check.log" 2>&1; rc=$?
+echo "exit $rc" >> "$log"
+[ $rc -ne 0 ] && { echo "GATE FAILED: timepoint_check (see work/gate_timepoint_check.log)" >> "$log"; exit $rc; }
 echo "ALL DONE $(date +%H:%M:%S)" >> "$log"

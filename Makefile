@@ -4,7 +4,7 @@
 #   make verify     run the integrity gates on the extraction contract
 #   make selftest   prove that verify fails on perturbed input
 #   make validate   prove the statistics recover known truth on simulated data
-#   make gates      run the full twenty four gate provenance chain
+#   make gates      run the full twenty five gate provenance chain
 #   make analysis   run the full pipeline (needs analysis/data/extraction_master.csv)
 #   make table1     regenerate Table 1 from the biomarker inventory (the chain only checks it)
 #   make manifest   rehash analysis/output into MANIFEST.csv without a full run
@@ -27,7 +27,7 @@ install:
 pin:
 	$(RS) src/pin_environment.R
 
-# The full provenance chain, twenty four gates. It was reachable only as scripts/run_gates.sh, so the
+# The full provenance chain, twenty five gates. It was reachable only as scripts/run_gates.sh, so the
 # one command that validates the whole pipeline was the one command the Makefile did not offer.
 gates:
 	bash scripts/run_gates.sh

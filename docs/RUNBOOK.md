@@ -23,6 +23,14 @@ make selftest
 
 Both run without data and without network access. `verify` checks that the code still implements the protocol; `selftest` proves `verify` can fail. If either fails on a clean checkout, the repository is internally inconsistent and nothing downstream should be trusted.
 
+The full chain, `make gates`, reads retrieved sources under `work/`, which the gitignore keeps out of version control because they are licensed text. Two of its twenty five gates therefore need a retrieval step first on a clean clone:
+
+```
+python3 -I src/corpus_registry_harvest.py
+```
+
+retrieves the ClinicalTrials.gov record of every included trial that carries a registry identifier, 44 of 76, into `work/fulltext/registry_corpus/`. Gate twenty five, the timepoint check, reads them; without them its self test fails rather than passing, because a check with nothing to compare would otherwise report a green light for work it did not do. The packet texts gates eleven to twenty four read are rebuilt by the extraction retrieval scripts, which `docs/EXTRACTION_BRIEF.md` documents.
+
 ## 3. Extraction
 
 This is the step that is not yet done, and it is the only remaining blocker on the Results.
