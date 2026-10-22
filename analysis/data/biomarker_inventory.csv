@@ -22,7 +22,7 @@ TC,20,Total cholesterol,lipid_aging,-1,2,provisional_2026-10-16,table1,no,contin
 lean_mass,21,Total lean mass,musculoskeletal_aging,1,4,provisional_2026-10-16,table1,yes,continuous,lean_mass,the unfavourable axis; DXA or MRI; kg or percent of baseline; record the method
 body_fat_pct,22,Body fat percentage,adipose_senescence,-1,2,provisional_2026-10-16,table1,no,continuous,body_fat,DXA or BIA; record the method
 VAT,23,Visceral adipose tissue,adipose_senescence,-1,3,provisional_2026-10-16,table1,no,continuous,vat,MRI or DXA; record the method
-BMD,24,BMD,musculoskeletal_aging,1,3,provisional_2026-10-16,table1,no,continuous,bmd,DXA; site recorded in notes
+BMD,24,Bone mineral density,musculoskeletal_aging,1,3,provisional_2026-10-16,table1,no,continuous,bmd,DXA; site recorded in notes
 eGFR,25,eGFR,renal_aging,1,3,provisional_2026-10-16,table1,no,continuous,egfr,mL/min/1.73 m2; equation in notes
 resting_heart_rate,26,Resting heart rate,autonomic_aging,-1,3,provisional_2026-10-16,table1,no,continuous,heart_rate,bpm; increase is the unfavourable direction
 NTproBNP,,NT-proBNP,cardiac_aging,-1,2,prespecified,opportunistic_pre_amendment,yes,continuous,ntprobnp,retained in the composite because the drug does not move it

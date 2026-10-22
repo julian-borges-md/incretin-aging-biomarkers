@@ -187,12 +187,20 @@ if (cov_wald >= cov_hksj) {
 
 message("\nTEST 3  Composite invariance to biomarker coverage")
 
+# aging_direction and clinical_weight are columns of the frame compute_nbais is handed. They were
+# joined inside compute_nbais from a global `dat` until 22 October, and this file supplied a
+# minimal `dat` to satisfy that join; the join was hoisted out of the function so that it runs once
+# per frame instead of once per bootstrap replicate, and the columns are now stated here directly.
+# This is the clearer contract for a validator as well: the test says what direction each synthetic
+# marker has, in the same place it says what effect it has.
 make_class <- function(n_markers, effect, se) {
   tibble(
-    biomarker      = sprintf("bm%02d", seq_len(n_markers)),
-    estimate       = effect,
-    se             = se,
-    receptor_class = "X"
+    biomarker       = sprintf("bm%02d", seq_len(n_markers)),
+    estimate        = effect,
+    se              = se,
+    receptor_class  = "X",
+    aging_direction = 1,
+    clinical_weight = 1
   )
 }
 
@@ -201,14 +209,6 @@ SE     <- 0.08
 
 wide   <- make_class(16, EFFECT, SE)
 narrow <- make_class(7,  EFFECT, SE)
-
-# compute_nbais joins direction and clinical weight from `dat`, so a minimal
-# `dat` is supplied here covering exactly these biomarkers.
-dat <- tibble(
-  biomarker       = sprintf("bm%02d", seq_len(16)),
-  aging_direction = 1,
-  clinical_weight = 1
-)
 
 # The admitted marker set is passed explicitly. compute_nbais gained a filter on 19 October, when
 # the per class composite was found to be averaging every marker that pooled rather than the eleven
@@ -262,14 +262,10 @@ ok(sprintf("the rejected weighted sum would have inflated %.2f fold",
 message("\nTEST 4  Direction handling for the unfavorable axis")
 
 mixed <- tibble(
-  biomarker      = c("hsCRP", "adiponectin", "lean_mass"),
-  estimate       = c(-0.40,    0.30,          -0.50),
-  se             = c( 0.08,    0.08,           0.08),
-  receptor_class = "X"
-)
-
-dat <- tibble(
   biomarker       = c("hsCRP", "adiponectin", "lean_mass"),
+  estimate        = c(-0.40,    0.30,          -0.50),
+  se              = c( 0.08,    0.08,           0.08),
+  receptor_class  = "X",
   aging_direction = c(-1,       1,             1),
   clinical_weight = 1
 )
@@ -301,10 +297,12 @@ ok("composite matches the hand calculation exactly")
 # two was negative, and no test caught it because every biomarker extracted
 # up to that point was lower-is-better, making the inversion uniform.
 fell_good <- compute_nbais(
-  tibble(biomarker = "hsCRP", estimate = -0.40, se = 0.08, receptor_class = "X"),
+  tibble(biomarker = "hsCRP", estimate = -0.40, se = 0.08, receptor_class = "X",
+         aging_direction = -1, clinical_weight = 1),
   "inverse_variance", included = "hsCRP")
 rose_good <- compute_nbais(
-  tibble(biomarker = "adiponectin", estimate = 0.30, se = 0.08, receptor_class = "X"),
+  tibble(biomarker = "adiponectin", estimate = 0.30, se = 0.08, receptor_class = "X",
+         aging_direction = 1, clinical_weight = 1),
   "inverse_variance", included = "adiponectin")
 
 message(sprintf("\n  lower-is-better marker falling   %+.3f", fell_good))
@@ -325,10 +323,12 @@ ok("a higher-is-better biomarker that rose scores favorably")
 # A large enough unfavorable axis must be able to drag the composite negative.
 # If it cannot, the metric cannot express the clinical concern that motivates it.
 dominant <- tibble(
-  biomarker      = c("hsCRP", "adiponectin", "lean_mass"),
-  estimate       = c(-0.10,    0.10,          -2.00),
-  se             = c( 0.08,    0.08,           0.08),
-  receptor_class = "X"
+  biomarker       = c("hsCRP", "adiponectin", "lean_mass"),
+  estimate        = c(-0.10,    0.10,          -2.00),
+  se              = c( 0.08,    0.08,           0.08),
+  receptor_class  = "X",
+  aging_direction = c(-1,       1,             1),
+  clinical_weight = 1
 )
 score_dom <- compute_nbais(dominant, "inverse_variance", included = dominant$biomarker)
 message(sprintf("  with a dominant unfavorable axis   %.6f", score_dom))

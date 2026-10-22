@@ -447,6 +447,15 @@ run_weight_adjusted_metareg <- function(bm, n_perm = 10000) {
 
   perm_adj <- tryCatch(metafor::permutest(m_adj, iter = n_perm, seed = 20261013),
                        error = function(e) NULL)
+  # The weight only model gets its own permutation test so that the unadjusted weight coefficient
+  # can be reported with the inference the protocol requires rather than with a Wald p value. Until
+  # 22 October only the adjusted coefficient was written out, under the name beta_weight, directly
+  # beside R2_weight_only; a reader comparing the two would have read the adjusted slope as the
+  # slope of the weight only model whose R2 sits next to it. For liver fat those two quantities
+  # have opposite signs, which is the discrepancy decision A2 turns on, so both are now named and
+  # both are reported.
+  perm_weight <- tryCatch(metafor::permutest(m_weight, iter = n_perm, seed = 20261013),
+                          error = function(e) NULL)
 
   # Proportion of between-study variance explained, relative to intercept only.
   m_null <- fit_rma(NULL, d)
@@ -465,19 +474,30 @@ run_weight_adjusted_metareg <- function(bm, n_perm = 10000) {
     tau2_class_only    = m_class$tau2,
     tau2_adjusted      = m_adj$tau2,
     R2_weight_only     = max(0, (m_null$tau2 - m_weight$tau2) / m_null$tau2) * 100,
+    # The weight coefficient of the weight only model, which is the model R2_weight_only measures.
+    beta_weight_unadjusted = as.numeric(m_weight$b["pct_weight_change", ]),
+    se_weight_unadjusted   = m_weight$se[which(rownames(m_weight$b) == "pct_weight_change")],
+    p_weight_perm_unadjusted = if (!is.null(perm_weight))
+                                 perm_weight$pval[
+                                   which(rownames(m_weight$b) == "pct_weight_change")]
+                               else NA_real_,
     R2_class_only      = max(0, (m_null$tau2 - m_class$tau2) / m_null$tau2) * 100,
     R2_adjusted        = r2_adj,
-    beta_weight        = as.numeric(m_adj$b["pct_weight_change", ]),
-    se_weight          = m_adj$se[which(rownames(m_adj$b) == "pct_weight_change")],
+    # The weight coefficient of the adjusted model, which is the model R2_adjusted measures and
+    # the model whose receptor class coefficients the manuscript reports. These three columns were
+    # named beta_weight, se_weight and p_weight_perm until 22 October; the names carried no model.
+    beta_weight_adjusted = as.numeric(m_adj$b["pct_weight_change", ]),
+    se_weight_adjusted   = m_adj$se[which(rownames(m_adj$b) == "pct_weight_change")],
     # Permutation inference is the protocol's reported p value. Where the permutation test itself
     # cannot run, the field is left empty rather than quietly filled with the Wald p value, which
     # the plan rejects as anticonservative at these sample sizes.
-    p_weight_perm      = if (!is.null(perm_adj))
-                           perm_adj$pval[which(rownames(m_adj$b) == "pct_weight_change")]
-                         else NA_real_,
+    p_weight_perm_adjusted = if (!is.null(perm_adj))
+                               perm_adj$pval[which(rownames(m_adj$b) == "pct_weight_change")]
+                             else NA_real_,
     QM_adjusted        = m_adj$QM,
     QM_p_perm          = if (!is.null(perm_adj)) perm_adj$QMp else NA_real_,
     permutation_run    = !is.null(perm_adj),
+    permutation_run_weight_only = !is.null(perm_weight),
     I2_residual        = m_adj$I2,
     # The interaction model is only reported as fitted when its interaction terms SURVIVED. At these
     # sample sizes metafor routinely drops them as redundant and returns a model whose moderator
@@ -580,32 +600,37 @@ readr::write_csv(dplyr::filter(metareg_results, biomarker %in% hepatic_biomarker
 # figure built from it would have presented exactly the quantity the prespecification forbids, under
 # the name the prespecification gives the compliant one.
 #
-# The marker set is read from src/compute_composite.R, where it is declared, rather than restated
-# here. A rule stated twice is the defect that has bitten this repository three times, and this is
-# the same rule. Reading a declaration out of a sibling script is the pattern src/verify.R already
-# uses for CONTINUOUS_TYPES and src/pin_environment.R for the package set. The right end state is
-# one declaration in a data file that both scripts read; that is recorded as a next action rather
-# than done here, because moving it touches a gate script in the same pass as a statistical change.
+# The marker set is read from analysis/data/nbais_inclusion_set.csv, the single declaration of
+# prespecification/nbais_inclusion_rule.md in the repository, which src/compute_composite.R reads
+# from the same file. A rule stated twice is the defect that has bitten this repository three times,
+# and this is the same rule. Between 19 and 22 October this pipeline parsed the literal vector out
+# of src/compute_composite.R, which kept one declaration but made a statistical script depend on the
+# source text of another; the data file is the end state that was recorded as a next action then and
+# is now in place. The file carries each marker's hallmark domain, surrogacy grade and the reason it
+# is retained, so the rule and its justification travel together and neither script restates either.
 
-read_included_markers <- function(path = "src/compute_composite.R") {
-  src <- readLines(path, warn = FALSE)
-  start <- grep("^INCLUDED <- c\\(", src)
-  if (length(start) != 1) {
-    stop("could not find exactly one INCLUDED declaration in ", path,
-         "; the composite inclusion rule must be readable from where it is declared",
+NBAIS_INCLUSION_SET <- "analysis/data/nbais_inclusion_set.csv"
+
+read_included_markers <- function(path = NBAIS_INCLUSION_SET) {
+  if (!file.exists(path)) {
+    stop("the composite inclusion set is missing at ", path,
+         "; the rule in prespecification/nbais_inclusion_rule.md is declared there and nowhere else",
          call. = FALSE)
   }
-  i <- start
-  txt <- character(0)
-  repeat {
-    txt <- c(txt, src[i])
-    if (grepl("\\)\\s*$", src[i])) break
-    i <- i + 1
-    if (i > length(src)) stop("unterminated INCLUDED declaration in ", path, call. = FALSE)
+  tbl <- readr::read_csv(path, show_col_types = FALSE, progress = FALSE)
+  if (!"biomarker" %in% names(tbl)) {
+    stop(path, " has no biomarker column; the composite inclusion set must name its markers",
+         call. = FALSE)
   }
-  v <- eval(parse(text = sub("^INCLUDED\\s*<-\\s*", "", paste(txt, collapse = "\n"))))
-  if (!is.character(v) || length(v) < 2) {
-    stop("the INCLUDED declaration in ", path, " did not evaluate to a marker vector", call. = FALSE)
+  v <- as.character(tbl$biomarker)
+  v <- v[!is.na(v) & nzchar(trimws(v))]
+  if (length(v) < 2) {
+    stop(path, " declares fewer than two markers; a composite over one marker is a single marker",
+         call. = FALSE)
+  }
+  if (any(duplicated(v))) {
+    stop(path, " names a marker twice: ", paste(unique(v[duplicated(v)]), collapse = ", "),
+         call. = FALSE)
   }
   v
 }
@@ -615,8 +640,39 @@ NBAIS_INCLUDED <- read_included_markers()
 # requires three shared biomarkers before it will report a difference. A mean of one or two markers
 # is not a composite, and a bar drawn from one marker invites a comparison the data cannot support.
 NBAIS_MIN_MARKERS <- 3L
-message(sprintf("  composite inclusion rule: %d markers read from src/compute_composite.R (%s)",
-                length(NBAIS_INCLUDED), paste(NBAIS_INCLUDED, collapse = ", ")))
+message(sprintf("  composite inclusion rule: %d markers read from %s (%s)",
+                length(NBAIS_INCLUDED), NBAIS_INCLUSION_SET,
+                paste(NBAIS_INCLUDED, collapse = ", ")))
+
+# The direction and clinical weight of each marker are properties of the marker, not of a
+# resample, so they are joined once per frame rather than once per bootstrap replicate.
+# compute_nbais performed the join itself until 22 October, which was correct and slow: with three
+# weighting schemes, four receptor classes, six class pairs and 10 000 replicates for each of the
+# percentile and BCa procedures, the join ran on the order of 1.8e5 times on a frame of at most
+# eleven rows, and the composite section accounted for roughly eight of the twenty minutes of a
+# full run. Hoisting it changes no arithmetic: the join is a lookup keyed on biomarker, and the
+# duplicate guard below is what makes that claim checkable rather than assumed. Without the guard
+# a marker carrying two aging_direction values in the harmonised data would silently duplicate
+# rows inside a mean, which inflates the weight of that marker instead of failing.
+NBAIS_WEIGHT_LOOKUP <- dplyr::distinct(dat, biomarker, aging_direction, clinical_weight)
+if (any(duplicated(NBAIS_WEIGHT_LOOKUP$biomarker))) {
+  stop("the harmonised data gives more than one direction or clinical weight to: ",
+       paste(unique(NBAIS_WEIGHT_LOOKUP$biomarker[
+         duplicated(NBAIS_WEIGHT_LOOKUP$biomarker)]), collapse = ", "),
+       call. = FALSE)
+}
+
+# attach_nbais_weights is the join, and it is also the assertion that the join is a lookup: a
+# left_join that changes the row count has matched one row to several, and a composite computed
+# over that frame is a mean with a repeated term.
+attach_nbais_weights <- function(res_df, lookup = NBAIS_WEIGHT_LOOKUP) {
+  out <- dplyr::left_join(res_df, lookup, by = "biomarker")
+  if (nrow(out) != nrow(res_df)) {
+    stop("attaching marker weights changed the row count from ", nrow(res_df),
+         " to ", nrow(out), "; the weight lookup is not one row per biomarker", call. = FALSE)
+  }
+  out
+}
 
 # The admitted set is a parameter with the rule as its default, not a global this function reaches
 # for. src/validate_pipeline.R extracts this function and calls it on synthetic markers named bm01
@@ -630,12 +686,18 @@ compute_nbais <- function(res_df, weighting = c("inverse_variance",
                           included = NBAIS_INCLUDED) {
   weighting <- match.arg(weighting)
 
+  # The direction and clinical weight must already be on the frame. This is a stop rather than a
+  # fallback join: a function that quietly joined when the columns were missing would be the slow
+  # path again, and one that quietly treated them as absent would compute a mean of unsigned
+  # changes, which is the defect of 15 October in a new place. attach_nbais_weights is the join.
+  missing_cols <- setdiff(c("aging_direction", "clinical_weight"), names(res_df))
+  if (length(missing_cols) > 0) {
+    stop("compute_nbais needs ", paste(missing_cols, collapse = " and "),
+         " on its input; call attach_nbais_weights() once before resampling", call. = FALSE)
+  }
+
   d <- res_df |>
     dplyr::filter(biomarker %in% included) |>
-    dplyr::left_join(
-      dplyr::distinct(dat, biomarker, aging_direction, clinical_weight),
-      by = "biomarker"
-    ) |>
     dplyr::filter(!is.na(estimate), !is.na(se), se > 0)
 
   if (nrow(d) == 0) return(NA_real_)
@@ -698,6 +760,8 @@ nbais_boot <- function(res_df, weighting, R = 10000) {
   # interval of a filtered estimate.
   res_df <- dplyr::filter(res_df, biomarker %in% NBAIS_INCLUDED,
                           !is.na(estimate), !is.na(se), se > 0)
+  # Joined here, once, rather than inside each of the 20 000 calls to compute_nbais below.
+  res_df <- attach_nbais_weights(res_df)
   n <- nrow(res_df)
 
   if (n < NBAIS_MIN_MARKERS) {
@@ -788,6 +852,10 @@ nbais_contrast <- function(rc_a, rc_b, weighting = "inverse_variance",
   }
   a <- dplyr::filter(a, biomarker %in% shared)
   b <- dplyr::filter(b, biomarker %in% shared)
+
+  # Joined once per arm, rather than inside each of the 20 000 calls to compute_nbais below.
+  a <- attach_nbais_weights(a)
+  b <- attach_nbais_weights(b)
 
   diffs <- replicate(R, {
     aa <- a; bb <- b
@@ -1630,20 +1698,16 @@ readr::write_csv(dplyr::bind_rows(FIGURE_INDEX),
 # Every output file is listed with its SHA-256 hash. A reviewer can verify that
 # the files accompanying the submission are exactly those this script produced,
 # and a future reader can confirm that a rerun reproduces identical output.
+#
+# The writer moved to src/write_manifest.R on 22 October and is sourced here, so that the manifest
+# can be refreshed without a twenty minute pipeline run when a generator other than this one
+# legitimately rewrites an output. The seventeenth gate regenerates Table 1 from the biomarker
+# inventory, and a display name change there left the manifest describing a file that no longer
+# existed. That script's header records the whole of it, including why refreshing the manifest does
+# not weaken the gate that checks it.
 
-manifest <- tibble::tibble(
-  file = list.files(OUT_DIR, full.names = TRUE)
-) |>
-  dplyr::filter(basename(file) != "MANIFEST.csv") |>
-  dplyr::mutate(
-    bytes  = file.size(file),
-    sha256 = purrr::map_chr(file, ~ as.character(
-      openssl::sha256(file(.x, open = "rb"))
-    )),
-    generated = as.character(Sys.time())
-  )
-
-readr::write_csv(manifest, file.path(OUT_DIR, "MANIFEST.csv"))
+source(file.path("src", "write_manifest.R"))
+manifest <- write_result_manifest(OUT_DIR)
 
 message("Pipeline complete. ", nrow(manifest), " output files written.")
 message("Seed: 20261013. Environment captured in ", OUT_DIR, "/session_info.txt.")

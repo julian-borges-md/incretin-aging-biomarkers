@@ -189,21 +189,47 @@ def make_source_lines():
                 files.append(fp)
         return sorted(set(files))
 
-    def lines_for(trial, notes):
-        key = trial
+    def blocks_for(trial, notes):
+        """
+        The source text, one entry per file and in file order: [(relative path, lines)].
+
+        lines_for below flattens this and is the form every earlier gate uses. A check that
+        reads a line's NEIGHBOURS cannot use the flattened form: the last line of one capture
+        is adjacent to the first line of the next, and a header read across that seam belongs
+        to a different paper. The header order attribution gate reads the header above a value
+        line, so it reads blocks. The path travels with the lines because that gate must
+        report what its verdict rests on, and that depends on whether the file is publisher
+        text or a capture this review wrote.
+
+        The reader itself is unchanged and still exists once. Two copies of this
+        normalisation is the defect that has already bitten this chain twice.
+        """
+        key = ("blocks", trial)
         if key in cache:
             return cache[key]
-        txt = []
+        out = []
         for fp in files_for(trial, notes):
             # Lancet style captures print 79·4 for 79.4, so the middle dot is normalised
             # here; without it every number of such a source misses and the row reads as
             # unattached, which is what the SCALE pressure rows did.
             raw = open(fp, errors="replace").read().replace("−", "-").replace("\u00b7", ".")
-            txt += raw.split("\n")
+            lines = raw.split("\n")
+            out.append((os.path.relpath(fp, ROOT), lines))
+        cache[key] = out
+        return out
+
+    def lines_for(trial, notes):
+        key = trial
+        if key in cache:
+            return cache[key]
+        txt = []
+        for _, block in blocks_for(trial, notes):
+            txt += block
         cache[key] = txt
         return txt
 
     lines_for.files_for = files_for
+    lines_for.blocks_for = blocks_for
     return lines_for
 
 

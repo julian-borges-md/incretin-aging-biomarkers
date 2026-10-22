@@ -77,8 +77,27 @@ adjusted omnibus test in the weight adjusted meta-regression.
 | R2, receptor class only | 99.99999982 per cent | 1.91 per cent |
 | tau2, adjusted | 17.84 | 25.61 |
 | R2, adjusted | 96.97 per cent | 93.80 per cent |
-| Weight coefficient in the adjusted model | minus 3.19, SE 6.39, permutation p 0.648 | plus 16.09, SE 3.79, permutation p 0.031 |
+| Weight coefficient in the WEIGHT ONLY model | plus 3.21, SE 1.32, permutation p 0.070 | plus 9.16, SE 4.63, permutation p 0.122 |
+| Weight coefficient in the ADJUSTED model | minus 3.19, SE 6.39, permutation p 0.648 | plus 16.09, SE 3.79, permutation p 0.031 |
 | Interaction terms | Dropped as redundant | Dropped as redundant |
+
+**Amended 2026-10-22, and the amendment changes one number in this register.** The weight only
+coefficient was not in the output when this register was written. Table 4 carried three columns named
+`beta_weight`, `se_weight` and `p_weight_perm`, which hold the ADJUSTED model's coefficient and sit
+beside `R2_weight_only`, so the two could be read as belonging to the same model. The queued change
+renamed them and added the weight only model's coefficient with its own permutation test. The first
+version of this section reported the unadjusted slope as "plus 3.21, 95 per cent CI 0.63 to 5.80,
+permutation p 0.015". The slope and the interval are right and the p value was not a permutation p at
+all: no permutation test had been run on the weight only model, and 0.015 is its Wald p. The
+permutation p the protocol requires is **0.070**, and the interval quoted is the Wald interval, which
+is the only interval this model reports. The same correction applies to ALT, whose weight only
+coefficient is plus 9.16 at permutation p 0.122 against the Wald p of 0.048.
+
+This weakens the premise of the sign reversal rather than the reversal itself. Under the protocol's
+own inference the unadjusted weight slope for liver fat does not reach significance either, so the
+reading below should not be stated as a significant positive slope becoming a null one; it is a
+positive slope of borderline significance becoming a negative one of none, in a model whose
+parameters outnumber its usable points.
 
 Three readings of that table matter and none of them is the R2.
 
@@ -91,10 +110,11 @@ quantity. A reviewer who sees an R2 of 97 per cent beside k of 7 will reach the 
 faster than a reader of the text.
 
 Third, and this is the part worth your attention, the weight coefficient reverses sign on adjustment.
-Weight alone gives a slope of plus 3.21 per cent liver fat per per cent body weight, 95 per cent CI
-0.63 to 5.80, permutation p 0.015, which is Figure 4. Adjusted for receptor class the same covariate
-gives minus 3.19 with p 0.648. A sign reversal on adjustment with four parameters on seven points is
-a collinearity signature: in this corpus the triple agonist arms are also the largest weight losses,
+Weight alone gives a slope of plus 3.21 per cent liver fat per per cent body weight, Wald 95 per cent
+CI 0.63 to 5.80, permutation p 0.070, which is Figure 4. Adjusted for receptor class the same
+covariate gives minus 3.19 with permutation p 0.648. A sign reversal on adjustment with four
+parameters on seven points is a collinearity signature: in this corpus the triple agonist arms are
+also the largest weight losses,
 so class and weight are nearly the same variable and the model cannot separate them. That is the
 honest answer to H1, and it is more informative than either a null or a positive result.
 
@@ -342,16 +362,26 @@ pipeline section and removes a predictable reviewer request.
 
 ## What happens after the answers
 
-One pipeline run, carrying every pending change at once rather than one run per decision. Queued for
-that run, independent of your answers:
+One pipeline run, carrying every pending change at once rather than one run per decision.
+
+**Done 2026-10-22, before the answers, because none of these four moves a pooled number.** The run
+they required has been made, so the run that carries your answers will carry only decision driven
+changes. Table 2, Table 3, Table 5, Table 5a, Table 6 and every sensitivity table are byte identical
+to the previous commit's; only Table 4, Table 4a, the manifest, the figure files and the session
+record changed, which is what these four changes should have changed and nothing else.
+
+| Change | Reason | Outcome |
+| --- | --- | --- |
+| Rename `beta_weight`, `se_weight` and `p_weight_perm` in Table 4a to name the adjusted model | They are extracted from the adjusted model and sit beside `R2_weight_only`, which invites a reader to take them as the unadjusted coefficient. This is the discrepancy behind the sign reversal in A2, and it is a naming defect rather than a numerical one | Done, and it was not only a naming defect. The columns are now `beta_weight_adjusted`, `se_weight_adjusted` and `p_weight_perm_adjusted`, and the weight only model's coefficient is reported beside `R2_weight_only` with a permutation test of its own. That test had never been run, and it changes the unadjusted liver fat p from the Wald 0.015 to 0.070. The amendment under A2 records it |
+| Move the composite inclusion rule into one data file both scripts read | It is currently read out of `src/compute_composite.R` by the pipeline, which is one declaration read in two places rather than two declarations, but a shared file is the correct end state | Done. `analysis/data/nbais_inclusion_set.csv` holds the eleven markers with each one's hallmark domain, surrogacy grade and the reason it is retained; both scripts read it and neither restates it. Table 5 and Table 5b are byte identical across the change |
+| Hoist the inventory join out of `compute_nbais` | About 180,000 joins per run; the bootstrap phase costs eight of the twenty minutes | Done. The join is now one call per frame in `attach_nbais_weights`, which also asserts that it is a lookup by failing when it changes a frame's row count, and `compute_nbais` stops rather than joining when the columns are absent. Table 5 and Table 5a are byte identical |
+| Set the inventory display name for BMD to Bone mineral density | `table1_name` is the abbreviation, so Table 1 and every manuscript table that uses the inventory's own names print BMD. Changing it regenerates Table 1, which the manifest gate ties to a pipeline run | Done. Both spellings resolve to the same marker in the Results number gate, which reads the key and the display name, so neither the Discussion's existing BMD row nor a future spelled out row goes unchecked |
+
+Still queued, and dependent on your answers:
 
 | Change | Reason |
 | --- | --- |
-| Rename `beta_weight`, `se_weight` and `p_weight_perm` in Table 4a to name the adjusted model | They are extracted from the adjusted model and sit beside `R2_weight_only`, which invites a reader to take them as the unadjusted coefficient. This is the discrepancy behind the sign reversal in A2, and it is a naming defect rather than a numerical one |
-| Move the composite inclusion rule into one data file both scripts read | It is currently read out of `src/compute_composite.R` by the pipeline, which is one declaration read in two places rather than two declarations, but a shared file is the correct end state |
-| Hoist the inventory join out of `compute_nbais` | About 180,000 joins per run; the bootstrap phase costs eight of the twenty minutes |
 | Funnel panel, if C3 is approved | |
-| Set the inventory display name for BMD to Bone mineral density | `table1_name` is the abbreviation, so Table 1 and every manuscript table that uses the inventory's own names print BMD. Changing it regenerates Table 1, which the manifest gate ties to a pipeline run |
 
 Then the writing sequence, in order: Abstract results and conclusions, Discussion 4.1 and 4.2,
 Discussion 4.3 and 4.4 under the A2 answer, Section 5, title page under the A1 answer. Discussion 4.5

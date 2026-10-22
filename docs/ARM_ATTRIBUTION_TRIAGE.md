@@ -1,9 +1,18 @@
 # Arm attribution triage
 
-Companion to `src/arm_attribution_check.py`. **This is a probe, not a chain gate.** It is committed,
-it runs, it is correct where it speaks, and it is deliberately not wired into `scripts/run_gates.sh`,
-for the reason in the last section. Run it with
-`python3 -I src/arm_attribution_check.py --self-test` from the repository root.
+Companion to `src/arm_attribution_check.py` and, since 22 October, to
+`src/arm_header_attribution_check.py`. Run them with
+`python3 -I src/arm_attribution_check.py --self-test` and
+`python3 -I src/arm_header_attribution_check.py --self-test` from the repository root.
+
+**Status, amended 2026-10-22.** Both are now chain gates, twenty three and twenty four. Everything
+below the heading "Why the other 119 are unreadable" was written when the first gate stood alone and
+its reach of 3 rows did not justify a chain slot. The extension specified there has been built; it
+attributes 15 further rows, which took the pair to 18 of the 122 and the chain from twenty two gates
+to twenty four. The section "The extension, built 2026-10-22" records what it does, what it refuses,
+and the four false findings that building it produced and the guards that removed them. The earlier
+sections are left as written, because they are the record of a decision taken on the evidence then
+available.
 
 ## The hole it was built for
 
@@ -125,3 +134,80 @@ That distinction is not currently recorded anywhere in the corpus: nothing in th
 the notes marks which are publisher text and which are session written. Establishing that marking is
 a prerequisite for the extension, and a governance item in its own right, since every gate that reads
 captures inherits the same ambiguity.
+
+## The extension, built 2026-10-22
+
+`src/arm_header_attribution_check.py`. Scope is the 80 rows above whose arm name does not precede
+its value, taken from the first gate's own verdict rather than re-derived, so the two scopes are
+complementary by construction and a change to that gate's wording empties this one rather than
+silently shifting it.
+
+The rule is the order rule this document specified: the order in which the header names the arms is
+the order in which their values print below. Per row, every line carrying both values is a
+candidate; the nearest header above each candidate, in the same file, must name both arms; and the
+arm named first owns the value that prints first.
+
+### Result
+
+| Verdict | Independent source | Session capture | Total |
+| --- | --- | --- | --- |
+| ALIGNED | 9 | 6 | 15 |
+| REVERSED | 0 | 0 | 0 |
+| UNCLEAR | | | 65 |
+
+The self test injects a swapped pair into each of the 15 and the verdict flips on all 15, so the
+gate discriminates. The two provenance columns are not added together anywhere in the output, for
+the reason the caveat section above gives: against publisher text agreement verifies the extraction
+against the source, and against a caption this review wrote it establishes only that the extraction
+reproduces the capture. The 6 session rows are all Davies 2013.
+
+| Why a row is unclassifiable | Rows |
+| --- | --- |
+| One of the two values coincides with a dispersion or a count rather than a column value | 21 |
+| The two values are not adjacent columns on any line that carries both | 17 |
+| No retained line carries both values | 17 |
+| The nearest line naming both arms names one of them more than once | 6 |
+| No line within 25 lines above the values names both arms | 3 |
+| The nearest line naming both arms is prose rather than a row of column labels | 1 |
+
+### The projection was wrong, and by how much
+
+This document projected that the extension would lift reach "from 3 rows to roughly 72 of 122". It
+reaches 18. The projection measured one thing, whether a header within 25 lines names both arms, and
+an order rule needs four more things to be true before it attributes anything. The first
+implementation, which measured only what the projection measured, reported **five REVERSED rows, and
+all five were artefacts of the rule rather than defects in the extraction.** Each is now a fixture in
+the gate's self test.
+
+| Artefact | What it was | The guard |
+| --- | --- | --- |
+| Light On liver fat, HbA1c, LDL, SBP | A three arm table. The row compares liraglutide against insulin glargine, columns one and three of nine fields, with the sitagliptin columns between them. No order rule can say which column either value came from | Every numeric token between the two matched values must be attached to a value, as a dispersion after a plus or minus sign, a count in brackets or a p value. A bare number between them is another column |
+| Light On LDL, a second mechanism | The row records -0.01 against 0.2. On the HDL line below, 0.2 is the standard deviation of the liraglutide baseline and prints immediately before the HDL change of -0.01. Nothing stands between them, so the pair reads as two adjacent columns in the wrong order | Both ends must themselves be column values by the same attachment test |
+| NCT02660047 GDF15, NCT04844918 leptin and hsCRP | The nearest line naming both arms was a figure caption and an abstract's randomisation sentence. A sentence names the arms in the order the sentence needs | A header must be a row of column labels: it splits into fields on a tab, a pipe or a run of spaces and names the two arms in different fields. A line that is not columnar is admitted only where the value line itself has exactly two fields, which is the two arm case and the shape this review's own captures use |
+| Kelly 2012 triglycerides | Found while replacing the guard above. A length threshold of 110 characters admitted the paper's 101 character title, which names exenatide before metformin while the table prints metformin first, so the title inverted every verdict it attributed. Lowering the threshold to 90 then admitted a 78 character sentence that did the same | Length was the wrong test. The structural test above replaced it, and the row is now attributed from the real tab delimited header nine lines above it |
+| Several, silently | The first implementation chose the single line on which the two values sat closest together, which is the first gate's rule. A spuriously tight pair elsewhere in the same paper beats the true pair sixty characters apart | Every candidate is classified and they must agree. A disagreement is reported as unclassifiable, which is what an ambiguous attribution is |
+
+### A defect in the first gate, found by building the second, and not fixed here
+
+`src/arm_attribution_check.py` locates a value as a **string**, and where the signed string misses it
+falls back to the unsigned one. On this corpus that fallback matches the row value -4 against the
+printed dispersion 4.5, because the digit 4 occurs in it standalone by the function's own test. The
+second gate therefore does not reuse that locator: it extracts numeric tokens with their positions
+and compares them as numbers, so 4.5 is the number 4.5 and nothing else.
+
+This is a divergence between two gates that should share one definition, and it is recorded rather
+than resolved. Changing the locator changes the first gate's output, which is in the record and in
+the Methods, so it is a numbered next action and not a side effect of building the second gate:
+
+| Next action | What it requires |
+| --- | --- |
+| Port `arm_attribution_check` onto numeric token matching | Re-run both gates, confirm the three ALIGNED rows survive or record which do not and why, and update section 2.11 of the Methods if the count changes |
+
+### Why both now hold a chain slot
+
+The stated rule for this chain is that a gate people learn to ignore is worse than no gate, and 3 of
+122 did not clear it. Eighteen of 122 is still a minority, and the gate prints the reason for every
+row it cannot read, which is the form in which a partial reach is honest rather than misleading. What
+decides it is that the 18 are checked on every run rather than on the day someone remembers to look,
+and that both gates carry a self test that fails the chain if their discrimination stops working. The
+Methods state the 18 and the 104 explicitly, so the manuscript claims no more than this.

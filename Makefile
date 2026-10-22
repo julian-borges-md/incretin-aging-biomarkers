@@ -4,8 +4,9 @@
 #   make verify     run the integrity gates on the extraction contract
 #   make selftest   prove that verify fails on perturbed input
 #   make validate   prove the statistics recover known truth on simulated data
-#   make gates      run the full twenty two gate provenance chain
+#   make gates      run the full twenty four gate provenance chain
 #   make analysis   run the full pipeline (needs analysis/data/extraction_master.csv)
+#   make manifest   rehash analysis/output into MANIFEST.csv without a full run
 #   make pin        record the exact package versions this run used
 #   make clean      remove generated artefacts
 #
@@ -14,7 +15,7 @@
 
 RS := Rscript
 
-.PHONY: install pin gates verify selftest validate extract analysis clean
+.PHONY: install pin gates verify selftest validate extract analysis manifest clean
 
 install:
 	$(RS) requirements.R
@@ -25,7 +26,7 @@ install:
 pin:
 	$(RS) src/pin_environment.R
 
-# The full provenance chain, twenty two gates. It was reachable only as scripts/run_gates.sh, so the
+# The full provenance chain, twenty four gates. It was reachable only as scripts/run_gates.sh, so the
 # one command that validates the whole pipeline was the one command the Makefile did not offer.
 gates:
 	bash scripts/run_gates.sh
@@ -44,6 +45,12 @@ extract:
 
 analysis:
 	$(RS) analysis/M5_AGE_analysis_pipeline.R
+
+# Rehash analysis/output without rerunning the pipeline. Needed when a generator other than the
+# pipeline rewrites an output, which gate seventeen does to Table 1 on every chain run. See the
+# header of src/write_manifest.R for why this does not weaken the manifest gate.
+manifest:
+	$(RS) src/write_manifest.R
 
 # Amendment R1 (2026-10-15): mandatory reruns of the imputed pre post
 # correlation at 0.3 and 0.7; requires the gate chain to have produced Table 2.

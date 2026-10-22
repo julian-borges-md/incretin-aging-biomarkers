@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Twenty two gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
+# Twenty four gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
 #
 # This file is the tracked copy and the one to edit. The chain lived at work/run_gates.sh until
 # 16 October, where the gitignore keeps it out of version control: the script that validates the
@@ -109,6 +109,34 @@ for g in prisma_check table1_inventory table2_reproduction_check; do
   [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
 done
 for g in composite_interval_check citation_record_check figure_check manifest_check; do
+  echo "== $g $(date +%H:%M:%S)" >> "$log"
+  python3 -I "src/$g.py" --self-test > "work/gate_$g.log" 2>&1; rc=$?
+  echo "exit $rc" >> "$log"
+  [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
+done
+# Gates twenty three and twenty four, added 2026-10-22, are the arm attribution pair. They reach
+# the 122 derived rows, where the effect was computed FROM the two arm values and so cannot be
+# checked against a reported effect: a swapped arm flips the derived effect too, and the two agree
+# by construction.
+#
+# The adjacent label gate was written on 19 October and deliberately left out of this chain, on its
+# own measurement: it classifies 3 of the 122 and reports 119 unclassifiable, and a gate that
+# prints 119 unknowns on every run is a green light that means almost nothing. The header order
+# gate is the extension docs/ARM_ATTRIBUTION_TRIAGE.md specified for the 80 rows whose arm names
+# sit in a table header rather than in front of the values. It classifies 15 of those 80 soundly,
+# which is far short of the 72 the document projected, because the projection counted headers that
+# name both arms and not the four conditions under which an order rule actually attributes: a
+# matched value must be a column value and not a dispersion, the two values must be adjacent
+# columns, the header must be a row of column labels and not prose, and every candidate line must
+# agree. The first version of that gate, without those conditions, reported five swapped arms and
+# all five were artefacts of the rule. The document records the measurement and the correction.
+#
+# Together the pair classifies 18 of the 122, which is why both now hold a slot: the adjacent gate
+# alone did not justify one, and the extension changed the arithmetic. Both run with their self
+# tests, which inject a swap into every row each gate attributes, because neither reports a finding
+# on this corpus and a gate that reports nothing has not thereby shown that it works. The header
+# gate's self test also carries the four artefacts above as fixtures.
+for g in arm_attribution_check arm_header_attribution_check; do
   echo "== $g $(date +%H:%M:%S)" >> "$log"
   python3 -I "src/$g.py" --self-test > "work/gate_$g.log" 2>&1; rc=$?
   echo "exit $rc" >> "$log"

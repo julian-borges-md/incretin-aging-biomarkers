@@ -34,8 +34,17 @@ dat <- readr::read_csv("analysis/data/extraction_master_harmonised.csv",
   slice_max(order_by = dose_mg, n = 1, with_ties = FALSE) |>
   ungroup()
 
-INCLUDED <- c("hsCRP","IL6","YKL40","GDF15","ICAM1","GGT",
-              "liver_fat_pdff","leptin","HOMA_IR","NTproBNP","lean_mass")
+# The admitted marker set is read from analysis/data/nbais_inclusion_set.csv, which is the one
+# declaration of prespecification/nbais_inclusion_rule.md in the repository. It was a literal vector
+# here until 22 October, and the analysis pipeline read that vector out of this file by parsing it,
+# because restating eleven marker names in a second script is the defect that has bitten this
+# repository three times. Parsing a sibling script was a working arrangement and not the right one:
+# a declaration that two programs depend on belongs in data that both read, not in the source of one
+# of them. The file carries the hallmark domain and surrogacy grade of each marker and the reason it
+# is retained, so the rule and its justification travel together.
+INCLUDED <- readr::read_csv("analysis/data/nbais_inclusion_set.csv",
+                            show_col_types = FALSE, progress = FALSE)$biomarker
+stopifnot(length(INCLUDED) >= 2, !any(duplicated(INCLUDED)))
 
 DIR <- c(hsCRP=-1, IL6=-1, YKL40=-1, GDF15=-1, ICAM1=-1, GGT=-1,
          liver_fat_pdff=-1, leptin=-1, HOMA_IR=-1, NTproBNP=-1,
