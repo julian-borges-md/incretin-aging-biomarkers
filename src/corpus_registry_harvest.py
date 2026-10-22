@@ -19,12 +19,15 @@ manifest so that a reader can see which identifier a comparison rests on:
   notes      an NCT appears in the extraction notes of one of the trial's rows, for 14 more
   ledger     the extraction ledger's identifiers column for the group whose reconciled file holds
              the trial's rows, for 3 more
-  none       32 trials carry no registry identifier anywhere in the repository. Most are older
-             single centre studies; one records a EudraCT number instead
+  resolved   analysis/data/trial_registry_ids.csv, where src/registry_id_resolve.py records an
+             identifier taken from the publisher's own statement of the registration and verified
+             against the registry before being written. Nine trials, added 2026-10-22
+  none       23 trials carry no registry identifier that any of the four lookups can find. Most are
+             older single centre studies; one records a EudraCT number instead
 
 WHAT THIS DOES NOT DO. It retrieves metadata and writes it to the gitignored work tree. It changes no
 tracked file, computes no statistic and is not a gate. The gate that would use it is measured first,
-in docs/TIMEPOINT_REACH.md, under the chain's rule that reach is measured before a gate is built.
+in docs/TIMEPOINT_TRIAGE.md, under the chain's rule that reach is measured before a gate is built.
 
 Usage
   python3 -I src/corpus_registry_harvest.py            fetch what is missing
@@ -44,6 +47,7 @@ import urllib.request
 ROOT = os.getcwd()
 MASTER = os.path.join(ROOT, "analysis", "data", "extraction_master.csv")
 LEDGER = os.path.join(ROOT, "analysis", "data", "EXTRACTION_LEDGER.csv")
+RESOLVED = os.path.join(ROOT, "analysis", "data", "trial_registry_ids.csv")
 OUTDIR = os.path.join(ROOT, "work", "fulltext", "registry_corpus")
 MANIFEST = os.path.join(OUTDIR, "MANIFEST.csv")
 API = "https://clinicaltrials.gov/api/v2/studies/{}"
@@ -80,6 +84,17 @@ def resolve():
             for t in file_trials.get(f, ()):
                 ledger[t] |= ids
 
+    # Fourth lookup, added 2026-10-22: identifiers resolved from the publisher's own record of the
+    # registration by src/registry_id_resolve.py and verified against the registry before being
+    # written there. Only verified rows are used. The file is tracked, so the resolution is a
+    # recorded fact about the corpus rather than something re-derived from the network on each run.
+    resolved = {}
+    if os.path.exists(RESOLVED):
+        for r in csv.DictReader(open(RESOLVED, newline="")):
+            if (r.get("verdict") or "").strip() == "verified" and NCT.fullmatch(
+                    (r.get("nct") or "").strip()):
+                resolved.setdefault(r["trial_id"], set()).add(r["nct"].strip())
+
     out = {}
     for r in rows:
         t = r["trial_id"]
@@ -91,6 +106,8 @@ def resolve():
             out[t] = ("notes", sorted(notes[t]))
         elif ledger.get(t):
             out[t] = ("ledger", sorted(ledger[t]))
+        elif resolved.get(t):
+            out[t] = ("resolved", sorted(resolved[t]))
         else:
             out[t] = ("none", [])
     return out
@@ -106,7 +123,7 @@ def main(argv):
     res = resolve()
     by_src = collections.Counter(s for s, _ in res.values())
     print(f"trials in the master: {len(res)}")
-    for s in ("trial_id", "notes", "ledger", "none"):
+    for s in ("trial_id", "notes", "ledger", "resolved", "none"):
         print(f"  {by_src.get(s, 0):3}  resolved from {s}")
 
     if "--resolve" in argv:

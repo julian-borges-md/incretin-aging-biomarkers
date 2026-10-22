@@ -1,0 +1,33 @@
+trial_id,nct,route,verdict,rows,detail,evidence
+Bouchi 2017,,,none_found,3,no registration identifier in the article's annotations or in the retained source text,
+Chaudhuri 2012,,,none_found,5,no registration identifier in the article's annotations or in the retained source text,
+Derosa 2010 exenatide vs glibenclamide,,,none_found,6,no registration identifier in the article's annotations or in the retained source text,
+Derosa 2011 exenatide vs glimepiride,,,none_found,6,no registration identifier in the article's annotations or in the retained source text,
+Derosa-2012,,,none_found,9,no registration identifier in the article's annotations or in the retained source text,
+Dutour 2016,,,none_found,12,no registration identifier in the article's annotations or in the retained source text,
+EUREXA adipokine addendum,,,none_found,2,no registration identifier in the article's annotations or in the retained source text,
+EudraCT 2013-004947-22,,,none_found,12,no registration identifier in the article's annotations or in the retained source text,
+Fan 2013,,,none_found,4,no registration identifier in the article's annotations or in the retained source text,
+Gurkan 2014,,,none_found,9,no registration identifier in the article's annotations or in the retained source text,
+Jin 2020 exenatide vs insulin CIMT (Harbin),,,none_found,8,no registration identifier in the article's annotations or in the retained source text,
+LIPER2,,,none_found,3,no registration identifier in the article's annotations or in the retained source text,
+LYDIA,,,none_found,3,no registration identifier in the article's annotations or in the retained source text,
+Quan 2017,,,none_found,11,no registration identifier in the article's annotations or in the retained source text,
+STOP,,,none_found,2,no registration identifier in the article's annotations or in the retained source text,
+Sathyanarayana 2011,,,none_found,2,no registration identifier in the article's annotations or in the retained source text,
+Savvidou 2016,,,none_found,5,no registration identifier in the article's annotations or in the retained source text,
+Suzuki 2014 Dokkyo,,,none_found,7,no registration identifier in the article's annotations or in the retained source text,
+Wang 2026 Xi'an DKD,,,none_found,1,no registration identifier in the article's annotations or in the retained source text,
+Wu-2011,,,none_found,4,no registration identifier in the article's annotations or in the retained source text,
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,,,none_found,6,no registration identifier in the article's annotations or in the retained source text,
+Zhu 2017 exenatide vs acarbose,,,none_found,12,no registration identifier in the article's annotations or in the retained source text,
+semaglutide psoriasis T2D open label (Biomolecules 2025),,,none_found,2,no registration identifier in the article's annotations or in the retained source text,
+1404-0002,NCT04153929,annotation,verified,7,"separated by identifier; the registration's own identifier is this review's label for the trial (1404-0002); it also names ['survodutide']; enrollment n/a; other registrations in the article: ['NCT04667377', 'NCT06066515', 'NCT06066528', 'NCT06077864', 'NCT06309992', 'NCT06632444', 'NCT06632457']",Abstract (http://purl.org/dc/terms/abstract): als.gov identifier: [NCT04153929] ; EudraCT number: 20
+1404-0036,NCT04667377,annotation,verified,8,"separated by identifier; the registration's own identifier is this review's label for the trial (1404-0036); it also names ['survodutide']; enrollment n/a; other registrations in the article: ['NCT04153929', 'NCT06066515', 'NCT06066528', 'NCT06077864', 'NCT06309992', 'NCT06632444', 'NCT06632457']",Abstract (http://purl.org/dc/terms/abstract): als.gov identifier: [NCT04667377] ; EudraCT number: 20
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",NCT00097500,annotation,verified,1,"separated by sole candidate; the registration names ['exenatide'] and comparator ['glargine', 'insulin']; enrollment 69/57","Article (http://semanticscience.org/resource/SIO_001029): Clinical trial reg. no. [NCT00097500] , ."
+Kelly 2012,NCT00546728,annotation,verified,10,separated by sole candidate; the registration names ['exenatide'] and comparator ['metformin']; enrollment 50/50,Abstract (http://purl.org/dc/terms/abstract): This study is registered on [NCT00546728]
+MDI-liraglutide study (Sweden),NCT02113332,annotation,verified,1,separated by sole candidate; the registration names ['liraglutide'] and comparator ['placebo']; enrollment 124/122,Article (http://semanticscience.org/resource/SIO_001029): EudraCT nr: 2012‐001941‐42 [NCT02113332]
+SOUL,NCT03914326,annotation,verified,7,separated by label; the registration names ['semaglutide'] and comparator ['placebo']; enrollment 9651/9650,Abstract (http://purl.org/dc/terms/abstract): ClinicalTrials.gov Identifier: [NCT03914326]
+STEP 2,NCT03552757,annotation,verified,1,"separated by label; the registration names ['semaglutide'] and comparator ['placebo']; enrollment n/a; other registrations in the article: ['NCT03548935', 'NCT03611582']","Methods (http://purl.org/orb/Methods): T03548935 (STEP 1), [NCT03552757] (STEP 2), and NCT03"
+STEP 3,NCT03611582,annotation,verified,1,"separated by label; the registration names ['semaglutide'] and comparator ['placebo']; enrollment n/a; other registrations in the article: ['NCT03548935', 'NCT03552757']","Methods (http://purl.org/orb/Methods): ), NCT03552757 (STEP 2), and [NCT03611582] (STEP 3)."
+SUMMIT,NCT04847557,annotation,verified,4,separated by label; the registration names ['tirzepatide'] and comparator ['placebo']; enrollment 731/731,"Abstract (http://purl.org/dc/terms/abstract): ; SUMMIT ClinicalTrials.gov number, [NCT04847557] .)."

@@ -29,7 +29,9 @@ The full chain, `make gates`, reads retrieved sources under `work/`, which the g
 python3 -I src/corpus_registry_harvest.py
 ```
 
-retrieves the ClinicalTrials.gov record of every included trial that carries a registry identifier, 44 of 76, into `work/fulltext/registry_corpus/`. Gate twenty five, the timepoint check, reads them; without them its self test fails rather than passing, because a check with nothing to compare would otherwise report a green light for work it did not do. The packet texts gates eleven to twenty four read are rebuilt by the extraction retrieval scripts, which `docs/EXTRACTION_BRIEF.md` documents.
+retrieves the ClinicalTrials.gov record of every included trial that carries a registry identifier, 53 of 76, into `work/fulltext/registry_corpus/`. Gate twenty five, the timepoint check, reads them; without them its self test fails rather than passing, because a check with nothing to compare would otherwise report a green light for work it did not do. The packet texts gates eleven to twenty four read are rebuilt by the extraction retrieval scripts, which `docs/EXTRACTION_BRIEF.md` documents.
+
+Nine of those 53 identifiers were not in the repository and were resolved from the publishers' own statements of the registration by `python3 -I src/registry_id_resolve.py`, which wrote `analysis/data/trial_registry_ids.csv`. That file is tracked, so a clone does not need to repeat the resolution; re-run it only when trials enter or leave the corpus. `docs/TIMEPOINT_TRIAGE.md` records what the resolution establishes, what it refuses to guess at, and the two pairs of trials an earlier version of it gave one registration each.
 
 ## 3. Extraction
 

@@ -22,6 +22,7 @@ rule that a gate which cannot reach enough of its scope does not get a slot.
 | --- | --- |
 | Against the registry records already on disk | 5 of 524 |
 | After retrieving the records of the corpus itself | 291 of 524 |
+| After resolving nine further registrations from the publishers' own statements of them | 316 of 524 |
 
 The first number is not a property of the data. 38 registry records were on disk, retrieved during
 screening by `src/ctgov_harvest.py`, which is driven by the screening pool and fetches the records of
@@ -39,9 +40,11 @@ on:
 | The identifier is in the trial's own label | 27 |
 | An NCT appears in the extraction notes of one of the trial's rows | 14 |
 | The extraction ledger's identifiers column, through the group whose reconciled file holds the trial's rows | 3 |
-| No registry identifier anywhere in the repository | 32 |
+| `analysis/data/trial_registry_ids.csv`, resolved and verified by `src/registry_id_resolve.py` on 22 October | 9 |
+| No registry identifier that any of the four lookups can find | 23 |
 
-All 44 records retrieved, all 44 state at least one primary outcome.
+Fifty three trials have an identifier, 50 distinct records, every one stating at least one primary
+outcome. The fourth lookup is the subject of the next section.
 
 ## A deadline is not a visit, and reading it as one produced six false findings
 
@@ -64,13 +67,15 @@ reports less. Both shapes are fixtures in the self test.
 
 | Verdict | Rows | Meaning |
 | --- | --- | --- |
-| MATCHES | 234 | the row's timepoint is a registered primary time point, or inside a registered window |
+| MATCHES | 259 | the row's timepoint is a registered primary time point, or inside a registered window |
 | OUTSIDE | 4 | the row is flagged as the trial's prespecified endpoint and its timepoint is neither |
 | CONTEXT | 53 | the row is not flagged, so no expectation applies. Counted, never a verdict |
-| UNREACHABLE | 233 | 143 trials with no registry identifier, 68 rows with no timepoint recorded, 22 rows whose registry time frame does not parse to weeks |
+| UNREACHABLE | 208 | 118 rows in trials with no registry identifier, 68 rows with no timepoint recorded, 22 rows whose registry time frame does not parse to weeks |
 
 The self test shifts every MATCHES row 500 weeks and requires the verdict to change; it does on all
-234. The 22 unparsed rows are one trial whose time frame reads `seven months` in words.
+259. The 22 unparsed rows are one trial whose time frame reads `seven months` in words. The counts
+were 234 and 233 before the nine registrations below were resolved: 25 of the 40 rows those nine
+trials hold reached a verdict, and the other 15 carry no timepoint or no parseable time frame.
 
 ## The four OUTSIDE rows, judged
 
@@ -93,14 +98,82 @@ method available here resolves undetectable reporting bias.
 
 The field therefore conflates two things a reader will not separate on their own: prespecified by the
 registration, and prespecified by the paper that reported it. This gate measures the difference for
-the first time. Of the rows it can reach, 234 sit at a registered primary endpoint and 4 are
+the first time. Of the rows it can reach, 259 sit at a registered primary endpoint and 4 are
 prespecified by their paper at a timepoint the registration does not carry.
 
 | Next action | Status |
 | --- | --- |
 | State in the Methods that `prespecified_endpoint` means the paper or its registration, and give the gate's two counts, so the reporting bias discussion rests on a measured distinction rather than on the field's name | Open, and it is a writing change rather than a data change |
-| Decide whether the field should be split into `prespecified_in_registration` and `prespecified_in_report` | For the Director. Additive to the schema; it would retouch the 256 flagged rows, and the gate's output is the evidence for whether that is worth doing |
-| Resolve registry identifiers for the 32 trials that carry none | Measured ceiling: 143 of the 233 unreachable rows. Most are older single centre studies; one records a EudraCT number instead of an NCT, which this gate cannot read |
+| Decide whether the field should be split into `prespecified_in_registration` and `prespecified_in_report` | For the Director, as D1 of the register. Additive to the schema; it would retouch the 256 flagged rows, and the gate's output is the evidence for whether that is worth doing |
+| Resolve registry identifiers for the trials that carry none | **Done for 9 of the 32.** The section below records how, and what the attempt found. The remaining 23 hold 118 of the 208 unreachable rows |
+
+## Resolving the missing registrations, and what the attempt found
+
+`src/registry_id_resolve.py`, written for decision D2 of the Director register. It takes a
+registration from the publisher's own statement of it, never from a search of the registry, because a
+search finds a plausible record for almost every trial and plausible is the failure this gate exists
+to avoid. Two routes: Europe PMC's indexed accession annotation of the article, which carries the
+sentence the identifier was found in and the section it was in, and a scan of the retained source
+text accepting an NCT only where the surrounding 120 characters say that it is a registration.
+
+| Verdict | Trials | Rows |
+| --- | --- | --- |
+| verified | 9 | 40 |
+| none_found, no registration in the article's annotation or its retained text | 23 | 154 |
+| unverified or ambiguous | 0 | 0 |
+
+### The first version resolved two pairs of trials to one registration each, and the drug check could not see it
+
+This is the finding worth keeping. The first version accepted a candidate when the registration named
+the trial's drug. That check passed for every candidate in two cases and therefore separated nothing:
+
+| Case | What the first version did | Why the check could not see it |
+| --- | --- | --- |
+| STEP 2 and STEP 3 | Gave both `NCT03548935` | Both trials are semaglutide against placebo, and both are reported in one article that annotates several registrations. The drug check passes for each candidate |
+| 1404-0002 and 1404-0036 | Gave both `NCT04667377` | Both are survodutide against placebo, reported in one article |
+
+Two trials cannot share a registration, and the loser of each pair would have been given another
+trial's primary endpoint for every one of its rows. **A verification that passes for every candidate
+is not a verification.** Three checks now run, in order of what they establish:
+
+| Check | What it establishes | Where it decided a case |
+| --- | --- | --- |
+| identifier | the registry's own `orgStudyIdInfo.id` or a secondary id EQUALS the review's label for the trial, punctuation removed. Verifies on its own | `NCT04153929` is registered as 1404-0002 and `NCT04667377` as 1404-0036, which separates and verifies the survodutide pair in one step |
+| label | the label appears inside an identifier, the acronym or a title, with the match not followed by another digit so that `STEP 2` does not match `STEP 25`. Separates candidates; does not verify | `NCT03552757` and `NCT03611582` carry their STEP numbers in their titles, which separates the STEP pair; the drug check then verifies each |
+| drug | the registration's interventions or arm labels name the trial's drug, or a development code the registry itself declares to be that drug | Six of the nine |
+
+Where none of the three singles out one candidate, nothing is resolved and the trial is recorded as
+ambiguous. On this corpus that happens zero times now and would have happened four times without the
+first two checks.
+
+### The synonym table is derived from the registry, not asserted here
+
+`NCT04153929` names its intervention `BI 456906` and nothing else, so a check for `survodutide` fails
+against the correct record. The equivalences are read out of the `otherNames` the registry states
+beside each intervention, over every record the repository holds and every record the run fetches,
+and are then restricted to the nine drug words this corpus actually studies. That yields five
+entries, each one a statement a registry record makes:
+
+| Drug | Code the registry declares to be that drug |
+| --- | --- |
+| survodutide | BI 456906, from the sibling trial NCT04667377, which names both |
+| tirzepatide | LY3298176 |
+| dulaglutide | LY2189265 |
+| cotadutide | MEDI0382 |
+| liraglutide | SUB25238, the EU substance code |
+
+Before the restriction the same derivation produced entries keyed on `holder`, `number` and
+`marketing`, from a record whose `otherNames` carry a marketing authorisation block. They were
+harmless to a check that only ever asks about a trial's own drug, and they were removed anyway: a
+derived table that states things nobody means is a table the next reader has to disbelieve in parts.
+
+### The 23 that stay unresolved
+
+Their articles state no registration, in the annotation or in the retained text. Most are older
+single centre studies and one records a EudraCT number rather than an NCT, which this gate cannot
+read. The honest reading is the one the limitations section should carry: for those trials the
+prespecification cannot be verified at all, which is a stronger statement about the corpus than any
+count of matching timepoints.
 
 ## Scope limit, stated as every gate in this chain states its own
 
