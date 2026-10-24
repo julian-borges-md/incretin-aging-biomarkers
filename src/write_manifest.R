@@ -41,9 +41,17 @@ write_result_manifest <- function(out_dir) {
     dplyr::filter(basename(file) != "MANIFEST.csv") |>
     dplyr::mutate(
       bytes  = file.size(file),
-      sha256 = purrr::map_chr(file, ~ as.character(
-        openssl::sha256(file(.x, open = "rb"))
-      )),
+      # Each connection is closed as soon as its digest is taken. Until 23 October they were left
+      # open and the garbage collector closed them later, with one "closing unused connection"
+      # warning apiece: the writer alone leaves fifty or more over the outputs, and the pipeline's
+      # runs ended with 34 and 35 warnings that nobody read. A run that ends in dozens of warnings
+      # is the run in which a figure that was never written went unnoticed, so the noise is
+      # removed rather than tolerated. The digests are unchanged.
+      sha256 = purrr::map_chr(file, function(path) {
+        con <- file(path, open = "rb")
+        on.exit(close(con))
+        as.character(openssl::sha256(con))
+      }),
       generated = as.character(Sys.time())
     )
   readr::write_csv(manifest, file.path(out_dir, "MANIFEST.csv"))
