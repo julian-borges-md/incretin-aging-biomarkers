@@ -1,10 +1,10 @@
 ###############################################################################
 # figure_style.R
 #
-# Figure style 2 of the laboratory, in R: the standard the EG-RP-001 record and the governed research
-# template draw their figures in, adopted for this review on 24 October 2026 at the Director's
-# decision for more resolution and a more modern style. Sourced by the analysis pipeline (section 10)
-# and by src/prisma_figure.R, so every figure of the submission is drawn one way.
+# Figure style 2 of the laboratory, in R: the laboratory's standard for the figures it publishes,
+# adopted for this review on 24 October 2026 at the Director's decision for more resolution and a
+# more modern style. Sourced by the analysis pipeline (section 10) and by src/prisma_figure.R, so
+# every figure of the submission is drawn one way.
 #
 # WHAT A FIGURE IS. Every figure is drawn at its final journal width, 89 mm for a single column,
 # 120 mm for one and a half columns or 183 mm for a double column, and at most 170 mm high, with

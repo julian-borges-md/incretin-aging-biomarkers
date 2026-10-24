@@ -1175,8 +1175,8 @@ readr::write_csv(diagnostics, file.path(OUT_DIR, "table_diagnostics.csv"))
 # printed inside the image. A journal reduces such a figure to its column width, so its text reached
 # the page at whatever size the reduction left, and the caption appeared twice, once in the image
 # and once in the legend. At the Director's decision of 24 October for more resolution and a more
-# modern style, the figures follow figure style 2 of the laboratory, the standard the governed
-# research template and the EG-RP-001 record already draw in: each figure is drawn at its final
+# modern style, the figures follow figure style 2, the laboratory's standard for the figures it
+# publishes: each figure is drawn at its final
 # journal width, 89, 120 or 183 mm, at most 170 mm high, in the vendored Inter typeface verified by
 # its SHA-256, with text between 5.8 and 7 pt, written as a vector PDF whose glyphs are outlines and
 # as a 600 dpi PNG, and with no title or caption inside it: the caption is written to
