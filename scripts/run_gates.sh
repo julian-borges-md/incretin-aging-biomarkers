@@ -94,6 +94,13 @@ echo "exit $rc" >> "$log"
 # is mapped to a submission number; and whether every digest in the result manifest still matches
 # the file beside it, which turns the manifest from a list into a check.
 #
+# The figure gate was extended 2026-10-23 from whether a figure exists to what it shows. Every
+# figure now writes its plotted values beside it, and the gate recomputes them from the result
+# tables and the data each figure is drawn from, by one rule per figure, and fails on a
+# disagreement or on a figure with no rule. Its self test injects into the tracked figures the
+# defects the rules exist for, the per class least squares lines Figure 4 drew until 19 October
+# among them.
+#
 # The last three check artefacts that `make analysis` produces rather than this chain: the analysis
 # pipeline is a separate command because it costs ten minutes of permutation and bootstrap work.
 # They are in the chain because the committed output is part of the repository, and an output that

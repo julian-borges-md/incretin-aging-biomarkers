@@ -1209,10 +1209,57 @@ ROB_GLYPH  <- c(low = "+", some_concerns = "?", high = "x")
 # document kept in step by hand. docs/FIGURES.md maps these files to the submission numbering.
 FIGURE_INDEX <- list()
 
-save_figure <- function(name, plot, width, height, caption) {
+# The plotted values of every figure are written beside it as <name>.csv, its data twin, added
+# 23 October. A PDF or a PNG records what the device drew and not what the figure claims: nothing
+# in a forest plot file says which estimate a square stands for, so a figure drawn from a stale
+# object, a differently filtered frame or a different model passes every check of existence while
+# disagreeing with the table it illustrates. Figure 4 did exactly that until 19 October, drawing one
+# least squares line per receptor class beside a table that reports a random effects
+# meta-regression, and nothing in the repository could have noticed. The twin makes the drawn
+# values a record, and src/figure_check.py recomputes every twin from the result tables and the data
+# the figure is drawn from and stops the gate chain on a disagreement.
+#
+# Doubles are rounded to ten significant digits, a resolution far finer than anything a reader can
+# measure from a figure and far coarser than the last bits of a platform's floating point, so the
+# twin of an unchanged figure is the same file on every run. A figure with more than one layer
+# passes a named list and the layers are stacked under a layer column. The twin is written before
+# the images, so a figure whose plotted values cannot be recorded stops the run before any file of
+# it exists.
+write_twin <- function(name, data) {
+  layered <- !is.data.frame(data)
+  if (layered && (is.null(names(data)) || any(names(data) == ""))) {
+    stop("figure ", name, ": a figure with several layers names each of them", call. = FALSE)
+  }
+  if (!layered) data <- list(data)
+  parts <- lapply(seq_along(data), function(i) {
+    d <- dplyr::mutate(dplyr::ungroup(data[[i]]),
+                       dplyr::across(dplyr::where(is.factor), as.character),
+                       dplyr::across(dplyr::where(is.double), ~ signif(.x, 10)))
+    if (layered) d <- dplyr::mutate(d, layer = names(data)[i], .before = 1)
+    d
+  })
+  twin <- dplyr::bind_rows(parts)
+  if (nrow(twin) == 0) {
+    stop("figure ", name, " has no plotted values, and a figure of nothing is not written",
+         call. = FALSE)
+  }
+  path <- file.path(OUT_DIR, paste0(name, ".csv"))
+  readr::write_csv(twin, path, na = "")
+  path
+}
+
+# The PDF device writes its creation and modification times into every file, so a rerun that drew
+# the same figure produced a different file, and the manifest recorded a change that was only the
+# clock. Without the timestamp the PDF of an unchanged figure is byte identical across runs. The
+# argument exists from R 4.4; on an older R the device is called as before rather than failing.
+PDF_ARGS <- c(list(useDingbats = FALSE),
+              if ("timestamp" %in% names(formals(grDevices::pdf))) list(timestamp = FALSE))
+
+save_figure <- function(name, plot, width, height, caption, data) {
+  twin <- write_twin(name, data)
   written <- character(0)
   attempts <- list(
-    list(ext = "pdf", dev = "pdf",            args = list(useDingbats = FALSE)),
+    list(ext = "pdf", dev = "pdf",            args = PDF_ARGS),
     list(ext = "png", dev = ragg::agg_png,    args = list(dpi = 300))
   )
   for (a in attempts) {
@@ -1242,6 +1289,7 @@ save_figure <- function(name, plot, width, height, caption) {
   FIGURE_INDEX[[name]] <<- tibble::tibble(
     name = name, caption = caption,
     files = paste(basename(written), collapse = "; "),
+    twin = basename(twin),
     width_in = width, height_in = height,
     bytes = paste(file.size(written), collapse = "; ")
   )
@@ -1343,7 +1391,11 @@ save_figure("figure1_signature_heatmap", fig1, width = 9.5, height = 12,
             caption = paste0("Receptor class signature across aging biomarkers, grouped by ",
                              "hallmark domain. Cell fill and the printed value are the direction ",
                              "adjusted pooled percent change, positive toward a younger biomarker ",
-                             "profile. Cells marked n/e were not estimable.", fig1_empty_note))
+                             "profile. Cells marked n/e were not estimable.", fig1_empty_note),
+            data = fig1_data |>
+              dplyr::arrange(hallmark_domain, biomarker_label, receptor_class) |>
+              dplyr::select(hallmark_domain, biomarker, biomarker_label, receptor_class,
+                            signed_effect))
 
 # Figure 4: weight adjusted meta-regression bubble plot for hepatic outcomes.
 # Bubble area is inverse variance, so the visually dominant points are the
@@ -1420,7 +1472,14 @@ save_figure("figure4_weight_adjusted_liverfat", fig4, width = 8, height = 6,
                             "per pooled trial arm that carries the body weight covariate.", fig4_coverage,
                             "Point area is inverse variance and point shape is receptor class. The",
                             "line and band are the random effects meta-regression reported in",
-                            "Table 4a."))
+                            "Table 4a."),
+            # The points are the arms drawn, the two without the covariate excluded as the geom
+            # excludes them; the line layer is the model's prediction and confidence band.
+            data = Filter(Negate(is.null), list(
+              points = fig4_data |>
+                dplyr::filter(!is.na(pct_weight_change), !is.na(vi)) |>
+                dplyr::select(trial_id, receptor_class, pct_weight_change, yi, vi),
+              line = fig4_line)))
 
 # Figure 5: the composite score by receptor class with bootstrap intervals,
 # faceted by weighting scheme so the reader sees immediately whether the
@@ -1507,7 +1566,10 @@ save_figure("figure5_nbais", fig5, width = 10, height = 5.4,
                              "weighting schemes, computed over the ", length(NBAIS_INCLUDED),
                              " markers of the prespecified inclusion rule. Bars are the weighted ",
                              "mean direction adjusted percent change; error bars are the percentile ",
-                             "interval of the two level bootstrap.", fig5_absent_note))
+                             "interval of the two level bootstrap.", fig5_absent_note),
+            data = fig5_data |>
+              dplyr::arrange(weighting, receptor_class) |>
+              dplyr::select(weighting, receptor_class, nbais, ci_lb, ci_ub, n_markers))
 
 
 # Figure 2: the forest plot of the overall pooled effect per biomarker, which is the primary result
@@ -1576,7 +1638,11 @@ fig2 <- ggplot2::ggplot(fig2_data,
 save_figure("figure2_forest_overall", fig2, width = 9.5, height = 8,
             caption = paste("Forest plot of the overall pooled percent change per aging biomarker",
                             "across all incretin receptor classes, ordered by effect. Squares are",
-                            "pooled estimates, bars 95 per cent confidence intervals."))
+                            "pooled estimates, bars 95 per cent confidence intervals."),
+            # In the order drawn, bottom to top, which is the order of the label factor.
+            data = fig2_data |>
+              dplyr::arrange(label) |>
+              dplyr::select(biomarker, label, k, estimate, ci_lb, ci_ub, I2))
 
 
 # Figure 6 and its supplement: risk of bias. The RoB-2 assessment of every trial existed in
@@ -1664,7 +1730,8 @@ fig6 <- ggplot2::ggplot(rob_summary,
 save_figure("figure6_rob_summary", fig6, width = 8, height = 4,
             caption = paste("Risk of bias across the five RoB-2 domains and the overall",
                             "judgement, as the share of assessed trials. Glyphs accompany every",
-                            "colour so the judgement does not depend on colour."))
+                            "colour so the judgement does not depend on colour."),
+            data = rob_summary)
 
 fig6s <- ggplot2::ggplot(rob_long,
                          ggplot2::aes(x = domain,
@@ -1686,7 +1753,8 @@ fig6s <- ggplot2::ggplot(rob_long,
 
 save_figure("figureS1_rob_traffic_light", fig6s, width = 7.5, height = 13,
             caption = paste("Per trial RoB-2 traffic light for all", nrow(rob),
-                            "assessed trials, supplementary to Figure 6."))
+                            "assessed trials, supplementary to Figure 6."),
+            data = dplyr::select(rob_long, trial_id, domain, judgement))
 
 readr::write_csv(dplyr::bind_rows(FIGURE_INDEX),
                  file.path(OUT_DIR, "figure_index.csv"))

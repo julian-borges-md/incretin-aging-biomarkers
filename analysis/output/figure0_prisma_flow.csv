@@ -1,0 +1,13 @@
+stage,box,n,derivation
+identification,Records identified from our own searching,1009,title_abstract_screening.records_screened_all_pools
+identification,"Separate inflow, Alrasheed 2026 RCTs",40,stream_b_adopted.alrasheed_2026_rcts
+identification,"Separate inflow, Ren 2025 RCTs",52,stream_b_adopted.ren_2025_rcts
+screening,"Records screened, title and abstract",1009,title_abstract_screening.records_screened_all_pools
+screening,Records excluded at title and abstract,433,title_abstract_screening: pool1_v2_remain_excluded + pool2_exclude + pool3_exclude
+screening,Records sought for full text,576,title_abstract_screening.records_to_full_text
+screening,Not assessed,23,full_text_stage: without_any_text + already_in_master
+eligibility,Records assessed at full text,553,full_text_stage.needing_a_screen
+eligibility,Records excluded at full text,113,full_text_stage: needing_a_screen minus included_records
+eligibility,"Records included, grouped into studies",340,grouping_and_extraction.ledger_groups_final
+included,Studies contributing to the synthesis,83,grouping_and_extraction: extracted + already_extracted
+included,Studies closed without contributing,257,grouping_and_extraction: no_usable_contrast_scan + no_usable_contrast + excluded_at_extraction + molecule_not_admitted + ongoing_no_results + held_pending_decision

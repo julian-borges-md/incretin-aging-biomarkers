@@ -1,0 +1,463 @@
+trial_id,domain,judgement
+NCT03574597-hsCRP,D1,low
+NCT03574597-hsCRP,D2,low
+NCT03574597-hsCRP,D3,low
+NCT03574597-hsCRP,D4,low
+NCT03574597-hsCRP,D5,some_concerns
+NCT03574597-hsCRP,Overall,some_concerns
+NCT03574597-LIVER,D1,low
+NCT03574597-LIVER,D2,low
+NCT03574597-LIVER,D3,low
+NCT03574597-LIVER,D4,low
+NCT03574597-LIVER,D5,some_concerns
+NCT03574597-LIVER,Overall,some_concerns
+NCT03131687-BIO,D1,low
+NCT03131687-BIO,D2,low
+NCT03131687-BIO,D3,some_concerns
+NCT03131687-BIO,D4,low
+NCT03131687-BIO,D5,high
+NCT03131687-BIO,Overall,high
+1404-0002,D1,low
+1404-0002,D2,low
+1404-0002,D3,some_concerns
+1404-0002,D4,low
+1404-0002,D5,high
+1404-0002,Overall,high
+1404-0036,D1,low
+1404-0036,D2,low
+1404-0036,D3,some_concerns
+1404-0036,D4,low
+1404-0036,D5,high
+1404-0036,Overall,high
+NCT04881760-MASLD,D1,low
+NCT04881760-MASLD,D2,low
+NCT04881760-MASLD,D3,some_concerns
+NCT04881760-MASLD,D4,low
+NCT04881760-MASLD,D5,some_concerns
+NCT04881760-MASLD,Overall,some_concerns
+EUREXA,D1,low
+EUREXA,D2,high
+EUREXA,D3,some_concerns
+EUREXA,D4,low
+EUREXA,D5,some_concerns
+EUREXA,Overall,high
+Derosa-2012,D1,some_concerns
+Derosa-2012,D2,low
+Derosa-2012,D3,low
+Derosa-2012,D4,some_concerns
+Derosa-2012,D5,some_concerns
+Derosa-2012,Overall,some_concerns
+Wu-2011,D1,some_concerns
+Wu-2011,D2,low
+Wu-2011,D3,low
+Wu-2011,D4,low
+Wu-2011,D5,some_concerns
+Wu-2011,Overall,some_concerns
+NCT01595789,D1,low
+NCT01595789,D2,low
+NCT01595789,D3,high
+NCT01595789,D4,low
+NCT01595789,D5,high
+NCT01595789,Overall,high
+LIPER2,D1,low
+LIPER2,D2,low
+LIPER2,D3,low
+LIPER2,D4,low
+LIPER2,D5,some_concerns
+LIPER2,Overall,some_concerns
+NCT02545738,D1,low
+NCT02545738,D2,low
+NCT02545738,D3,some_concerns
+NCT02545738,D4,low
+NCT02545738,D5,low
+NCT02545738,Overall,some_concerns
+Fan 2013,D1,high
+Fan 2013,D2,high
+Fan 2013,D3,high
+Fan 2013,D4,some_concerns
+Fan 2013,D5,high
+Fan 2013,Overall,high
+SCALE Obesity and Prediabetes 3 year,D1,low
+SCALE Obesity and Prediabetes 3 year,D2,some_concerns
+SCALE Obesity and Prediabetes 3 year,D3,high
+SCALE Obesity and Prediabetes 3 year,D4,low
+SCALE Obesity and Prediabetes 3 year,D5,low
+SCALE Obesity and Prediabetes 3 year,Overall,high
+EUREXA adipokine addendum,D1,low
+EUREXA adipokine addendum,D2,some_concerns
+EUREXA adipokine addendum,D3,some_concerns
+EUREXA adipokine addendum,D4,low
+EUREXA adipokine addendum,D5,some_concerns
+EUREXA adipokine addendum,Overall,some_concerns
+DUAL II,D1,low
+DUAL II,D2,low
+DUAL II,D3,some_concerns
+DUAL II,D4,low
+DUAL II,D5,some_concerns
+DUAL II,Overall,some_concerns
+NCT04019561,D1,low
+NCT04019561,D2,low
+NCT04019561,D3,some_concerns
+NCT04019561,D4,low
+NCT04019561,D5,some_concerns
+NCT04019561,Overall,some_concerns
+NCT00781937,D1,low
+NCT00781937,D2,some_concerns
+NCT00781937,D3,some_concerns
+NCT00781937,D4,low
+NCT00781937,D5,low
+NCT00781937,Overall,some_concerns
+4B trial,D1,low
+4B trial,D2,some_concerns
+4B trial,D3,some_concerns
+4B trial,D4,low
+4B trial,D5,low
+4B trial,Overall,some_concerns
+Kelly 2012,D1,some_concerns
+Kelly 2012,D2,some_concerns
+Kelly 2012,D3,low
+Kelly 2012,D4,low
+Kelly 2012,D5,some_concerns
+Kelly 2012,Overall,some_concerns
+Dutour 2016,D1,some_concerns
+Dutour 2016,D2,some_concerns
+Dutour 2016,D3,some_concerns
+Dutour 2016,D4,low
+Dutour 2016,D5,some_concerns
+Dutour 2016,Overall,some_concerns
+Derosa 2011 exenatide vs glimepiride,D1,some_concerns
+Derosa 2011 exenatide vs glimepiride,D2,some_concerns
+Derosa 2011 exenatide vs glimepiride,D3,low
+Derosa 2011 exenatide vs glimepiride,D4,low
+Derosa 2011 exenatide vs glimepiride,D5,some_concerns
+Derosa 2011 exenatide vs glimepiride,Overall,some_concerns
+DURATION-3,D1,low
+DURATION-3,D2,some_concerns
+DURATION-3,D3,low
+DURATION-3,D4,low
+DURATION-3,D5,low
+DURATION-3,Overall,some_concerns
+NCT04822181,D1,low
+NCT04822181,D2,low
+NCT04822181,D3,some_concerns
+NCT04822181,D4,low
+NCT04822181,D5,low
+NCT04822181,Overall,some_concerns
+LYDIA,D1,low
+LYDIA,D2,some_concerns
+LYDIA,D3,some_concerns
+LYDIA,D4,low
+LYDIA,D5,low
+LYDIA,Overall,some_concerns
+ChiCTR-IIR-16008084,D1,some_concerns
+ChiCTR-IIR-16008084,D2,some_concerns
+ChiCTR-IIR-16008084,D3,some_concerns
+ChiCTR-IIR-16008084,D4,low
+ChiCTR-IIR-16008084,D5,low
+ChiCTR-IIR-16008084,Overall,some_concerns
+Quan 2017,D1,some_concerns
+Quan 2017,D2,high
+Quan 2017,D3,some_concerns
+Quan 2017,D4,low
+Quan 2017,D5,some_concerns
+Quan 2017,Overall,high
+Zhu 2017 exenatide vs acarbose,D1,some_concerns
+Zhu 2017 exenatide vs acarbose,D2,high
+Zhu 2017 exenatide vs acarbose,D3,some_concerns
+Zhu 2017 exenatide vs acarbose,D4,low
+Zhu 2017 exenatide vs acarbose,D5,some_concerns
+Zhu 2017 exenatide vs acarbose,Overall,high
+Bouchi 2017,D1,low
+Bouchi 2017,D2,some_concerns
+Bouchi 2017,D3,some_concerns
+Bouchi 2017,D4,some_concerns
+Bouchi 2017,D5,low
+Bouchi 2017,Overall,some_concerns
+NCT01740921,D1,some_concerns
+NCT01740921,D2,high
+NCT01740921,D3,high
+NCT01740921,D4,some_concerns
+NCT01740921,D5,some_concerns
+NCT01740921,Overall,high
+Savvidou 2016,D1,high
+Savvidou 2016,D2,some_concerns
+Savvidou 2016,D3,some_concerns
+Savvidou 2016,D4,low
+Savvidou 2016,D5,some_concerns
+Savvidou 2016,Overall,high
+Gurkan 2014,D1,some_concerns
+Gurkan 2014,D2,some_concerns
+Gurkan 2014,D3,some_concerns
+Gurkan 2014,D4,low
+Gurkan 2014,D5,some_concerns
+Gurkan 2014,Overall,high
+NCT01147627 Drum Tower MRS substudy,D1,some_concerns
+NCT01147627 Drum Tower MRS substudy,D2,some_concerns
+NCT01147627 Drum Tower MRS substudy,D3,some_concerns
+NCT01147627 Drum Tower MRS substudy,D4,low
+NCT01147627 Drum Tower MRS substudy,D5,some_concerns
+NCT01147627 Drum Tower MRS substudy,Overall,high
+Suzuki 2014 Dokkyo,D1,some_concerns
+Suzuki 2014 Dokkyo,D2,some_concerns
+Suzuki 2014 Dokkyo,D3,high
+Suzuki 2014 Dokkyo,D4,some_concerns
+Suzuki 2014 Dokkyo,D5,some_concerns
+Suzuki 2014 Dokkyo,Overall,high
+NCT01208012,D1,some_concerns
+NCT01208012,D2,some_concerns
+NCT01208012,D3,low
+NCT01208012,D4,some_concerns
+NCT01208012,D5,low
+NCT01208012,Overall,some_concerns
+Derosa 2010 exenatide vs glibenclamide,D1,some_concerns
+Derosa 2010 exenatide vs glibenclamide,D2,some_concerns
+Derosa 2010 exenatide vs glibenclamide,D3,low
+Derosa 2010 exenatide vs glibenclamide,D4,low
+Derosa 2010 exenatide vs glibenclamide,D5,some_concerns
+Derosa 2010 exenatide vs glibenclamide,Overall,some_concerns
+NCT06164873,D1,low
+NCT06164873,D2,low
+NCT06164873,D3,low
+NCT06164873,D4,low
+NCT06164873,D5,low
+NCT06164873,Overall,low
+Wang 2026 Xi'an DKD,D1,low
+Wang 2026 Xi'an DKD,D2,some_concerns
+Wang 2026 Xi'an DKD,D3,some_concerns
+Wang 2026 Xi'an DKD,D4,some_concerns
+Wang 2026 Xi'an DKD,D5,high
+Wang 2026 Xi'an DKD,Overall,high
+NCT04844918,D1,low
+NCT04844918,D2,low
+NCT04844918,D3,low
+NCT04844918,D4,low
+NCT04844918,D5,low
+NCT04844918,Overall,low
+NCT05442450,D1,low
+NCT05442450,D2,some_concerns
+NCT05442450,D3,low
+NCT05442450,D4,some_concerns
+NCT05442450,D5,some_concerns
+NCT05442450,Overall,some_concerns
+NCT05564117,D1,low
+NCT05564117,D2,low
+NCT05564117,D3,low
+NCT05564117,D4,low
+NCT05564117,D5,low
+NCT05564117,Overall,low
+SOUL,D1,low
+SOUL,D2,low
+SOUL,D3,low
+SOUL,D4,low
+SOUL,D5,some_concerns
+SOUL,Overall,low
+STEP-HFpEF program pooled,D1,low
+STEP-HFpEF program pooled,D2,low
+STEP-HFpEF program pooled,D3,low
+STEP-HFpEF program pooled,D4,low
+STEP-HFpEF program pooled,D5,low
+STEP-HFpEF program pooled,Overall,low
+SUMMIT,D1,low
+SUMMIT,D2,low
+SUMMIT,D3,low
+SUMMIT,D4,low
+SUMMIT,D5,low
+SUMMIT,Overall,low
+STEP 1,D1,low
+STEP 1,D2,low
+STEP 1,D3,low
+STEP 1,D4,low
+STEP 1,D5,low
+STEP 1,Overall,low
+STEP UP,D1,low
+STEP UP,D2,low
+STEP UP,D3,low
+STEP UP,D4,low
+STEP UP,D5,low
+STEP UP,Overall,low
+STOP,D1,low
+STOP,D2,low
+STOP,D3,some_concerns
+STOP,D4,low
+STOP,D5,some_concerns
+STOP,Overall,some_concerns
+NCT03951753,D1,low
+NCT03951753,D2,low
+NCT03951753,D3,some_concerns
+NCT03951753,D4,low
+NCT03951753,D5,some_concerns
+NCT03951753,Overall,low
+STARDUST,D1,low
+STARDUST,D2,some_concerns
+STARDUST,D3,some_concerns
+STARDUST,D4,low
+STARDUST,D5,low
+STARDUST,Overall,some_concerns
+EudraCT 2013-004947-22,D1,low
+EudraCT 2013-004947-22,D2,some_concerns
+EudraCT 2013-004947-22,D3,some_concerns
+EudraCT 2013-004947-22,D4,low
+EudraCT 2013-004947-22,D5,some_concerns
+EudraCT 2013-004947-22,Overall,high
+OASIS 1,D1,low
+OASIS 1,D2,low
+OASIS 1,D3,low
+OASIS 1,D4,low
+OASIS 1,D5,low
+OASIS 1,Overall,low
+BELIEVE,D1,low
+BELIEVE,D2,low
+BELIEVE,D3,low
+BELIEVE,D4,low
+BELIEVE,D5,some_concerns
+BELIEVE,Overall,low
+Chaudhuri 2012,D1,some_concerns
+Chaudhuri 2012,D2,some_concerns
+Chaudhuri 2012,D3,low
+Chaudhuri 2012,D4,low
+Chaudhuri 2012,D5,some_concerns
+Chaudhuri 2012,Overall,some_concerns
+Sathyanarayana 2011,D1,some_concerns
+Sathyanarayana 2011,D2,some_concerns
+Sathyanarayana 2011,D3,some_concerns
+Sathyanarayana 2011,D4,low
+Sathyanarayana 2011,D5,some_concerns
+Sathyanarayana 2011,Overall,high
+SUSTAIN 4,D1,low
+SUSTAIN 4,D2,some_concerns
+SUSTAIN 4,D3,low
+SUSTAIN 4,D4,some_concerns
+SUSTAIN 4,D5,low
+SUSTAIN 4,Overall,some_concerns
+NCT00614120 Nanjing adipokine substudy,D1,some_concerns
+NCT00614120 Nanjing adipokine substudy,D2,low
+NCT00614120 Nanjing adipokine substudy,D3,some_concerns
+NCT00614120 Nanjing adipokine substudy,D4,low
+NCT00614120 Nanjing adipokine substudy,D5,some_concerns
+NCT00614120 Nanjing adipokine substudy,Overall,some_concerns
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",D1,some_concerns
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",D2,high
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",D3,some_concerns
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",D4,low
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",D5,some_concerns
+"Bunck exenatide vs glargine (Amsterdam, Helsinki, Gothenburg)",Overall,some_concerns
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),D1,some_concerns
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),D2,some_concerns
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),D3,low
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),D4,low
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),D5,some_concerns
+NCT01644500 dulaglutide vs glimepiride (Nanjing First),Overall,some_concerns
+NCT01648582 dulaglutide vs glargine (Nanjing First),D1,some_concerns
+NCT01648582 dulaglutide vs glargine (Nanjing First),D2,some_concerns
+NCT01648582 dulaglutide vs glargine (Nanjing First),D3,some_concerns
+NCT01648582 dulaglutide vs glargine (Nanjing First),D4,low
+NCT01648582 dulaglutide vs glargine (Nanjing First),D5,some_concerns
+NCT01648582 dulaglutide vs glargine (Nanjing First),Overall,some_concerns
+NCT01761318,D1,low
+NCT01761318,D2,low
+NCT01761318,D3,low
+NCT01761318,D4,low
+NCT01761318,D5,some_concerns
+NCT01761318,Overall,low
+NCT02660047,D1,low
+NCT02660047,D2,low
+NCT02660047,D3,low
+NCT02660047,D4,low
+NCT02660047,D5,some_concerns
+NCT02660047,Overall,low
+NCT02147925 Light-On,D1,low
+NCT02147925 Light-On,D2,high
+NCT02147925 Light-On,D3,some_concerns
+NCT02147925 Light-On,D4,low
+NCT02147925 Light-On,D5,low
+NCT02147925 Light-On,Overall,some_concerns
+STEP 2,D1,low
+STEP 2,D2,low
+STEP 2,D3,low
+STEP 2,D4,low
+STEP 2,D5,some_concerns
+STEP 2,Overall,low
+STEP 3,D1,low
+STEP 3,D2,low
+STEP 3,D3,low
+STEP 3,D4,low
+STEP 3,D5,some_concerns
+STEP 3,Overall,low
+PIONEER 1,D1,low
+PIONEER 1,D2,low
+PIONEER 1,D3,low
+PIONEER 1,D4,low
+PIONEER 1,D5,some_concerns
+PIONEER 1,Overall,low
+PIONEER 2,D1,low
+PIONEER 2,D2,low
+PIONEER 2,D3,low
+PIONEER 2,D4,low
+PIONEER 2,D5,some_concerns
+PIONEER 2,Overall,low
+PIONEER 5,D1,low
+PIONEER 5,D2,low
+PIONEER 5,D3,low
+PIONEER 5,D4,low
+PIONEER 5,D5,some_concerns
+PIONEER 5,Overall,low
+NCT03987451,D1,low
+NCT03987451,D2,low
+NCT03987451,D3,low
+NCT03987451,D4,low
+NCT03987451,D5,low
+NCT03987451,Overall,low
+Jin 2020 exenatide vs insulin CIMT (Harbin),D1,some_concerns
+Jin 2020 exenatide vs insulin CIMT (Harbin),D2,high
+Jin 2020 exenatide vs insulin CIMT (Harbin),D3,some_concerns
+Jin 2020 exenatide vs insulin CIMT (Harbin),D4,low
+Jin 2020 exenatide vs insulin CIMT (Harbin),D5,some_concerns
+Jin 2020 exenatide vs insulin CIMT (Harbin),Overall,some_concerns
+semaglutide psoriasis T2D open label (Biomolecules 2025),D1,high
+semaglutide psoriasis T2D open label (Biomolecules 2025),D2,high
+semaglutide psoriasis T2D open label (Biomolecules 2025),D3,some_concerns
+semaglutide psoriasis T2D open label (Biomolecules 2025),D4,some_concerns
+semaglutide psoriasis T2D open label (Biomolecules 2025),D5,some_concerns
+semaglutide psoriasis T2D open label (Biomolecules 2025),Overall,high
+SURMOUNT-1,D1,low
+SURMOUNT-1,D2,low
+SURMOUNT-1,D3,some_concerns
+SURMOUNT-1,D4,low
+SURMOUNT-1,D5,some_concerns
+SURMOUNT-1,Overall,low
+MDI-liraglutide study (Sweden),D1,low
+MDI-liraglutide study (Sweden),D2,low
+MDI-liraglutide study (Sweden),D3,low
+MDI-liraglutide study (Sweden),D4,low
+MDI-liraglutide study (Sweden),D5,some_concerns
+MDI-liraglutide study (Sweden),Overall,low
+SURPASS-1,D1,low
+SURPASS-1,D2,low
+SURPASS-1,D3,low
+SURPASS-1,D4,low
+SURPASS-1,D5,some_concerns
+SURPASS-1,Overall,low
+NCT04904913 mazdutide phase 2,D1,low
+NCT04904913 mazdutide phase 2,D2,low
+NCT04904913 mazdutide phase 2,D3,some_concerns
+NCT04904913 mazdutide phase 2,D4,low
+NCT04904913 mazdutide phase 2,D5,some_concerns
+NCT04904913 mazdutide phase 2,Overall,low
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,D1,some_concerns
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,D2,high
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,D3,some_concerns
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,D4,low
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,D5,low
+Yu 2015 Dalian liraglutide vs metformin vs sitagliptin,Overall,high
+Davies 2013 EQW vs detemir (NCT01003184),D1,low
+Davies 2013 EQW vs detemir (NCT01003184),D2,high
+Davies 2013 EQW vs detemir (NCT01003184),D3,some_concerns
+Davies 2013 EQW vs detemir (NCT01003184),D4,low
+Davies 2013 EQW vs detemir (NCT01003184),D5,low
+Davies 2013 EQW vs detemir (NCT01003184),Overall,high
+SURPASS-3 MRI (NCT03882970),D1,low
+SURPASS-3 MRI (NCT03882970),D2,some_concerns
+SURPASS-3 MRI (NCT03882970),D3,some_concerns
+SURPASS-3 MRI (NCT03882970),D4,low
+SURPASS-3 MRI (NCT03882970),D5,low
+SURPASS-3 MRI (NCT03882970),Overall,some_concerns

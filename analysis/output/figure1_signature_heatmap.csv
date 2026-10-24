@@ -1,0 +1,113 @@
+hallmark_domain,biomarker,biomarker_label,receptor_class,signed_effect
+adipose_senescence,adiponectin,Adiponectin,GLP1_mono,14.49023142
+adipose_senescence,adiponectin,Adiponectin,GLP1_GIP,25.94657241
+adipose_senescence,adiponectin,Adiponectin,GLP1_GCGR,11.64192407
+adipose_senescence,adiponectin,Adiponectin,GLP1_GIP_GCGR,
+adipose_senescence,body_fat_pct,Body fat percentage,GLP1_mono,-0.1523644989
+adipose_senescence,body_fat_pct,Body fat percentage,GLP1_GIP,
+adipose_senescence,body_fat_pct,Body fat percentage,GLP1_GCGR,
+adipose_senescence,body_fat_pct,Body fat percentage,GLP1_GIP_GCGR,
+adipose_senescence,leptin,Leptin,GLP1_mono,12.97136898
+adipose_senescence,leptin,Leptin,GLP1_GIP,54.18805974
+adipose_senescence,leptin,Leptin,GLP1_GCGR,
+adipose_senescence,leptin,Leptin,GLP1_GIP_GCGR,
+adipose_senescence,VAT,Visceral adipose tissue,GLP1_mono,13.08952104
+adipose_senescence,VAT,Visceral adipose tissue,GLP1_GIP,
+adipose_senescence,VAT,Visceral adipose tissue,GLP1_GCGR,
+adipose_senescence,VAT,Visceral adipose tissue,GLP1_GIP_GCGR,
+autonomic_aging,resting_heart_rate,Resting heart rate,GLP1_mono,-2.696128739
+autonomic_aging,resting_heart_rate,Resting heart rate,GLP1_GIP,
+autonomic_aging,resting_heart_rate,Resting heart rate,GLP1_GCGR,
+autonomic_aging,resting_heart_rate,Resting heart rate,GLP1_GIP_GCGR,
+cardiac_aging,NTproBNP,NT-proBNP,GLP1_mono,18.14381869
+cardiac_aging,NTproBNP,NT-proBNP,GLP1_GIP,8.134171378
+cardiac_aging,NTproBNP,NT-proBNP,GLP1_GCGR,
+cardiac_aging,NTproBNP,NT-proBNP,GLP1_GIP_GCGR,
+hepatocellular_senescence,ALT,ALT,GLP1_mono,16.5949071
+hepatocellular_senescence,ALT,ALT,GLP1_GIP,
+hepatocellular_senescence,ALT,ALT,GLP1_GCGR,28.28254166
+hepatocellular_senescence,ALT,ALT,GLP1_GIP_GCGR,
+hepatocellular_senescence,AST,AST,GLP1_mono,-4.524709944
+hepatocellular_senescence,AST,AST,GLP1_GIP,
+hepatocellular_senescence,AST,AST,GLP1_GCGR,
+hepatocellular_senescence,AST,AST,GLP1_GIP_GCGR,
+hepatocellular_senescence,GGT,GGT,GLP1_mono,17.61568091
+hepatocellular_senescence,GGT,GGT,GLP1_GIP,
+hepatocellular_senescence,GGT,GGT,GLP1_GCGR,
+hepatocellular_senescence,GGT,GGT,GLP1_GIP_GCGR,
+hepatocellular_senescence,liver_fat_pdff,Liver fat (MRI-PDFF),GLP1_mono,21.40506306
+hepatocellular_senescence,liver_fat_pdff,Liver fat (MRI-PDFF),GLP1_GIP,
+hepatocellular_senescence,liver_fat_pdff,Liver fat (MRI-PDFF),GLP1_GCGR,
+hepatocellular_senescence,liver_fat_pdff,Liver fat (MRI-PDFF),GLP1_GIP_GCGR,
+inflammaging,IL6,IL-6,GLP1_mono,0.1290193
+inflammaging,IL6,IL-6,GLP1_GIP,
+inflammaging,IL6,IL-6,GLP1_GCGR,
+inflammaging,IL6,IL-6,GLP1_GIP_GCGR,
+inflammaging,TNF_alpha,TNF-alpha,GLP1_mono,10.81917057
+inflammaging,TNF_alpha,TNF-alpha,GLP1_GIP,
+inflammaging,TNF_alpha,TNF-alpha,GLP1_GCGR,
+inflammaging,TNF_alpha,TNF-alpha,GLP1_GIP_GCGR,
+inflammaging,hsCRP,hsCRP,GLP1_mono,29.36000263
+inflammaging,hsCRP,hsCRP,GLP1_GIP,44.42119669
+inflammaging,hsCRP,hsCRP,GLP1_GCGR,
+inflammaging,hsCRP,hsCRP,GLP1_GIP_GCGR,
+lipid_aging,LDL,LDL cholesterol,GLP1_mono,3.422546831
+lipid_aging,LDL,LDL cholesterol,GLP1_GIP,
+lipid_aging,LDL,LDL cholesterol,GLP1_GCGR,10.75335829
+lipid_aging,LDL,LDL cholesterol,GLP1_GIP_GCGR,
+lipid_aging,TC,Total cholesterol,GLP1_mono,2.50708226
+lipid_aging,TC,Total cholesterol,GLP1_GIP,
+lipid_aging,TC,Total cholesterol,GLP1_GCGR,9.822382298
+lipid_aging,TC,Total cholesterol,GLP1_GIP_GCGR,
+lipid_aging,TG,Triglycerides,GLP1_mono,11.24961662
+lipid_aging,TG,Triglycerides,GLP1_GIP,
+lipid_aging,TG,Triglycerides,GLP1_GCGR,25.36258806
+lipid_aging,TG,Triglycerides,GLP1_GIP_GCGR,
+mitochondrial_stress,GDF15,GDF-15,GLP1_mono,4.673469489
+mitochondrial_stress,GDF15,GDF-15,GLP1_GIP,
+mitochondrial_stress,GDF15,GDF-15,GLP1_GCGR,
+mitochondrial_stress,GDF15,GDF-15,GLP1_GIP_GCGR,
+musculoskeletal_aging,lean_mass,Total lean mass,GLP1_mono,-5.028534562
+musculoskeletal_aging,lean_mass,Total lean mass,GLP1_GIP,
+musculoskeletal_aging,lean_mass,Total lean mass,GLP1_GCGR,
+musculoskeletal_aging,lean_mass,Total lean mass,GLP1_GIP_GCGR,
+nutrient_sensing,C_peptide,C-peptide,GLP1_mono,-0.611250311
+nutrient_sensing,C_peptide,C-peptide,GLP1_GIP,
+nutrient_sensing,C_peptide,C-peptide,GLP1_GCGR,3.732176427
+nutrient_sensing,C_peptide,C-peptide,GLP1_GIP_GCGR,
+nutrient_sensing,fasting_glucose,Fasting glucose,GLP1_mono,4.320720413
+nutrient_sensing,fasting_glucose,Fasting glucose,GLP1_GIP,
+nutrient_sensing,fasting_glucose,Fasting glucose,GLP1_GCGR,14.64409486
+nutrient_sensing,fasting_glucose,Fasting glucose,GLP1_GIP_GCGR,
+nutrient_sensing,fasting_insulin,Fasting insulin,GLP1_mono,20.33150796
+nutrient_sensing,fasting_insulin,Fasting insulin,GLP1_GIP,
+nutrient_sensing,fasting_insulin,Fasting insulin,GLP1_GCGR,15.69797838
+nutrient_sensing,fasting_insulin,Fasting insulin,GLP1_GIP_GCGR,
+nutrient_sensing,glucagon,Glucagon,GLP1_mono,10.62208371
+nutrient_sensing,glucagon,Glucagon,GLP1_GIP,
+nutrient_sensing,glucagon,Glucagon,GLP1_GCGR,20.85839187
+nutrient_sensing,glucagon,Glucagon,GLP1_GIP_GCGR,
+nutrient_sensing,HOMA_IR,HOMA-IR,GLP1_mono,17.7393509
+nutrient_sensing,HOMA_IR,HOMA-IR,GLP1_GIP,
+nutrient_sensing,HOMA_IR,HOMA-IR,GLP1_GCGR,29.52027597
+nutrient_sensing,HOMA_IR,HOMA-IR,GLP1_GIP_GCGR,
+nutrient_sensing,HOMA_beta,HOMA-beta,GLP1_mono,16.62242485
+nutrient_sensing,HOMA_beta,HOMA-beta,GLP1_GIP,
+nutrient_sensing,HOMA_beta,HOMA-beta,GLP1_GCGR,38.21308277
+nutrient_sensing,HOMA_beta,HOMA-beta,GLP1_GIP_GCGR,
+nutrient_sensing,HbA1c,HbA1c,GLP1_mono,3.778761769
+nutrient_sensing,HbA1c,HbA1c,GLP1_GIP,
+nutrient_sensing,HbA1c,HbA1c,GLP1_GCGR,6.851987031
+nutrient_sensing,HbA1c,HbA1c,GLP1_GIP_GCGR,
+renal_aging,eGFR,eGFR,GLP1_mono,2.926256477
+renal_aging,eGFR,eGFR,GLP1_GIP,
+renal_aging,eGFR,eGFR,GLP1_GCGR,
+renal_aging,eGFR,eGFR,GLP1_GIP_GCGR,
+vascular_aging,DBP,DBP,GLP1_mono,1.274103899
+vascular_aging,DBP,DBP,GLP1_GIP,
+vascular_aging,DBP,DBP,GLP1_GCGR,2.139399115
+vascular_aging,DBP,DBP,GLP1_GIP_GCGR,
+vascular_aging,SBP,SBP,GLP1_mono,2.742165615
+vascular_aging,SBP,SBP,GLP1_GIP,
+vascular_aging,SBP,SBP,GLP1_GCGR,5.989899744
+vascular_aging,SBP,SBP,GLP1_GIP_GCGR,

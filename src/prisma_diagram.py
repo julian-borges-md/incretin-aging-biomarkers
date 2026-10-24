@@ -22,11 +22,20 @@ Design constraints, each from a source rather than from taste.
 
 Output
   analysis/output/figure0_prisma_flow.svg   version controlled
+  analysis/output/figure0_prisma_flow.csv   version controlled; the count in every box, with its
+                                            derivation from docs/prisma_counts.json
+
+The second file is the figure's data twin, as every figure in analysis/output has one. The diagram
+is drawn by render(), which src/figure_check.py calls to regenerate both files from the declared
+counts and compare them with the tracked ones, so a count edited in the SVG, or a declared count
+changed without this script being rerun, fails the gate chain.
 
 Usage
   python3 -I src/prisma_diagram.py
   exit 1 if any count on the diagram fails to follow from the counts above it
 """
+import csv
+import io
 import json
 import os
 import sys
@@ -34,6 +43,8 @@ import sys
 ROOT = os.getcwd()
 COUNTS = os.path.join(ROOT, "docs", "prisma_counts.json")
 OUT = os.path.join(ROOT, "analysis", "output", "figure0_prisma_flow.svg")
+TWIN = os.path.join(ROOT, "analysis", "output", "figure0_prisma_flow.csv")
+TWIN_HEADER = ("stage", "box", "n", "derivation")
 
 INK = "#1a1a1a"
 MUTED = "#5c5c5c"
@@ -111,8 +122,12 @@ class Canvas:
             f'transform="rotate(-90 18 {y})">{esc(label.upper())}</text>')
 
 
-def main():
-    d = json.load(open(COUNTS))
+def render(d):
+    """The diagram and the counts it draws, from the declared counts d.
+
+    Returns the SVG text, the twin rows (stage, box, n, derivation), one per box count, and the
+    balance report. Every count is asserted before anything is drawn, so an AssertionError here is
+    a diagram that would not follow from its own inputs."""
     a, b = d["stream_a_identification"], d["title_abstract_screening"]
     f, g, inc = d["full_text_stage"], d["grouping_and_extraction"], d["included_in_synthesis"]
     sb = d["stream_b_adopted"]
@@ -255,18 +270,72 @@ def main():
     svg.extend(c.parts)
     svg.append('</svg>')
 
+    # The count in every box, in drawing order, with the arithmetic that produced it. The titles
+    # above are formatted from these same variables, so the twin is what the boxes print.
+    drawn = [
+        ("identification", "Records identified from our own searching",
+         b["records_screened_all_pools"], "title_abstract_screening.records_screened_all_pools"),
+        ("identification", "Separate inflow, Alrasheed 2026 RCTs",
+         sb["alrasheed_2026_rcts"], "stream_b_adopted.alrasheed_2026_rcts"),
+        ("identification", "Separate inflow, Ren 2025 RCTs",
+         sb["ren_2025_rcts"], "stream_b_adopted.ren_2025_rcts"),
+        ("screening", "Records screened, title and abstract",
+         b["records_screened_all_pools"], "title_abstract_screening.records_screened_all_pools"),
+        ("screening", "Records excluded at title and abstract", ex_screen,
+         "title_abstract_screening: pool1_v2_remain_excluded + pool2_exclude + pool3_exclude"),
+        ("screening", "Records sought for full text",
+         b["records_to_full_text"], "title_abstract_screening.records_to_full_text"),
+        ("screening", "Not assessed", f["without_any_text"] + f["already_in_master"],
+         "full_text_stage: without_any_text + already_in_master"),
+        ("eligibility", "Records assessed at full text",
+         f["needing_a_screen"], "full_text_stage.needing_a_screen"),
+        ("eligibility", "Records excluded at full text", ex_fulltext,
+         "full_text_stage: needing_a_screen minus included_records"),
+        ("eligibility", "Records included, grouped into studies",
+         g["ledger_groups_final"], "grouping_and_extraction.ledger_groups_final"),
+        ("included", "Studies contributing to the synthesis", contributing,
+         "grouping_and_extraction: extracted + already_extracted"),
+        ("included", "Studies closed without contributing", closed,
+         "grouping_and_extraction: no_usable_contrast_scan + no_usable_contrast + "
+         "excluded_at_extraction + molecule_not_admitted + ongoing_no_results + "
+         "held_pending_decision"),
+    ]
+    report = [
+        f"screening balances: {ex_screen} excluded + {b['records_to_full_text']} sought "
+        f"= {b['records_screened_all_pools']} screened",
+        f"full text: {f['needing_a_screen']} assessed - {ex_fulltext} excluded "
+        f"= {f['included_records']} included records",
+        f"ledger balances: {closed} closed + {contributing} contributing "
+        f"= {g['ledger_groups_final']} groups",
+        f"diagram {height} px tall, {len(drawn)} box counts",
+    ]
+    return "\n".join(svg), drawn, report
+
+
+def twin_text(drawn):
+    """The twin as the file holds it."""
+    buf = io.StringIO()
+    w = csv.writer(buf, lineterminator="\n")
+    w.writerow(TWIN_HEADER)
+    w.writerows(drawn)
+    return buf.getvalue()
+
+
+def main():
+    d = json.load(open(COUNTS))
+    svg, drawn, report = render(d)
+
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w") as fh:
-        fh.write("\n".join(svg))
+        fh.write(svg)
+        fh.flush()
+    with open(TWIN, "w", newline="") as fh:
+        fh.write(twin_text(drawn))
         fh.flush()
 
-    print(f"screening balances: {ex_screen} excluded + {b['records_to_full_text']} sought "
-          f"= {b['records_screened_all_pools']} screened")
-    print(f"full text: {f['needing_a_screen']} assessed - {ex_fulltext} excluded "
-          f"= {f['included_records']} included records")
-    print(f"ledger balances: {closed} closed + {contributing} contributing "
-          f"= {g['ledger_groups_final']} groups")
-    print(f"written {os.path.relpath(OUT, ROOT)} ({height} px tall)")
+    for line in report:
+        print(line)
+    print(f"written {os.path.relpath(OUT, ROOT)} and {os.path.relpath(TWIN, ROOT)}")
 
 
 if __name__ == "__main__":

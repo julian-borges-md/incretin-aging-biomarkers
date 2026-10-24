@@ -72,9 +72,9 @@ Writes to `analysis/output/`:
 | `table_nma_coherence.csv` | Network inconsistency diagnostics |
 | `table_diagnostics.csv` | Leave one out range, influential trials, Egger where assessable, trim and fill |
 | `sensitivity_*.csv` | Nine pre-specified sensitivity analyses |
-| `figure1_signature_heatmap.pdf` | The signature figure |
-| `figure4_weight_adjusted_liverfat.pdf` | Meta-regression bubble plot |
-| `figure5_nbais.pdf` | Composite by class, faceted by weighting scheme |
+| `figure*_*.pdf`, `figure*_*.png` | The figure set; the PRISMA diagram is written by `src/prisma_diagram.py` instead, and `docs/FIGURES.md` maps every file stem to its submission number |
+| `figure*_*.csv` | The plotted values of each figure, which the figure gate recomputes from the tables and data the figure is drawn from |
+| `figure_index.csv` | Each figure's files, plotted values, caption and size, as the run saved them |
 | `session_info.txt` | R version, platform, every loaded package version |
 | `MANIFEST.csv` | Every output file with its SHA-256 hash |
 

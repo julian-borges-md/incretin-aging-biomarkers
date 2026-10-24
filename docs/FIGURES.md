@@ -1,8 +1,9 @@
 # Figures
 
-The figure set of the M5-AGE manuscript, what produces each one, and which submission number it
-carries. `src/figure_check.py` reads this document and fails the gate chain when a
-figure named here has not been produced, or a figure that has been produced is not named here.
+The figure set of the M5-AGE manuscript, what produces each one, which submission number it
+carries, and what its plotted values are recomputed from. `src/figure_check.py` reads this document
+and fails the gate chain when a figure named here has not been produced, a figure that has been
+produced is not named here, or a figure plots values that differ from the tables it is drawn from.
 
 ## State before 19 October 2026
 
@@ -44,19 +45,55 @@ review uses; it is a declared deviation from the registered Hedges' g plan, reco
 the pipeline. Three figures previously carried `Hedges' g` in their axis labels, which on this scale
 would have understated every printed quantity by roughly a factor of twenty.
 
-| Submission | File stem | Produced by | Content |
-| --- | --- | --- | --- |
-| Figure 1 | `figure0_prisma_flow` | `src/prisma_diagram.py` | PRISMA 2020 flow, three screening pools, 1009 records screened to 76 included trials |
-| Figure 2 | `figure2_forest_overall` | pipeline section 10 | Forest plot of the overall pooled percent change per biomarker across all receptor classes, ordered by effect, with k and I2 per row |
-| Figure 3 | `figure1_signature_heatmap` | pipeline section 10 | Direction adjusted signature heatmap, biomarkers by hallmark domain against the four receptor classes |
-| Figure 4 | `figure4_weight_adjusted_liverfat` | pipeline section 10 | Liver fat against mean body weight change, point area inverse variance, point shape receptor class, line and band the random effects meta-regression of Table 4a |
-| Figure 5 | `figure5_nbais` | pipeline section 10 | Net Biological Age Impact Score by receptor class under three weighting schemes, with the percentile interval of the two level bootstrap |
-| Figure 6 | `figure6_rob_summary` | pipeline section 10 | RoB-2 judgements across the five domains and overall, as the share of assessed trials |
-| Figure S1 | `figureS1_rob_traffic_light` | pipeline section 10 | Per trial RoB-2 traffic light for every assessed trial |
+| Submission | File stem | Produced by | Plotted values, recomputed from | Content |
+| --- | --- | --- | --- | --- |
+| Figure 1 | `figure0_prisma_flow` | `src/prisma_diagram.py` | `figure0_prisma_flow.csv`; diagram and values regenerated from `docs/prisma_counts.json` | PRISMA 2020 flow, three screening pools, 1009 records screened to 76 included trials |
+| Figure 2 | `figure2_forest_overall` | pipeline section 10 | `figure2_forest_overall.csv`; `table2_pipeline.csv`, with names and favourable directions from `biomarker_inventory.csv` | Forest plot of the overall pooled percent change per biomarker across all receptor classes, ordered by effect, with k and I2 per row |
+| Figure 3 | `figure1_signature_heatmap` | pipeline section 10 | `figure1_signature_heatmap.csv`; `table3_primary_results.csv` times the aging direction in `biomarker_inventory.csv` | Direction adjusted signature heatmap, biomarkers by hallmark domain against the four receptor classes |
+| Figure 4 | `figure4_weight_adjusted_liverfat` | pipeline section 10 | `figure4_weight_adjusted_liverfat.csv`; points matched to `extraction_master_harmonised.csv`, line and band refitted at the variance of `table4a_hepatic_metaregression.csv`, arm count against `table2_pipeline.csv` | Liver fat against mean body weight change, point area inverse variance, point shape receptor class, line and band the random effects meta-regression of Table 4a |
+| Figure 5 | `figure5_nbais` | pipeline section 10 | `figure5_nbais.csv`; the computed rows of `table5_nbais.csv` | Net Biological Age Impact Score by receptor class under three weighting schemes, with the percentile interval of the two level bootstrap |
+| Figure 6 | `figure6_rob_summary` | pipeline section 10 | `figure6_rob_summary.csv`; recounted from `risk_of_bias.csv` | RoB-2 judgements across the five domains and overall, as the share of assessed trials |
+| Figure S1 | `figureS1_rob_traffic_light` | pipeline section 10 | `figureS1_rob_traffic_light.csv`; `risk_of_bias.csv` | Per trial RoB-2 traffic light for every assessed trial |
 
 Each stem exists as a `.pdf` for submission and a 300 dpi `.png` for drafts and for inspection; the
-PRISMA diagram is an `.svg` written directly rather than through ggplot. `analysis/output/figure_
-index.csv` is written by the run and records the files, captions and sizes as they were saved.
+PRISMA diagram is an `.svg` written directly rather than through ggplot. Each stem also exists as a
+`.csv`, the figure's plotted values, described in the next section.
+`analysis/output/figure_index.csv` is written by the run and records the files, the plotted
+values, captions and sizes as they were saved.
+
+## Plotted values
+
+Every figure writes the values it draws beside it, as a data twin with the figure's stem and the
+extension `.csv`, added 23 October 2026. The checks above establish that a figure exists, is the
+file the run produced and is the one the manuscript numbers; none of them reads what the figure
+shows, and a PDF does not record which number a mark stands for. A figure is a second rendering of
+numbers a table already reports, and the two can disagree with every file present: until 19
+October Figure 4 drew one least squares line per receptor class beside a table reporting a random
+effects meta-regression, and nothing in the repository could have noticed.
+
+| Element | Rule | Where |
+| --- | --- | --- |
+| Twin | The data frame each layer is drawn from, with the columns the figure encodes; a figure with several layers stacks them under a `layer` column; empty cells are values the figure leaves empty, such as a heatmap cell with no pooled estimate | `write_twin` and `save_figure` in the pipeline, `twin_text` in `src/prisma_diagram.py` |
+| Rounding | Doubles to ten significant digits, far finer than anything readable from a figure and far coarser than a platform's last bits, so the twin of an unchanged figure is the same file on every run | `write_twin` |
+| Content check | One rule per figure recomputes its twin from the files named in the table above, without the pipeline, and requires agreement to the ten digits written; a produced figure with no rule fails, so a figure enters the manuscript with the rule that checks it | `src/figure_check.py`, in the gate chain with its self test |
+| Record | Each figure's row above names its twin and every file its rule reads, and the gate fails when it does not | `src/figure_check.py` |
+| Determinism | The PDF device writes no creation or modification time, so the PDF of an unchanged figure is byte identical across runs and the manifest records a change only when a figure changed | `PDF_ARGS` in the pipeline |
+
+Two of the rules do more than look values up. Figure 4's points must each be one of their trial's
+liver fat arms in the harmonised master, with that trial's receptor class, and weighted least
+squares at the between trial variance Table 4a reports must reproduce from them that table's slope
+and standard error, which holds only if they are the points the model was fitted to; the drawn line
+and band must then be that fit's prediction and confidence band at every one of the hundred points
+drawn. Figure 5's rule compares the drawn interval with the percentile interval of
+`table5_nbais.csv` and requires the table to label it so, because the table carries the BCa interval
+beside it, and a figure drawing that one would match a column of the table and contradict its own
+caption.
+
+The self test injects into the tracked twins and tables the defects the rules exist for, among them
+another dose arm of a trial plotted in Figure 4, its line fitted by unweighted least squares, the
+method of the per class lines drawn until 19 October, the BCa interval drawn in Figure 5, a
+judgement recoded in the risk of bias data, and a PRISMA count changed without the diagram being
+redrawn, and requires each to be caught and the tracked figures to pass.
 
 ## File names are not submission numbers
 
