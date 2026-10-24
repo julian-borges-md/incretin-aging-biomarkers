@@ -52,6 +52,23 @@ invisible(lapply(required_packages, function(p) {
   library(p, character.only = TRUE)
 }))
 
+# The packages figure style 2 draws with (section 10 and analysis/figure_style.R), checked here so
+# that a missing one stops the run before twenty minutes of computation rather than at the first
+# figure. They are called with :: and not attached, so nothing computed before section 10 runs on a
+# different search path.
+figure_packages <- c(
+  "showtext",     # >= 0.9    glyphs drawn as outlines in the PDF
+  "sysfonts",     # >= 0.8    registers the vendored typeface for showtext
+  "systemfonts",  # >= 1.1    registers the vendored typeface for ragg
+  "scales"        # >= 1.3    true minus signs and percent labels on the axes
+)
+figure_missing <- figure_packages[!vapply(figure_packages, requireNamespace, logical(1),
+                                          quietly = TRUE)]
+if (length(figure_missing) > 0) {
+  stop("Package(s) required for the figures: ", paste(figure_missing, collapse = ", "),
+       ". Run make install.", call. = FALSE)
+}
+
 # Ported 2026-10-16 from the arm level master to the harmonised one, resolving the divergence
 # recorded in docs/PIPELINE_DIVERGENCE_2026-10-15.md as option A. The reason is in that document and
 # in docs/LESSONS.md: this literature reports between group contrasts with intervals, not arm level
@@ -1153,25 +1170,32 @@ readr::write_csv(diagnostics, file.path(OUT_DIR, "table_diagnostics.csv"))
 # reports anything, and stops the run when a figure produced no file on any device. A capability
 # that a library reports is a claim; a file on disk is evidence.
 #
+# AMENDMENT 2026-10-24, figure style 2. The figures were drawn at a size chosen for each in inches,
+# 9.5 by 12 for the heatmap among them, in the device's default face, at 300 dpi, with a caption
+# printed inside the image. A journal reduces such a figure to its column width, so its text reached
+# the page at whatever size the reduction left, and the caption appeared twice, once in the image
+# and once in the legend. At the Director's decision of 24 October for more resolution and a more
+# modern style, the figures follow figure style 2 of the laboratory, the standard the governed
+# research template and the EG-RP-001 record already draw in: each figure is drawn at its final
+# journal width, 89, 120 or 183 mm, at most 170 mm high, in the vendored Inter typeface verified by
+# its SHA-256, with text between 5.8 and 7 pt, written as a vector PDF whose glyphs are outlines and
+# as a 600 dpi PNG, and with no title or caption inside it: the caption is written to
+# figure_index.csv and carried by the manuscript legend. The standard, the twin writer and
+# save_figure live in analysis/figure_style.R, which this section sources, so that
+# src/prisma_figure.R draws the flow diagram the same way. The restyle changes what a figure looks
+# like and not what it plots: every twin is still recomputed from its sources by the figure gate.
+#
 # Colour follows the data visualisation standard in use: one hue for a single series, hue order
 # fixed and never cycled, a diverging ramp only for a signed quantity with a neutral midpoint, and
 # identity never carried by colour alone. The four receptor classes cannot be separated by colour
 # in a scatter: no four hue set from the reference palette clears the all pairs colour vision
 # deficiency and normal vision floors, which was measured rather than judged, so Figure 4 carries
 # class by point shape and spends no colour on it. Figure 5 needs no class colour at all, since the
-# axis names each class. The heatmap keeps the ColorBrewer RdBu poles, a published diverging scheme
-# with balanced arms that is standard in biomedical journals.
+# axis names each class. The heatmap's diverging ramp runs from a dark orange through a grey with
+# no hue to a dark blue, the pair of figure style 2. It replaced the ColorBrewer RdBu poles on
+# 24 October, because their red arm is the colour this submission reserves for a high risk of bias.
 
-FIG_SERIES    <- "#2a78d6"   # single series hue
-FIG_INK       <- "#0b0b0b"   # primary ink
-FIG_INK_SOFT  <- "#52514e"   # secondary ink
-FIG_MUTED     <- "#898781"   # axis and annotation
-FIG_GRID      <- "#e1e0d9"   # hairline grid
-FIG_RIBBON    <- "#dfe9f7"   # model interval band, a light step of the series hue
-FIG_DIV_LOW   <- "#b2182b"   # RdBu negative pole
-FIG_DIV_MID   <- "#f7f7f7"   # RdBu neutral midpoint
-FIG_DIV_HIGH  <- "#2166ac"   # RdBu positive pole
-FIG_NA_FILL   <- "#d9d9d6"   # not estimable, distinguishable from the midpoint and glyph marked
+source(file.path("analysis", "figure_style.R"))
 
 # Display vocabulary. The analysis keys are snake case because they index data; a printed figure
 # is read by a person, and `body_fat_pct` and `GLP1_GIP_GCGR` are keys rather than names. The
@@ -1181,6 +1205,12 @@ CLASS_LABELS <- c(GLP1_mono     = "GLP-1 mono",
                   GLP1_GIP      = "GLP-1 / GIP",
                   GLP1_GCGR     = "GLP-1 / GCG",
                   GLP1_GIP_GCGR = "GLP-1 / GIP / GCG")
+# The heatmap's columns are narrower at its journal width than the longest class name, so its
+# column headers break the names over two lines.
+CLASS_LABELS_STACKED <- c(GLP1_mono     = "GLP-1\nmono",
+                          GLP1_GIP      = "GLP-1 /\nGIP",
+                          GLP1_GCGR     = "GLP-1 /\nGCG",
+                          GLP1_GIP_GCGR = "GLP-1 /\nGIP / GCG")
 WEIGHTING_LEVELS <- c("inverse_variance", "equal", "clinical")
 WEIGHTING_LABELS <- c(inverse_variance = "Inverse variance weighted",
                       equal            = "Equally weighted",
@@ -1194,108 +1224,22 @@ label_biomarker <- function(x) ifelse(is.na(BIOMARKER_LABELS[x]), x, BIOMARKER_L
 label_domain <- function(x) sub("^(.)", "\\U\\1", gsub("_", " ", x), perl = TRUE)
 
 # A rounded value of zero prints as "-0" for any small negative, which reads as a quantity that does
-# not exist. Values that round to zero print as 0 with no sign.
+# not exist. Values that round to zero print as 0 with no sign, and a negative value carries a true
+# minus sign rather than a hyphen.
 fmt_signed <- function(v) {
   r <- round(v)
-  ifelse(is.na(r), NA_character_, ifelse(r == 0, "0", sprintf("%+d", as.integer(r))))
+  ifelse(is.na(r), NA_character_,
+         ifelse(r == 0, "0", sub("^-", "−", sprintf("%+d", as.integer(r)))))
 }
 
 ROB_LEVELS <- c("low", "some_concerns", "high")
 ROB_LABELS <- c(low = "Low risk", some_concerns = "Some concerns", high = "High risk")
-ROB_FILL   <- c(low = "#0ca30c", some_concerns = "#fab219", high = "#d03b3b")
-ROB_GLYPH  <- c(low = "+", some_concerns = "?", high = "x")
-
-# Each figure is recorded as it is written, and the index is an output of the run rather than a
-# document kept in step by hand. docs/FIGURES.md maps these files to the submission numbering.
-FIGURE_INDEX <- list()
-
-# The plotted values of every figure are written beside it as <name>.csv, its data twin, added
-# 23 October. A PDF or a PNG records what the device drew and not what the figure claims: nothing
-# in a forest plot file says which estimate a square stands for, so a figure drawn from a stale
-# object, a differently filtered frame or a different model passes every check of existence while
-# disagreeing with the table it illustrates. Figure 4 did exactly that until 19 October, drawing one
-# least squares line per receptor class beside a table that reports a random effects
-# meta-regression, and nothing in the repository could have noticed. The twin makes the drawn
-# values a record, and src/figure_check.py recomputes every twin from the result tables and the data
-# the figure is drawn from and stops the gate chain on a disagreement.
-#
-# Doubles are rounded to ten significant digits, a resolution far finer than anything a reader can
-# measure from a figure and far coarser than the last bits of a platform's floating point, so the
-# twin of an unchanged figure is the same file on every run. A figure with more than one layer
-# passes a named list and the layers are stacked under a layer column. The twin is written before
-# the images, so a figure whose plotted values cannot be recorded stops the run before any file of
-# it exists.
-write_twin <- function(name, data) {
-  layered <- !is.data.frame(data)
-  if (layered && (is.null(names(data)) || any(names(data) == ""))) {
-    stop("figure ", name, ": a figure with several layers names each of them", call. = FALSE)
-  }
-  if (!layered) data <- list(data)
-  parts <- lapply(seq_along(data), function(i) {
-    d <- dplyr::mutate(dplyr::ungroup(data[[i]]),
-                       dplyr::across(dplyr::where(is.factor), as.character),
-                       dplyr::across(dplyr::where(is.double), ~ signif(.x, 10)))
-    if (layered) d <- dplyr::mutate(d, layer = names(data)[i], .before = 1)
-    d
-  })
-  twin <- dplyr::bind_rows(parts)
-  if (nrow(twin) == 0) {
-    stop("figure ", name, " has no plotted values, and a figure of nothing is not written",
-         call. = FALSE)
-  }
-  path <- file.path(OUT_DIR, paste0(name, ".csv"))
-  readr::write_csv(twin, path, na = "")
-  path
-}
-
-# The PDF device writes its creation and modification times into every file, so a rerun that drew
-# the same figure produced a different file, and the manifest recorded a change that was only the
-# clock. Without the timestamp the PDF of an unchanged figure is byte identical across runs. The
-# argument exists from R 4.4; on an older R the device is called as before rather than failing.
-PDF_ARGS <- c(list(useDingbats = FALSE),
-              if ("timestamp" %in% names(formals(grDevices::pdf))) list(timestamp = FALSE))
-
-save_figure <- function(name, plot, width, height, caption, data) {
-  twin <- write_twin(name, data)
-  written <- character(0)
-  attempts <- list(
-    list(ext = "pdf", dev = "pdf",            args = PDF_ARGS),
-    list(ext = "png", dev = ragg::agg_png,    args = list(dpi = 300))
-  )
-  for (a in attempts) {
-    path <- file.path(OUT_DIR, paste0(name, ".", a$ext))
-    if (file.exists(path)) unlink(path)
-    ok <- tryCatch({
-      do.call(ggplot2::ggsave,
-              c(list(filename = path, plot = plot, device = a$dev,
-                     width = width, height = height, units = "in", bg = "white"),
-                a$args))
-      TRUE
-    }, error = function(e) {
-      message("  figure ", name, " device ", a$ext, " failed: ", conditionMessage(e))
-      FALSE
-    })
-    if (ok && file.exists(path) && file.size(path) > 1024) {
-      written <- c(written, path)
-    } else {
-      message("  FIGURE NOT WRITTEN: ", path)
-      if (file.exists(path)) unlink(path)
-    }
-  }
-  if (length(written) == 0) {
-    stop("figure ", name, " produced no file on any device; the run is stopped rather than ",
-         "reporting a figure that does not exist", call. = FALSE)
-  }
-  FIGURE_INDEX[[name]] <<- tibble::tibble(
-    name = name, caption = caption,
-    files = paste(basename(written), collapse = "; "),
-    twin = basename(twin),
-    width_in = width, height_in = height,
-    bytes = paste(file.size(written), collapse = "; ")
-  )
-  message("  figure ", name, ": ", paste(basename(written), collapse = ", "))
-  invisible(written)
-}
+ROB_FILL   <- FIG_STATUS
+ROB_TEXT   <- FIG_STATUS_TEXT
+ROB_GLYPH  <- c(low = "+", some_concerns = "?", high = "×")
+# The legend carries the glyph beside each label, so the key is read the same way as the cells.
+ROB_KEY    <- stats::setNames(paste(ROB_GLYPH, ROB_LABELS[names(ROB_GLYPH)], sep = "  "),
+                              names(ROB_GLYPH))
 
 # Figure 1: the signature heatmap. Rows are the biomarkers grouped by aging
 # hallmark domain, columns are the four receptor classes, and cell fill is the
@@ -1345,53 +1289,79 @@ fig1_empty_note <- if (length(fig1_empty_classes) > 0) {
           paste(CLASS_LABELS[as.character(fig1_empty_classes)], collapse = " or "))
 } else ""
 
+# The value is printed in every estimable cell. The pooled effects here run from about minus 5 to
+# plus 50 per cent, so a diverging ramp centred on zero spends almost all of its range on one arm
+# and most cells read as a pale blue that cannot be told from its neighbour. Printing the number
+# makes the figure exact and leaves colour to do what colour is good at, which is sorting the cells
+# at a glance rather than carrying the quantity.
+#
+# The ramp passes through the steps of the validated sequential blue on the positive arm and through
+# the orange slot to its dark step on the negative arm, with the hueless grey at zero. A ramp drawn
+# straight from the grey to the dark blue passes through greyed violets on its way, which read as a
+# third hue; through the sequential steps it stays blue. The stops sit where the lightness of those
+# steps falls evenly with the magnitude, and both arms are scaled by the largest magnitude on either
+# side, so a cell of minus 5 is as far from the grey as a cell of plus 5. The colour bar spans the
+# observed range only. The number in each cell takes white or ink by its contrast with the cell's
+# own colour, computed here with the scale's own palette, so the darkest blues carry white numbers.
+fig1_reach <- max(abs(fig1_data$signed_effect), na.rm = TRUE)
+fig1_from <- range(fig1_data$signed_effect, na.rm = TRUE)
+fig1_colours <- c(FIG_DIV_LOW, FIG_ORANGE, FIG_DIV_MID, FIG_SEQ)
+fig1_values <- scales::rescale(c(-1, -0.73, 0, 0.38, 0.54, 0.73, 1) * fig1_reach, from = fig1_from)
+fig1_palette <- scales::pal_gradient_n(fig1_colours, fig1_values)
+fig1_cells <- fig1_data |>
+  dplyr::mutate(
+    label = ifelse(is.na(signed_effect), "n/e", fmt_signed(signed_effect)),
+    ink = ifelse(is.na(signed_effect), FIG_INK_SOFT,
+                 fig_text_on(fig1_palette(scales::rescale(signed_effect, from = fig1_from)))))
+
 fig1 <- ggplot2::ggplot(
-  fig1_data,
-  ggplot2::aes(x = receptor_class, y = forcats::fct_rev(biomarker_label),
-               fill = signed_effect)
+  fig1_cells,
+  ggplot2::aes(x = receptor_class, y = forcats::fct_rev(biomarker_label))
 ) +
-  ggplot2::geom_tile(color = "white", linewidth = 0.4) +
-  # The value is printed in every estimable cell. The pooled effects here run from about minus 5 to
-  # plus 50 per cent, so a diverging ramp centred on zero spends almost all of its range on one arm
-  # and most cells read as a pale blue that cannot be told from its neighbour. Printing the number
-  # makes the figure exact and leaves colour to do what colour is good at, which is sorting the
-  # cells at a glance rather than carrying the quantity.
-  ggplot2::geom_text(
-    data = dplyr::filter(fig1_data, !is.na(signed_effect)),
-    ggplot2::aes(label = fmt_signed(signed_effect)),
-    size = 2.2, color = FIG_INK, na.rm = TRUE
-  ) +
-  ggplot2::geom_text(
-    data = dplyr::filter(fig1_data, is.na(signed_effect)),
-    ggplot2::aes(label = "n/e"), size = 2.1, color = FIG_INK_SOFT, na.rm = TRUE
-  ) +
-  ggplot2::scale_fill_gradient2(
-    low = FIG_DIV_LOW, mid = FIG_DIV_MID, high = FIG_DIV_HIGH, midpoint = 0,
-    name = "Pooled % change,\ndirection adjusted\n(+ = younger)",
-    na.value = FIG_NA_FILL
-  ) +
-  ggplot2::scale_x_discrete(drop = FALSE, labels = CLASS_LABELS) +
+  ggplot2::geom_tile(ggplot2::aes(fill = signed_effect), colour = "white",
+                     linewidth = fig_lw(0.8)) +
+  ggplot2::geom_text(ggplot2::aes(label = label, colour = ink), size = fig_size(FIG_PT$note)) +
+  ggplot2::scale_colour_identity() +
+  ggplot2::scale_fill_gradientn(
+    colours = fig1_colours, values = fig1_values, limits = fig1_from,
+    na.value = FIG_NA_FILL, labels = fig_axis_number,
+    name = "Direction adjusted pooled change, % (positive, toward younger)",
+    guide = ggplot2::guide_colourbar(theme = ggplot2::theme(
+      legend.title.position = "top",
+      legend.key.width = grid::unit(46, "mm"), legend.key.height = grid::unit(2.2, "mm"),
+      legend.ticks = ggplot2::element_line(colour = "white", linewidth = fig_lw(0.5))))) +
+  ggplot2::scale_x_discrete(position = "top", drop = FALSE, labels = CLASS_LABELS_STACKED,
+                            expand = c(0, 0)) +
+  ggplot2::scale_y_discrete(expand = c(0, 0)) +
   ggplot2::facet_grid(hallmark_domain ~ ., scales = "free_y", space = "free_y",
                       labeller = ggplot2::as_labeller(label_domain)) +
-  ggplot2::labs(x = "Receptor class", y = NULL,
-                caption = paste0("Cell values are the pooled percent change multiplied by the ",
-                                 "biomarker's aging direction, so a positive value is a shift\n",
-                                 "toward a younger profile whether the marker should rise or fall. ",
-                                 "n/e, not estimable: fewer than two\ntrials for that biomarker in ",
-                                 "that class.", fig1_empty_note)) +
-  ggplot2::theme_minimal(base_size = 10) +
+  ggplot2::labs(x = "Receptor class", y = NULL) +
+  theme_figure() +
   ggplot2::theme(
-    strip.text.y = ggplot2::element_text(angle = 0, hjust = 0),
-    panel.grid = ggplot2::element_blank(),
-    plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8),
-    axis.text = ggplot2::element_text(color = FIG_INK)
+    axis.line          = ggplot2::element_blank(),
+    axis.ticks         = ggplot2::element_blank(),
+    panel.grid.major   = ggplot2::element_blank(),
+    axis.text.x.top    = ggplot2::element_text(colour = FIG_INK, lineheight = 0.95, vjust = 0,
+                                               margin = ggplot2::margin(0, 0, 1.2, 0, "mm")),
+    axis.text.y        = ggplot2::element_text(colour = FIG_INK, hjust = 1,
+                                               margin = ggplot2::margin(0, 1.2, 0, 0, "mm")),
+    strip.text.y.right = ggplot2::element_text(family = "Inter Medium", size = FIG_PT$tick,
+                                               colour = FIG_INK_SOFT, angle = 0, hjust = 0,
+                                               margin = ggplot2::margin(0, 0, 0, 1.6, "mm")),
+    panel.spacing.y    = grid::unit(0.9, "mm"),
+    legend.justification = "left",
+    legend.title       = ggplot2::element_text(size = FIG_PT$tick, colour = FIG_INK,
+                                               margin = ggplot2::margin(0, 0, 1, 0, "mm"))
   )
 
-save_figure("figure1_signature_heatmap", fig1, width = 9.5, height = 12,
+save_figure("figure1_signature_heatmap", fig1,
+            width_mm = FIG_WIDTHS_MM[["one_and_a_half"]], height_mm = 150,
             caption = paste0("Receptor class signature across aging biomarkers, grouped by ",
-                             "hallmark domain. Cell fill and the printed value are the direction ",
-                             "adjusted pooled percent change, positive toward a younger biomarker ",
-                             "profile. Cells marked n/e were not estimable.", fig1_empty_note),
+                             "hallmark domain. Cell colour and the printed value are the pooled ",
+                             "percent change multiplied by the biomarker's aging direction, so a ",
+                             "positive value is a shift toward a younger profile whether the marker ",
+                             "should rise or fall. n/e, not estimable: fewer than two trials for ",
+                             "that biomarker in that class.", fig1_empty_note),
             data = fig1_data |>
               dplyr::arrange(hallmark_domain, biomarker_label, receptor_class) |>
               dplyr::select(hallmark_domain, biomarker, biomarker_label, receptor_class,
@@ -1423,61 +1393,67 @@ fig4_line <- if (!is.null(fig4_fit) && nrow(fig4_fit$b) == 2) {
 # Two of the nine pooled liver fat arms carry no body weight covariate, so the model and the figure
 # both rest on seven. ggplot dropped them with a warning that the run buried among 35 others, which
 # is how a figure comes to show less data than its caption claims. The counts are computed and
-# printed, and the geom is told to drop them on purpose rather than by default.
+# printed, and the arms are set aside here on purpose rather than by the geom by default.
 fig4_n_all <- nrow(fig4_data)
 fig4_n_cov <- sum(!is.na(fig4_data$pct_weight_change) & !is.na(fig4_data$vi))
 fig4_coverage <- sprintf("%d of the %d pooled liver fat arms carry the body weight covariate and are plotted; %d are not.",
                          fig4_n_cov, fig4_n_all, fig4_n_all - fig4_n_cov)
+fig4_points <- dplyr::filter(fig4_data, !is.na(pct_weight_change), !is.na(vi))
 
 fig4_slope <- if (!is.null(fig4_line)) {
-  sprintf("Meta-regression slope %.2f per cent liver fat per per cent body weight (95%% CI %.2f to %.2f), p = %.3f, k = %d, estimator %s",
+  sprintf("Meta-regression slope %.2f per cent liver fat per per cent body weight (95%% CI %.2f to %.2f), p = %.3f, k = %d, estimator %s.",
           fig4_fit$b[2], fig4_fit$ci.lb[2], fig4_fit$ci.ub[2], fig4_fit$pval[2],
           fig4_fit$k, attr(fig4_fit, "estimator_used"))
-} else "Meta-regression not estimable on this subset"
+} else "Meta-regression not estimable on this subset."
 
-fig4 <- ggplot2::ggplot(fig4_data,
+fig4 <- ggplot2::ggplot(fig4_points,
                         ggplot2::aes(x = pct_weight_change, y = yi)) +
+  ggplot2::geom_hline(yintercept = 0, colour = FIG_INK_SOFT, linetype = "22",
+                      linewidth = fig_lw(FIG_LW$ref)) +
   {if (!is.null(fig4_line))
-    ggplot2::geom_ribbon(data = fig4_line,
-                         ggplot2::aes(ymin = lo, ymax = hi),
-                         fill = FIG_RIBBON, alpha = 0.8, inherit.aes = TRUE)} +
+    ggplot2::geom_ribbon(data = fig4_line, ggplot2::aes(ymin = lo, ymax = hi),
+                         fill = FIG_BAND, colour = NA)} +
   {if (!is.null(fig4_line))
-    ggplot2::geom_line(data = fig4_line, linewidth = 0.7, color = FIG_SERIES)} +
+    ggplot2::geom_line(data = fig4_line, colour = FIG_BLUE, linewidth = fig_lw(FIG_LW$data))} +
+  # Point area is proportional to inverse variance, with zero precision at zero area, as the caption
+  # states; the former size range started at a floor, which made area an affine function of it.
   ggplot2::geom_point(ggplot2::aes(size = 1 / vi, shape = receptor_class),
-                      fill = FIG_SERIES, color = FIG_INK, stroke = 0.3, alpha = 0.85,
-                      na.rm = TRUE) +
+                      fill = FIG_BLUE, colour = "white", stroke = fig_stroke(0.6)) +
   ggplot2::scale_shape_manual(values = c(GLP1_mono = 21, GLP1_GIP = 22,
                                          GLP1_GCGR = 23, GLP1_GIP_GCGR = 24),
                               drop = FALSE, name = "Receptor class",
                               labels = CLASS_LABELS) +
-  ggplot2::scale_size_continuous(name = "Precision (1/variance)", range = c(2, 9)) +
+  ggplot2::scale_size_area(name = "Precision, 1 / variance", max_size = 5.4,
+                           breaks = scales::breaks_pretty(n = 3)) +
+  ggplot2::scale_x_continuous(labels = fig_axis_number) +
+  ggplot2::scale_y_continuous(labels = fig_axis_number) +
   ggplot2::guides(
-    shape = ggplot2::guide_legend(override.aes = list(size = 3.5, fill = FIG_SERIES)),
+    shape = ggplot2::guide_legend(order = 1, override.aes = list(size = 2.6, fill = FIG_BLUE,
+                                                                 colour = "white")),
     # The size key drew black circles beside blue points, so the legend named a colour the figure
     # does not use.
-    size = ggplot2::guide_legend(override.aes = list(shape = 21, fill = FIG_SERIES,
-                                                     color = FIG_INK))) +
-  ggplot2::labs(
-    x = "Mean body weight change (%)",
-    y = "Liver fat change (% vs comparator)",
-    caption = paste(fig4_slope, fig4_coverage, sep = "\n")
-  ) +
-  ggplot2::theme_minimal(base_size = 11) +
-  ggplot2::theme(panel.grid.minor = ggplot2::element_blank(),
-                 panel.grid.major = ggplot2::element_line(color = FIG_GRID),
-                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
+    size = ggplot2::guide_legend(order = 2, override.aes = list(shape = 21, fill = FIG_BLUE,
+                                                                colour = "white"))) +
+  ggplot2::labs(x = "Mean body weight change, %",
+                y = "Liver fat change vs comparator, %") +
+  theme_figure() +
+  ggplot2::theme(legend.position = "right", legend.justification = "top",
+                 legend.box.just = "left", legend.spacing.y = grid::unit(2.5, "mm"),
+                 legend.title = ggplot2::element_text(size = FIG_PT$tick, colour = FIG_INK,
+                                                      margin = ggplot2::margin(0, 0, 0.8, 0, "mm")))
 
-save_figure("figure4_weight_adjusted_liverfat", fig4, width = 8, height = 6,
+save_figure("figure4_weight_adjusted_liverfat", fig4,
+            width_mm = FIG_WIDTHS_MM[["one_and_a_half"]], height_mm = 82,
             caption = paste("Liver fat percent change against mean body weight change, one point",
                             "per pooled trial arm that carries the body weight covariate.", fig4_coverage,
-                            "Point area is inverse variance and point shape is receptor class. The",
-                            "line and band are the random effects meta-regression reported in",
-                            "Table 4a."),
-            # The points are the arms drawn, the two without the covariate excluded as the geom
-            # excludes them; the line layer is the model's prediction and confidence band.
+                            "Point area is proportional to inverse variance and point shape is",
+                            "receptor class. The line and band are the random effects",
+                            "meta-regression reported in Table 4a and its 95 per cent confidence",
+                            "band.", fig4_slope),
+            # The points are the arms drawn, the two without the covariate set aside; the line layer
+            # is the model's prediction and confidence band.
             data = Filter(Negate(is.null), list(
-              points = fig4_data |>
-                dplyr::filter(!is.na(pct_weight_change), !is.na(vi)) |>
+              points = fig4_points |>
                 dplyr::select(trial_id, receptor_class, pct_weight_change, yi, vi),
               line = fig4_line)))
 
@@ -1495,8 +1471,8 @@ save_figure("figure4_weight_adjusted_liverfat", fig4, width = 8, height = 6,
 # Both orderings were alphabetical, which put the clinically weighted panel first and sorted the
 # receptor classes as strings. The weighting panels now run in the order the protocol states them,
 # inverse variance first as the primary, and the classes in the declared receptor order, with the
-# class that has no composite kept as an empty position rather than dropped: a reader of a three bar
-# figure cannot tell that a fourth class was studied.
+# class that has no composite kept as a labelled empty position rather than dropped: a reader of a
+# three bar figure cannot tell that a fourth class was studied.
 fig5_all <- nbais_results |>
   dplyr::mutate(
     receptor_class = factor(receptor_class, levels = RECEPTOR_CLASSES),
@@ -1515,58 +1491,69 @@ fig5_absent_note <- ""
 if (length(fig5_no_pool) > 0) {
   fig5_absent_note <- paste0(
     fig5_absent_note,
-    sprintf("\n%s: no biomarker pools within the class, so there is nothing to average.",
+    sprintf(" %s: no biomarker pools within the class, so there is nothing to average.",
             paste(CLASS_LABELS[fig5_no_pool], collapse = " and ")))
 }
 if (nrow(fig5_too_few) > 0) {
   fig5_absent_note <- paste0(
     fig5_absent_note,
-    sprintf("\n%s: fewer than %d of the %d markers named by the composite inclusion rule pool within the class, so no composite is computed.",
+    sprintf(" %s: fewer than %d of the %d markers named by the composite inclusion rule pool within the class, so no composite is computed.",
             paste(sprintf("%s (%d)", CLASS_LABELS[as.character(fig5_too_few$receptor_class)],
                           fig5_too_few$n_markers), collapse = "; "),
             NBAIS_MIN_MARKERS, length(NBAIS_INCLUDED)))
 }
+# Every class without a composite keeps its row in every panel, marked rather than left blank.
+fig5_absent <- tidyr::expand_grid(
+    weighting = factor(WEIGHTING_LEVELS, levels = WEIGHTING_LEVELS),
+    receptor_class = factor(RECEPTOR_CLASSES, levels = RECEPTOR_CLASSES)) |>
+  dplyr::anti_join(fig5_data, by = c("weighting", "receptor_class"))
+fig5_resamples <- unique(fig5_data$R)
+# Ticks cover the drawn values; the axis runs on beyond them to hold the printed values.
+fig5_breaks <- pretty(c(min(0, fig5_data$ci_lb), max(fig5_data$ci_ub)), n = 4)
 
 fig5 <- ggplot2::ggplot(
   fig5_data,
-  ggplot2::aes(x = receptor_class, y = nbais)
+  ggplot2::aes(x = nbais, y = receptor_class)
 ) +
-  ggplot2::geom_col(width = 0.65, fill = FIG_SERIES) +
-  ggplot2::geom_errorbar(ggplot2::aes(ymin = ci_lb, ymax = ci_ub), width = 0.2,
-                         linewidth = 0.4, color = FIG_INK) +
-  ggplot2::geom_hline(yintercept = 0, linewidth = 0.4, color = FIG_INK) +
+  ggplot2::geom_vline(xintercept = 0, colour = FIG_AXIS, linewidth = fig_lw(FIG_LW$axis)) +
+  ggplot2::geom_col(width = 0.62, fill = FIG_BLUE, orientation = "y") +
+  ggplot2::geom_errorbar(ggplot2::aes(xmin = ci_lb, xmax = ci_ub), width = 0.3,
+                         orientation = "y", colour = FIG_INK, linewidth = fig_lw(0.6)) +
   # The value sat just above the bar top, which is exactly where the error bar runs, so every
-  # number was struck through by its own interval. It goes above the upper bound instead.
-  ggplot2::geom_text(ggplot2::aes(y = ci_ub,
-                                  label = sprintf("%.1f (k = %d)", nbais, n_markers)),
-                     vjust = -0.7, size = 2.6, color = FIG_INK_SOFT) +
-  ggplot2::scale_x_discrete(drop = FALSE, labels = CLASS_LABELS) +
-  ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0.02, 0.12))) +
+  # number was struck through by its own interval. It stands beyond the upper bound instead.
+  ggplot2::geom_text(ggplot2::aes(x = ci_ub,
+                                  label = sprintf("%s  (k = %d)", fig_num(nbais), n_markers)),
+                     hjust = 0, nudge_x = 1.6, size = fig_size(FIG_PT$note), colour = FIG_INK) +
+  ggplot2::geom_text(data = fig5_absent,
+                     ggplot2::aes(x = 0, y = receptor_class, label = "no composite"),
+                     hjust = 0, nudge_x = 1.6, size = fig_size(FIG_PT$note),
+                     colour = FIG_INK_SOFT, fontface = "italic") +
+  ggplot2::scale_y_discrete(limits = rev(RECEPTOR_CLASSES), labels = CLASS_LABELS) +
+  ggplot2::scale_x_continuous(labels = fig_axis_number, breaks = fig5_breaks,
+                              expand = ggplot2::expansion(mult = c(0, 0.5))) +
   ggplot2::facet_wrap(~ weighting, nrow = 1,
                       labeller = ggplot2::as_labeller(WEIGHTING_LABELS)) +
   ggplot2::labs(
-    x = NULL,
-    y = "Net Biological Age Impact Score\n(weighted mean direction adjusted % change)",
-    caption = paste0("Computed over the ", length(NBAIS_INCLUDED), " markers named by ",
-                     "prespecification/nbais_inclusion_rule.md; k is how many of them pool within ",
-                     "the class.\nError bars are the 2.5th to 97.5th percentiles of the two level ",
-                     "bootstrap (10 000 resamples, seed 20261013). Positive values indicate a shift ",
-                     "toward a younger biomarker profile.", fig5_absent_note)
-  ) +
-  ggplot2::theme_minimal(base_size = 11) +
-  ggplot2::theme(legend.position = "none",
-                 panel.grid.major.x = ggplot2::element_blank(),
-                 panel.grid.minor = ggplot2::element_blank(),
-                 panel.grid.major.y = ggplot2::element_line(color = FIG_GRID),
-                 axis.text.x = ggplot2::element_text(angle = 30, hjust = 1, color = FIG_INK),
-                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
+    x = "Net Biological Age Impact Score, weighted mean direction adjusted change, %",
+    y = NULL) +
+  theme_figure() +
+  ggplot2::theme(panel.grid.major.y = ggplot2::element_blank(),
+                 axis.line.y = ggplot2::element_blank(),
+                 axis.ticks.y = ggplot2::element_blank(),
+                 axis.text.y = ggplot2::element_text(colour = FIG_INK),
+                 panel.spacing.x = grid::unit(4, "mm"))
 
-save_figure("figure5_nbais", fig5, width = 10, height = 5.4,
+save_figure("figure5_nbais", fig5,
+            width_mm = FIG_WIDTHS_MM[["double"]], height_mm = 60,
             caption = paste0("Net Biological Age Impact Score by receptor class under three ",
                              "weighting schemes, computed over the ", length(NBAIS_INCLUDED),
-                             " markers of the prespecified inclusion rule. Bars are the weighted ",
-                             "mean direction adjusted percent change; error bars are the percentile ",
-                             "interval of the two level bootstrap.", fig5_absent_note),
+                             " markers named by prespecification/nbais_inclusion_rule.md; k is how ",
+                             "many of them pool within the class. Bars are the weighted mean ",
+                             "direction adjusted percent change, positive toward a younger ",
+                             "biomarker profile; error bars are the 2.5th to 97.5th percentiles of ",
+                             "the two level bootstrap (",
+                             format(fig5_resamples, big.mark = " ", scientific = FALSE),
+                             " resamples, seed 20261013).", fig5_absent_note),
             data = fig5_data |>
               dplyr::arrange(weighting, receptor_class) |>
               dplyr::select(weighting, receptor_class, nbais, ci_lb, ci_ub, n_markers))
@@ -1578,71 +1565,116 @@ save_figure("figure5_nbais", fig5, width = 10, height = 5.4,
 # primary synthesis in a table only, and a reader could not see which markers move together or how
 # wide the intervals are relative to each other without reconstructing the figure by hand.
 #
-# The favourable direction differs by biomarker, so each label carries it. Printing it in the label
+# The favourable direction differs by biomarker, so each row carries it. Printing it in a column
 # rather than colouring the point by it keeps the identity channel free and keeps the figure
 # readable in print and under colour vision deficiency, where a red and blue point are the same
 # point.
+#
+# The figure is a table with a plot in it, three panels on one row grid: the names, favourable
+# directions and k on the left, the estimates and intervals in the middle, and the printed estimate
+# with its interval and I2 on the right. The printed column stood inside the plot until 24 October,
+# at an x beyond the largest upper bound, so the axis had to be extended to hold text and the
+# numbers sat in data coordinates; in a panel of its own the column has its own width and the axis
+# describes only the data. Rows run from the most negative effect at the top to the most positive
+# at the bottom, and every second row carries a light band across all three panels so a row can be
+# followed from its name to its numbers.
 
 fig2_data <- table2_pipeline |>
   dplyr::left_join(
     dplyr::distinct(dat, biomarker, aging_direction, hallmark_domain),
     by = "biomarker") |>
   dplyr::mutate(
-    favourable = ifelse(aging_direction < 0, "lower", "higher"),
-    label = sprintf("%s (%s better; k = %d)", label_biomarker(biomarker), favourable, k),
-    label = forcats::fct_reorder(label, estimate),
-    annotation = paste0(
-      sprintf("%.1f (%.1f to %.1f)", estimate, ci_lb, ci_ub),
-      dplyr::if_else(is.na(I2), ", I2 not estimable", sprintf(", I2 %.0f%%", I2)))
-  )
+    biomarker_label = label_biomarker(biomarker),
+    favourable = ifelse(aging_direction < 0, "lower", "higher")) |>
+  dplyr::arrange(estimate) |>
+  dplyr::mutate(row = dplyr::row_number(),
+                interval = sprintf("%s (%s to %s)", fig_num(estimate), fig_num(ci_lb),
+                                   fig_num(ci_ub)),
+                heterogeneity = ifelse(is.na(I2), "n/e", sprintf("%.0f%%", I2)))
 
-# The annotation column sits at a fixed x, not at each row's own upper bound. Placed at ci_ub it
-# started wherever the interval happened to end, so the text crossed the zero line on the rows with
-# negative effects and ran over the interval it was describing; in a column the numbers align and
-# the plotting area stays clear. The axis is extended to hold the column rather than the column
-# being allowed to overflow the panel, which is what clipped the caption on the first draft.
-fig2_x_min <- min(fig2_data$ci_lb, na.rm = TRUE) - 4
-fig2_x_max <- max(fig2_data$ci_ub, na.rm = TRUE) + 4
-fig2_text_x <- fig2_x_max + 4
+fig2_n <- nrow(fig2_data)
+fig2_bands <- dplyr::filter(fig2_data, row %% 2 == 0)
+# One row grid for the three panels: row 1 at the top, and a header line above it. The panels abut,
+# so the bands and the rules under the header and below the last row run unbroken across the page.
+fig2_rows <- ggplot2::scale_y_reverse(limits = c(fig2_n + 0.5, -0.7), expand = c(0, 0))
+fig2_header_y <- -0.15
+fig2_band_layer <- ggplot2::geom_rect(
+  data = fig2_bands, inherit.aes = FALSE,
+  ggplot2::aes(xmin = -Inf, xmax = Inf, ymin = row - 0.5, ymax = row + 0.5), fill = FIG_ROW)
+fig2_header_rule <- ggplot2::geom_hline(yintercept = 0.5, colour = FIG_RULE,
+                                        linewidth = fig_lw(FIG_LW$axis))
+fig2_bottom_rule <- ggplot2::geom_hline(yintercept = fig2_n + 0.5, colour = FIG_AXIS,
+                                        linewidth = fig_lw(FIG_LW$axis))
+fig2_text_theme <- ggplot2::theme_void(base_family = "Inter") +
+  ggplot2::theme(plot.margin = ggplot2::margin(1.5, 0, 1.5, 0, "mm"),
+                 plot.background = ggplot2::element_rect(fill = "white", colour = NA))
+# The ticks cover the intervals drawn; the gridlines and the zero line stop at the rows, so the
+# header line stays clear.
+fig2_breaks <- Filter(function(v) v >= min(fig2_data$ci_lb) && v <= max(fig2_data$ci_ub),
+                      pretty(c(min(fig2_data$ci_lb), max(fig2_data$ci_ub)), n = 6))
+fig2_head <- function(x, label, hjust) {
+  ggplot2::annotate("text", x = x, y = fig2_header_y, label = label, hjust = hjust,
+                    family = "Inter Medium", size = fig_size(FIG_PT$tick), colour = FIG_INK)
+}
 
-fig2 <- ggplot2::ggplot(fig2_data,
-                        ggplot2::aes(x = estimate, y = label)) +
-  ggplot2::geom_vline(xintercept = 0, linewidth = 0.4, color = FIG_MUTED) +
-  ggplot2::geom_linerange(ggplot2::aes(xmin = ci_lb, xmax = ci_ub),
-                          linewidth = 0.6, color = FIG_SERIES) +
-  ggplot2::geom_point(size = 2.2, shape = 22, fill = FIG_SERIES, color = FIG_INK,
-                      stroke = 0.3) +
-  ggplot2::geom_text(ggplot2::aes(x = fig2_text_x, label = annotation),
-                     hjust = 0, size = 2.5, color = FIG_INK_SOFT) +
-  ggplot2::scale_x_continuous(
-    name = "Pooled change vs comparator (%)",
-    # Breaks are taken from the data range, not the panel range: an automatic break at 150 would
-    # put an axis tick underneath the annotation column, where there are no data.
-    breaks = Filter(function(b) b >= fig2_x_min && b <= fig2_x_max,
-                    pretty(c(fig2_x_min, fig2_x_max), n = 6)),
-    limits = c(fig2_x_min, fig2_text_x + 62),
-    expand = c(0, 0)) +
-  ggplot2::labs(y = NULL,
-                caption = paste0("Random effects pooling across all receptor classes, percent ",
-                                 "change relative to comparator. k, contributing trial arms after\n",
-                                 "dose collapse; I2, heterogeneity. Estimator, prediction interval ",
-                                 "and heterogeneity statistics per biomarker are in\n",
-                                 "table2_pipeline.csv.")) +
-  ggplot2::theme_minimal(base_size = 10) +
-  ggplot2::theme(panel.grid.major.y = ggplot2::element_blank(),
-                 panel.grid.minor = ggplot2::element_blank(),
-                 panel.grid.major.x = ggplot2::element_line(color = FIG_GRID),
-                 axis.text = ggplot2::element_text(color = FIG_INK),
-                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
+fig2_left <- ggplot2::ggplot(fig2_data, ggplot2::aes(y = row)) +
+  fig2_band_layer + fig2_header_rule + fig2_bottom_rule +
+  ggplot2::geom_text(ggplot2::aes(x = 0.02, label = biomarker_label), hjust = 0,
+                     size = fig_size(FIG_PT$tick)) +
+  ggplot2::geom_text(ggplot2::aes(x = 0.68, label = favourable), hjust = 0,
+                     size = fig_size(FIG_PT$tick), colour = FIG_INK_SOFT) +
+  ggplot2::geom_text(ggplot2::aes(x = 0.97, label = k), hjust = 1,
+                     size = fig_size(FIG_PT$tick)) +
+  fig2_head(0.02, "Biomarker", 0) + fig2_head(0.68, "Better", 0) + fig2_head(0.97, "k", 1) +
+  ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
+  fig2_rows + fig2_text_theme
 
-save_figure("figure2_forest_overall", fig2, width = 9.5, height = 8,
+fig2_mid <- ggplot2::ggplot(fig2_data, ggplot2::aes(x = estimate, y = row)) +
+  fig2_band_layer + fig2_header_rule +
+  ggplot2::annotate("segment", x = fig2_breaks, xend = fig2_breaks, y = 0.5, yend = fig2_n + 0.5,
+                    colour = FIG_GRID, linewidth = fig_lw(FIG_LW$grid)) +
+  ggplot2::annotate("segment", x = 0, xend = 0, y = 0.5, yend = fig2_n + 0.5,
+                    colour = FIG_AXIS, linewidth = fig_lw(FIG_LW$ref)) +
+  ggplot2::geom_linerange(ggplot2::aes(xmin = ci_lb, xmax = ci_ub), orientation = "y",
+                          colour = FIG_BLUE, linewidth = fig_lw(1.0)) +
+  ggplot2::geom_point(shape = 22, size = 2.0, fill = FIG_BLUE, colour = "white",
+                      stroke = fig_stroke(0.5)) +
+  ggplot2::scale_x_continuous(name = "Pooled change vs comparator, %", labels = fig_axis_number,
+                              breaks = fig2_breaks) +
+  fig2_rows +
+  theme_figure() +
+  ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                 axis.text.y = ggplot2::element_blank(),
+                 axis.ticks.y = ggplot2::element_blank(),
+                 axis.line.y = ggplot2::element_blank(),
+                 panel.grid.major = ggplot2::element_blank(),
+                 plot.margin = ggplot2::margin(1.5, 0, 1.5, 0, "mm"))
+
+fig2_right <- ggplot2::ggplot(fig2_data, ggplot2::aes(y = row)) +
+  fig2_band_layer + fig2_header_rule + fig2_bottom_rule +
+  ggplot2::geom_text(ggplot2::aes(x = 0.03, label = interval), hjust = 0,
+                     size = fig_size(FIG_PT$tick)) +
+  ggplot2::geom_text(ggplot2::aes(x = 0.97, label = heterogeneity), hjust = 1,
+                     size = fig_size(FIG_PT$tick), colour = FIG_INK_SOFT) +
+  fig2_head(0.03, "Change, % (95% CI)", 0) + fig2_head(0.97, "I²", 1) +
+  ggplot2::scale_x_continuous(limits = c(0, 1), expand = c(0, 0)) +
+  fig2_rows + fig2_text_theme
+
+fig2 <- patchwork::wrap_plots(fig2_left, fig2_mid, fig2_right, nrow = 1,
+                              widths = c(62, 74, 44))
+
+save_figure("figure2_forest_overall", fig2,
+            width_mm = FIG_WIDTHS_MM[["double"]], height_mm = 20 + 4.4 * fig2_n,
             caption = paste("Forest plot of the overall pooled percent change per aging biomarker",
                             "across all incretin receptor classes, ordered by effect. Squares are",
-                            "pooled estimates, bars 95 per cent confidence intervals."),
-            # In the order drawn, bottom to top, which is the order of the label factor.
+                            "pooled estimates and bars 95 per cent confidence intervals, from",
+                            "random effects pooling relative to comparator. Better, the direction",
+                            "of change favourable for the marker; k, contributing trial arms after",
+                            "dose collapse; I², heterogeneity. Estimator, prediction interval",
+                            "and heterogeneity statistics per biomarker are in table2_pipeline.csv."),
+            # In the order drawn, top to bottom, which is ascending order of effect.
             data = fig2_data |>
-              dplyr::arrange(label) |>
-              dplyr::select(biomarker, label, k, estimate, ci_lb, ci_ub, I2))
+              dplyr::select(biomarker, biomarker_label, favourable, k, estimate, ci_lb, ci_ub, I2))
 
 
 # Figure 6 and its supplement: risk of bias. The RoB-2 assessment of every trial existed in
@@ -1664,9 +1696,9 @@ rob <- readr::read_csv("analysis/data/risk_of_bias.csv", show_col_types = FALSE)
 rob_contributing <- sum(rob$trial_id %in% unique(dat$trial_id))
 rob_held <- nrow(rob) - rob_contributing
 rob_held_note <- if (rob_held == 1) {
-  "\nOne of them contributes no pooled estimate, being held pending an eligibility decision."
+  " One of them contributes no pooled estimate, being held pending an eligibility decision."
 } else if (rob_held > 1) {
-  sprintf("\n%d of them contribute no pooled estimate, being held pending an eligibility decision.",
+  sprintf(" %d of them contribute no pooled estimate, being held pending an eligibility decision.",
           rob_held)
 } else ""
 
@@ -1693,67 +1725,90 @@ rob_summary <- rob_long |>
   dplyr::mutate(share = n / sum(n)) |>
   dplyr::ungroup()
 
-fig6 <- ggplot2::ggplot(rob_summary,
+# The overall judgement is set apart from the five domains by a gap, since it is their summary and
+# not a sixth domain.
+rob_group <- function(domain) ifelse(as.character(domain) == "Overall", "overall", "domains")
+
+fig6 <- ggplot2::ggplot(dplyr::mutate(rob_summary, group = rob_group(domain)),
                         ggplot2::aes(x = share, y = forcats::fct_rev(domain),
                                      fill = judgement)) +
   # reverse = TRUE puts low risk at the left. position_stack stacks in the reverse of the factor
   # order, so the first draft ran high risk first and read right to left against the convention the
   # Cochrane tool itself prints, which costs a reader a second look at every bar.
-  ggplot2::geom_col(width = 0.7, color = "white", linewidth = 0.6,
+  ggplot2::geom_col(width = 0.68, colour = "white", linewidth = fig_lw(0.8),
                     position = ggplot2::position_stack(reverse = TRUE)) +
   # Every segment carries its glyph and count, including the three and four trial segments that the
   # first draft left blank because they fell under a six per cent threshold: a status colour with no
-  # label beside it is the one thing the status palette may not do.
-  ggplot2::geom_text(ggplot2::aes(label = sprintf("%s %d", ROB_GLYPH[as.character(judgement)], n)),
+  # label beside it is the one thing the status palette may not do. The label takes the ink that
+  # contrasts with its segment, white on the high risk red.
+  ggplot2::geom_text(ggplot2::aes(label = sprintf("%s %d", ROB_GLYPH[as.character(judgement)], n),
+                                  colour = judgement),
                      position = ggplot2::position_stack(vjust = 0.5, reverse = TRUE),
-                     size = 2.7, color = FIG_INK) +
-  ggplot2::scale_fill_manual(values = ROB_FILL, labels = ROB_LABELS, name = NULL,
-                             drop = FALSE) +
-  ggplot2::scale_x_continuous(labels = function(x) paste0(round(100 * x), "%"),
-                              expand = ggplot2::expansion(mult = c(0, 0.02)),
-                              name = "Trials") +
+                     size = fig_size(FIG_PT$note), show.legend = FALSE) +
+  ggplot2::scale_fill_manual(values = ROB_FILL, labels = ROB_KEY, name = NULL, drop = FALSE) +
+  ggplot2::scale_colour_manual(values = ROB_TEXT, guide = "none") +
+  ggplot2::scale_x_continuous(labels = scales::label_percent(), breaks = seq(0, 1, 0.25),
+                              expand = c(0, 0), name = "Share of assessed trials") +
   ggplot2::scale_y_discrete(labels = c(D1 = "D1 randomisation", D2 = "D2 deviations",
                                        D3 = "D3 missing outcome data",
                                        D4 = "D4 outcome measurement",
                                        D5 = "D5 selective reporting",
                                        Overall = "Overall")) +
-  ggplot2::labs(y = NULL,
-                caption = paste0("RoB-2 judgements for all ", nrow(rob), " assessed trials.",
-                                 rob_held_note, "\nSegment labels give the glyph and the trial ",
-                                 "count: + low, ? some concerns, x high.")) +
-  ggplot2::theme_minimal(base_size = 11) +
-  ggplot2::theme(panel.grid = ggplot2::element_blank(),
-                 legend.position = "bottom",
-                 axis.text = ggplot2::element_text(color = FIG_INK),
-                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 8))
+  ggplot2::facet_grid(group ~ ., scales = "free_y", space = "free_y") +
+  ggplot2::labs(y = NULL) +
+  theme_figure() +
+  ggplot2::theme(strip.text = ggplot2::element_blank(),
+                 panel.grid.major.y = ggplot2::element_blank(),
+                 axis.line.y = ggplot2::element_blank(),
+                 axis.ticks.y = ggplot2::element_blank(),
+                 axis.text.y = ggplot2::element_text(colour = FIG_INK),
+                 panel.spacing.y = grid::unit(1.8, "mm"),
+                 legend.justification = "left",
+                 plot.margin = ggplot2::margin(1.5, 4, 1.5, 1.5, "mm"))
 
-save_figure("figure6_rob_summary", fig6, width = 8, height = 4,
-            caption = paste("Risk of bias across the five RoB-2 domains and the overall",
-                            "judgement, as the share of assessed trials. Glyphs accompany every",
-                            "colour so the judgement does not depend on colour."),
+save_figure("figure6_rob_summary", fig6,
+            width_mm = FIG_WIDTHS_MM[["double"]], height_mm = 52,
+            caption = paste0("Risk of bias across the five RoB-2 domains and the overall ",
+                             "judgement, as the share of the ", nrow(rob), " assessed trials.",
+                             rob_held_note, " Each segment carries its glyph and trial count, + ",
+                             "low, ? some concerns, × high, so the judgement does not depend ",
+                             "on colour."),
             data = rob_summary)
 
-fig6s <- ggplot2::ggplot(rob_long,
+fig6s <- ggplot2::ggplot(dplyr::mutate(rob_long, group = rob_group(domain)),
                          ggplot2::aes(x = domain,
                                       y = forcats::fct_rev(factor(trial_id)),
                                       fill = judgement)) +
-  ggplot2::geom_tile(color = "white", linewidth = 0.5) +
-  ggplot2::geom_text(ggplot2::aes(label = ROB_GLYPH[as.character(judgement)]),
-                     size = 2.4, color = FIG_INK) +
-  ggplot2::scale_fill_manual(values = ROB_FILL, labels = ROB_LABELS, name = NULL,
-                             drop = FALSE) +
-  ggplot2::scale_x_discrete(position = "top") +
-  ggplot2::labs(x = NULL, y = NULL,
-                caption = "+ low, ? some concerns, x high. Domains D1 to D5 of RoB-2 and the overall judgement.") +
-  ggplot2::theme_minimal(base_size = 7) +
-  ggplot2::theme(panel.grid = ggplot2::element_blank(),
-                 legend.position = "bottom",
-                 axis.text = ggplot2::element_text(color = FIG_INK),
-                 plot.caption = ggplot2::element_text(hjust = 0, color = FIG_INK_SOFT, size = 7))
+  ggplot2::geom_tile(colour = "white", linewidth = fig_lw(0.8)) +
+  ggplot2::geom_text(ggplot2::aes(label = ROB_GLYPH[as.character(judgement)],
+                                  colour = judgement),
+                     size = fig_size(FIG_PT$small), show.legend = FALSE) +
+  ggplot2::scale_fill_manual(values = ROB_FILL, labels = ROB_KEY, name = NULL, drop = FALSE) +
+  ggplot2::scale_colour_manual(values = ROB_TEXT, guide = "none") +
+  ggplot2::scale_x_discrete(position = "top", expand = c(0, 0)) +
+  ggplot2::scale_y_discrete(expand = c(0, 0)) +
+  ggplot2::facet_grid(. ~ group, scales = "free_x", space = "free_x") +
+  ggplot2::labs(x = NULL, y = NULL) +
+  theme_figure() +
+  ggplot2::theme(strip.text = ggplot2::element_blank(),
+                 panel.grid.major = ggplot2::element_blank(),
+                 axis.line = ggplot2::element_blank(),
+                 axis.ticks = ggplot2::element_blank(),
+                 axis.text.x.top = ggplot2::element_text(colour = FIG_INK,
+                                                         margin = ggplot2::margin(0, 0, 1, 0, "mm")),
+                 axis.text.y = ggplot2::element_text(size = FIG_PT$small, colour = FIG_INK,
+                                                     margin = ggplot2::margin(0, 1, 0, 0, "mm")),
+                 panel.spacing.x = grid::unit(1.4, "mm"),
+                 legend.justification = "right")
 
-save_figure("figureS1_rob_traffic_light", fig6s, width = 7.5, height = 13,
-            caption = paste("Per trial RoB-2 traffic light for all", nrow(rob),
-                            "assessed trials, supplementary to Figure 6."),
+# A supplementary figure of its own page may take the full page depth: 77 rows do not fit 170 mm at
+# a readable size.
+save_figure("figureS1_rob_traffic_light", fig6s,
+            width_mm = FIG_WIDTHS_MM[["one_and_a_half"]], height_mm = 240,
+            max_height_mm = FIG_PAGE_DEPTH_MM,
+            caption = paste0("Per trial RoB-2 traffic light for all ", nrow(rob), " assessed ",
+                             "trials, supplementary to Figure 6: domains D1 to D5 and the overall ",
+                             "judgement, + low, ? some concerns, × high."),
             data = dplyr::select(rob_long, trial_id, domain, judgement))
 
 readr::write_csv(dplyr::bind_rows(FIGURE_INDEX),

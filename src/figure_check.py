@@ -43,11 +43,23 @@ requirement:
      twin, hashed in the manifest like the figure itself. RULES below holds one rule per figure,
      which recomputes the twin from the result tables and the data the figure is drawn from,
      without the pipeline, and the twin must agree to the ten significant digits it is written at.
-     The PRISMA diagram is drawn by a deterministic script in this repository, so its rule
-     regenerates the SVG and the twin from docs/prisma_counts.json and compares both exactly. The
-     mapping document names, in each figure's row, its twin and every file its rule reads, so the
-     record of what a figure is drawn from is checked rather than asserted. A produced figure with
-     no rule fails, so a new figure enters the manuscript together with the check that covers it.
+     The PRISMA diagram is drawn by src/prisma_figure.R from docs/prisma_counts.json, and its rule
+     recomputes every box count with src/prisma_counts.py, a second implementation of the same
+     arithmetic, and requires the twin to equal it. The mapping document names, in each figure's
+     row, its twin and every file its rule reads, so the record of what a figure is drawn from is
+     checked rather than asserted. A produced figure with no rule fails, so a new figure enters the
+     manuscript together with the check that covers it.
+
+What a figure is, added 24 October 2026 with figure style 2 (analysis/figure_style.R). A figure is
+drawn at its final journal width and written as a vector PDF and a 600 dpi PNG, so a fifth
+requirement reads the files themselves rather than the record of them:
+
+  5. Every figure has both files. The PNG records 600 dpi in its pHYs chunk and is 89, 120 or
+     183 mm wide and at most 170 mm high, or 247 mm, the full page depth, for a supplementary
+     figure; the figure index states the same size. The PDF's page is that size, carries no
+     creation or modification date, so an unchanged figure is the same file on every run, and
+     declares no font, because figure style 2 draws every glyph as an outline and a font resource
+     in the file is text that was set in a face other than the vendored one.
 
 The rules are independent statements of what each figure must show, and two of them do more than
 look values up. Figure 4's line and band are refitted from the plotted points: weighted least
@@ -69,7 +81,9 @@ import json
 import math
 import os
 import re
+import struct
 import sys
+import zlib
 
 ROOT = os.getcwd()
 OUT = os.path.join(ROOT, "analysis", "output")
@@ -80,7 +94,7 @@ PIPELINE = os.path.join(ROOT, "analysis", "M5_AGE_analysis_pipeline.R")
 
 # Figures written by a script other than the analysis pipeline: stem -> producing script.
 EXTERNAL = {
-    "figure0_prisma_flow": "src/prisma_diagram.py",
+    "figure0_prisma_flow": "src/prisma_figure.R",
 }
 
 MIN_BYTES = 1024
@@ -199,8 +213,7 @@ INVENTORY = "analysis/data/biomarker_inventory.csv"
 MASTER = "analysis/data/extraction_master_harmonised.csv"
 ROB = "analysis/data/risk_of_bias.csv"
 PRISMA_COUNTS = "docs/prisma_counts.json"
-PRISMA_SCRIPT = "src/prisma_diagram.py"
-PRISMA_SVG = "analysis/output/figure0_prisma_flow.svg"
+PRISMA_SCRIPT = "src/prisma_counts.py"
 
 # A twin is written at ten significant digits, which moves a value by at most half a unit in the
 # tenth digit, 5e-10 of it; twice that is the tolerance for a value read from a twin.
@@ -306,24 +319,22 @@ def display_name(entry, biomarker):
 
 @rule("figure0_prisma_flow", PRISMA_COUNTS)
 def prisma_rule(stem, rows, data, ctx):
+    # The box counts in drawing order, as src/prisma_counts.py computes them from the declared
+    # counts; the diagram is drawn by src/prisma_figure.R, so the two implementations must agree.
     prisma = ctx["prisma"]
     try:
-        svg, drawn, _ = prisma.render(json.loads(json.dumps(data[PRISMA_COUNTS])))
+        drawn, _ = prisma.rows(json.loads(json.dumps(data[PRISMA_COUNTS])))
     except AssertionError as e:
         return ["%s cannot be drawn from docs/prisma_counts.json: %s" % (stem, e)]
-    failures = []
-    if svg.encode("utf-8") != ctx["prisma_svg"]:
-        failures.append("%s.svg is not the diagram src/prisma_diagram.py draws from "
-                        "docs/prisma_counts.json; rerun that script" % stem)
-    want = [[str(v) for v in d] for d in drawn]
-    got = [[(r.get(h) or "") for h in prisma.TWIN_HEADER] for r in rows]
+    want = [[str(v) for v in d[:len(prisma.TWIN_HEADER)]] for d in drawn]
+    got = [[(r.get(h) or "").strip() for h in prisma.TWIN_HEADER] for r in rows]
     if got != want:
         diff = [i for i in range(max(len(got), len(want)))
                 if i >= len(got) or i >= len(want) or got[i] != want[i]]
-        failures.append("%s.csv is not the box counts src/prisma_diagram.py draws from "
-                        "docs/prisma_counts.json, first at row %d of %d" % (stem, diff[0] + 1,
-                                                                            len(want)))
-    return failures
+        return ["%s.csv is not the box counts src/prisma_counts.py computes from "
+                "docs/prisma_counts.json, first at row %d of %d; redraw the diagram with "
+                "src/prisma_figure.R" % (stem, diff[0] + 1, len(want))]
+    return []
 
 
 @rule("figure1_signature_heatmap", TABLE3, INVENTORY)
@@ -353,8 +364,8 @@ def heatmap_rule(stem, rows, data, ctx):
 
 @rule("figure2_forest_overall", TABLE2, INVENTORY)
 def forest_rule(stem, rows, data, ctx):
-    # One row per biomarker of Table 2, labelled with its favourable direction and k, in order of
-    # effect, which is what the caption states.
+    # One row per biomarker of Table 2, with the name and favourable direction the inventory
+    # declares and its k, in order of effect from the top, which is what the caption states.
     inv = inventory(data)
     failures, expected = [], {}
     for r in data[TABLE2]:
@@ -364,15 +375,14 @@ def forest_rule(stem, rows, data, ctx):
             failures.append("%s: %s is in table2_pipeline.csv and has no inventory entry"
                             % (stem, b))
             continue
-        k = int(num(r["k"]))
-        better = "lower" if num(entry["aging_direction"]) < 0 else "higher"
         expected[(b,)] = {
-            "label": "%s (%s better; k = %d)" % (display_name(entry, b), better, k),
-            "k": k, "estimate": num(r["estimate"]), "ci_lb": num(r["ci_lb"]),
+            "biomarker_label": display_name(entry, b),
+            "favourable": "lower" if num(entry["aging_direction"]) < 0 else "higher",
+            "k": int(num(r["k"])), "estimate": num(r["estimate"]), "ci_lb": num(r["ci_lb"]),
             "ci_ub": num(r["ci_ub"]), "I2": num(r["I2"]),
         }
     failures += keyed(stem, rows, expected, ("biomarker",),
-                      ("label", "k", "estimate", "ci_lb", "ci_ub", "I2"))
+                      ("biomarker_label", "favourable", "k", "estimate", "ci_lb", "ci_ub", "I2"))
     drawn = [num(r.get("estimate")) for r in rows]
     if all(v is not None and not math.isnan(v) for v in drawn) and drawn != sorted(drawn):
         failures.append("%s: the rows are not in order of effect, which the caption states" % stem)
@@ -583,6 +593,134 @@ def check_content(stems, twins, data, ctx, mapping_text):
     return failures
 
 
+# ---------------------------------------------------------------------------------------------
+# What a figure is: the files of figure style 2, read from the files themselves
+# ---------------------------------------------------------------------------------------------
+
+JOURNAL_WIDTHS_MM = (89.0, 120.0, 183.0)
+MAX_HEIGHT_MM = 170.0
+PAGE_DEPTH_MM = 247.0
+DPI = 600
+PX_PER_METRE = round(DPI / 0.0254)
+# A device writes whole pixels and R's PDF device whole points, so a size read back from a file is
+# short of the size drawn by up to one pixel or one point.
+PNG_TOL_MM = 0.1
+PDF_TOL_MM = 0.4
+MM_PER_PT = 25.4 / 72
+
+
+def png_geometry(data):
+    """Width and height in pixels and the pHYs chunk (x and y pixels per unit, unit) or None, read
+    from the chunks a PNG carries before its image data."""
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        raise ValueError("not a PNG file")
+    pos, size, phys = 8, None, None
+    while pos + 8 <= len(data):
+        length = struct.unpack(">I", data[pos:pos + 4])[0]
+        kind, body = data[pos + 4:pos + 8], data[pos + 8:pos + 8 + length]
+        if kind == b"IHDR":
+            size = struct.unpack(">II", body[:8])
+        elif kind == b"pHYs":
+            phys = struct.unpack(">IIB", body[:9])
+        elif kind == b"IDAT":
+            break
+        pos += 12 + length
+    if size is None:
+        raise ValueError("no IHDR chunk")
+    return size[0], size[1], phys
+
+
+def pdf_geometry(data):
+    """The page width and height in points, whether the file carries a date, and the fonts its
+    resources name."""
+    m = re.search(rb"/MediaBox\s*\[\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s*\]", data)
+    if not m:
+        raise ValueError("no page size")
+    x0, y0, x1, y1 = (float(v) for v in m.groups())
+    dated = b"/CreationDate" in data or b"/ModDate" in data
+    fonts = sorted({f.decode("latin-1") for f in re.findall(rb"/BaseFont\s*/([^\s/<>\[\]()]+)",
+                                                           data)})
+    return x1 - x0, y1 - y0, dated, fonts
+
+
+def supplementary(stem):
+    return re.match(r"figureS\d+_", stem) is not None
+
+
+def check_format(stem, png, pdf, index_row=None):
+    """png and pdf are the bytes of the figure's files, or None where a file does not exist; the
+    PNG may be only its first few kilobytes."""
+    failures = []
+    if png is None or pdf is None:
+        missing = " and ".join(e for e, b in (("PDF", pdf), ("PNG", png)) if b is None)
+        failures.append("figure %r has no %s; every figure is written as a vector PDF and a %d dpi "
+                        "PNG" % (stem, missing, DPI))
+    width_mm = height_mm = None
+    if png is not None:
+        try:
+            w, h, phys = png_geometry(png)
+        except (ValueError, struct.error) as e:
+            return failures + ["%s.png cannot be read: %s" % (stem, e)]
+        if phys is None or phys[2] != 1:
+            failures.append("%s.png does not record its resolution, so it is %d by %d pixels at no "
+                            "stated size" % (stem, w, h))
+        elif abs(phys[0] - PX_PER_METRE) > 1 or abs(phys[1] - PX_PER_METRE) > 1:
+            failures.append("%s.png is %.0f dpi, and a figure is written at %d dpi"
+                            % (stem, phys[0] * 0.0254, DPI))
+        else:
+            width_mm, height_mm = w / phys[0] * 1000.0, h / phys[1] * 1000.0
+            if min(abs(width_mm - j) for j in JOURNAL_WIDTHS_MM) > PNG_TOL_MM:
+                failures.append("%s.png is %.1f mm wide, and a figure is drawn at a journal width, "
+                                "%s mm" % (stem, width_mm,
+                                           ", ".join("%g" % j for j in JOURNAL_WIDTHS_MM)))
+            limit = PAGE_DEPTH_MM if supplementary(stem) else MAX_HEIGHT_MM
+            if height_mm > limit + PNG_TOL_MM:
+                failures.append("%s.png is %.1f mm high, above the %g mm a %s figure may take"
+                                % (stem, height_mm, limit,
+                                   "supplementary" if supplementary(stem) else "main text"))
+            if index_row is not None:
+                for field, got in (("width_mm", width_mm), ("height_mm", height_mm)):
+                    stated = num(index_row.get(field))
+                    if stated is None or math.isnan(stated) or abs(stated - got) > PNG_TOL_MM:
+                        failures.append("figure_index.csv states %s %s for %r, and its PNG is "
+                                        "%.1f mm" % (field, shown(index_row.get(field)), stem, got))
+    if pdf is not None:
+        try:
+            pw, ph, dated, fonts = pdf_geometry(pdf)
+        except ValueError as e:
+            return failures + ["%s.pdf cannot be read: %s" % (stem, e)]
+        if dated:
+            failures.append("%s.pdf carries a creation or modification date, so the same figure "
+                            "is a different file on every run" % stem)
+        if fonts:
+            failures.append("%s.pdf declares the font(s) %s: text set in a face other than the "
+                            "vendored one, which figure style 2 draws as outlines"
+                            % (stem, ", ".join(fonts)))
+        if width_mm is not None and (abs(pw * MM_PER_PT - width_mm) > PDF_TOL_MM
+                                     or abs(ph * MM_PER_PT - height_mm) > PDF_TOL_MM):
+            failures.append("%s.pdf is %.1f by %.1f mm and its PNG %.1f by %.1f mm, so the two are "
+                            "not the same figure" % (stem, pw * MM_PER_PT, ph * MM_PER_PT,
+                                                     width_mm, height_mm))
+    return failures
+
+
+def read_head(path, n=None):
+    if not os.path.exists(path):
+        return None
+    with open(path, "rb") as fh:
+        return fh.read() if n is None else fh.read(n)
+
+
+def check_formats(stems, index_rows):
+    index = {(r.get("name") or "").strip(): r for r in index_rows}
+    failures = []
+    for stem in sorted(stems):
+        failures.extend(check_format(stem, read_head(os.path.join(OUT, stem + ".png"), 65536),
+                                     read_head(os.path.join(OUT, stem + ".pdf")),
+                                     index.get(stem)))
+    return failures
+
+
 def declared_classes():
     with open(PIPELINE) as fh:
         text = fh.read()
@@ -594,7 +732,7 @@ def declared_classes():
 
 
 def load_prisma():
-    spec = importlib.util.spec_from_file_location("prisma_diagram",
+    spec = importlib.util.spec_from_file_location("prisma_counts",
                                                   os.path.join(ROOT, PRISMA_SCRIPT))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -618,19 +756,49 @@ def load_content(stems):
                         data[s] = json.load(fh)
                 else:
                     data[s] = read_csv(full)
-    with open(os.path.join(ROOT, PRISMA_SVG), "rb") as fh:
-        svg = fh.read()
-    ctx = {"receptor_classes": declared_classes(), "prisma": load_prisma(), "prisma_svg": svg}
+    ctx = {"receptor_classes": declared_classes(), "prisma": load_prisma()}
     return twins, data, ctx
+
+
+def fake_png(width_mm, height_mm, dpi=DPI):
+    """The signature and the chunks before the image data of a PNG of that size, as ragg writes
+    it: whole pixels, truncated, and the resolution in pixels per metre."""
+    def chunk(kind, body):
+        return (struct.pack(">I", len(body)) + kind + body
+                + struct.pack(">I", zlib.crc32(kind + body) & 0xffffffff))
+    px = int(width_mm / 25.4 * (dpi or 72))
+    py = int(height_mm / 25.4 * (dpi or 72))
+    out = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", px, py, 8, 6, 0, 0, 0))
+    if dpi is not None:
+        ppm = round(dpi / 0.0254)
+        out += chunk(b"pHYs", struct.pack(">IIB", ppm, ppm, 1))
+    return out + chunk(b"IDAT", b"")
+
+
+def fake_pdf(width_mm, height_mm, dated=False, font=None):
+    """The objects of a PDF that the checks read, as R's PDF device writes them: the page size in
+    whole points, truncated, an information dictionary and the page resources."""
+    out = b"%PDF-1.4\n1 0 obj\n<<\n/Title (R Graphics Output)\n/Producer (R 4.5.2)\n"
+    if dated:
+        out += b"/CreationDate (D:20261024120000)\n/ModDate (D:20261024120000)\n"
+    out += b">>\nendobj\n"
+    out += b"4 0 obj\n<<\n/ProcSet [/PDF /Text]\n/Font <<"
+    if font:
+        out += b" /F1 5 0 R >>\n>>\nendobj\n5 0 obj\n<< /Type /Font /BaseFont /" + font.encode()
+    out += b">>\nendobj\n"
+    out += b"3 0 obj\n<< /Type /Pages /MediaBox [0 0 %d %d] >>\nendobj\n" % (
+        int(width_mm / 25.4 * 72), int(height_mm / 25.4 * 72))
+    return out
 
 
 def self_test():
     index = [{"name": "figure9_thing", "caption": "a caption",
               "files": "figure9_thing.pdf; figure9_thing.png", "twin": "figure9_thing.csv"}]
     manifest = {"figure9_thing.pdf", "figure9_thing.png", "figure9_thing.csv",
-                "figure0_prisma_flow.svg", "figure0_prisma_flow.csv"}
+                "figure0_prisma_flow.pdf", "figure0_prisma_flow.png", "figure0_prisma_flow.csv"}
     sizes = {"figure9_thing.pdf": 40000, "figure9_thing.png": 90000, "figure9_thing.csv": 400,
-             "figure0_prisma_flow.svg": 12000, "figure0_prisma_flow.csv": 1300}
+             "figure0_prisma_flow.pdf": 1400000, "figure0_prisma_flow.png": 650000,
+             "figure0_prisma_flow.csv": 600}
     mapping = "| Figure 1 | figure0_prisma_flow | x |\n| Figure 2 | figure9_thing | y |"
 
     cases = []
@@ -665,9 +833,46 @@ def self_test():
     quiet_prose = not check(index, manifest, prose, sizes)
 
     # The externally produced PRISMA figure.
-    s = dict(sizes); s.pop("figure0_prisma_flow.svg")
+    s = dict(sizes); s.pop("figure0_prisma_flow.pdf"); s.pop("figure0_prisma_flow.png")
     cases.append(("the external PRISMA figure missing",
-                  check(index, manifest, mapping, s), "produced by src/prisma_diagram.py"))
+                  check(index, manifest, mapping, s), "produced by src/prisma_figure.R"))
+
+    # What a figure is, 24 October: the files of figure style 2, read from synthetic files built
+    # here to the formats the devices write, one defect at a time.
+    row = {"width_mm": "89", "height_mm": "60"}
+    good = (fake_png(89, 60), fake_pdf(89, 60))
+    quiet_format = not check_format("figure9_thing", *good, index_row=row)
+    quiet_supplement = not check_format("figureS9_thing", fake_png(120, 240), fake_pdf(120, 240))
+    cases.append(("a PNG at 300 dpi",
+                  check_format("figure9_thing", fake_png(89, 60, dpi=300), good[1], row),
+                  "is 300 dpi"))
+    cases.append(("a PNG that records no resolution",
+                  check_format("figure9_thing", fake_png(89, 60, dpi=None), good[1], row),
+                  "does not record its resolution"))
+    cases.append(("a figure at no journal width",
+                  check_format("figure9_thing", fake_png(150, 60), fake_pdf(150, 60)),
+                  "journal width"))
+    cases.append(("a main text figure above 170 mm",
+                  check_format("figure9_thing", fake_png(183, 190), fake_pdf(183, 190)),
+                  "above the 170 mm"))
+    cases.append(("a supplementary figure above the page depth",
+                  check_format("figureS9_thing", fake_png(120, 255), fake_pdf(120, 255)),
+                  "above the 247 mm"))
+    cases.append(("an index size the PNG does not have",
+                  check_format("figure9_thing", *good, index_row={"width_mm": "89",
+                                                                 "height_mm": "70"}),
+                  "states height_mm"))
+    cases.append(("a PDF with a creation date",
+                  check_format("figure9_thing", good[0], fake_pdf(89, 60, dated=True), row),
+                  "creation or modification date"))
+    cases.append(("a PDF that declares a font",
+                  check_format("figure9_thing", good[0], fake_pdf(89, 60, font="Helvetica"), row),
+                  "declares the font"))
+    cases.append(("a PDF of another size than its PNG",
+                  check_format("figure9_thing", good[0], fake_pdf(89, 70), row),
+                  "not the same figure"))
+    cases.append(("a figure with no PNG",
+                  check_format("figure9_thing", None, good[1], row), "has no PNG"))
 
     # The plotted values, 23 October: a figure indexed without them, a twin that was not written,
     # one whose hash is not on record, and the external figure's twin missing.
@@ -693,7 +898,9 @@ def self_test():
     quiet = not check(index, manifest, mapping, sizes)
     print("  %-48s %s" % ("a complete set passes", quiet))
     print("  %-48s %s" % ("prose naming the gate is not a figure", quiet_prose))
-    ok = ok and quiet and quiet_prose
+    print("  %-48s %s" % ("a figure in figure style 2 passes", quiet_format))
+    print("  %-48s %s" % ("a full page supplementary figure passes", quiet_supplement))
+    ok = ok and quiet and quiet_prose and quiet_format and quiet_supplement
     print("  %s" % ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 
@@ -742,8 +949,7 @@ def content_self_test():
         return 1
     absent = sorted(set(RULES) - set(twins))
     if absent:
-        print("  no data twin for %s; run python3 -I src/prisma_diagram.py and make analysis"
-              % ", ".join(absent))
+        print("  no data twin for %s; run make prisma and make analysis" % ", ".join(absent))
         print("  FAIL")
         return 1
 
@@ -848,14 +1054,26 @@ def content_self_test():
     cases.append(("a RoB-2 judgement recoded, the traffic light",
                   failures, "figureS1_rob_traffic_light"))
 
-    # The PRISMA counts changed without the diagram being redrawn, and the SVG edited by hand.
+    # The PRISMA counts changed without the diagram being redrawn, and a box count computed by the
+    # drawing script with a term left out of its sum.
     counts = json.loads(json.dumps(data[PRISMA_COUNTS]))
     counts["stream_b_adopted"]["ren_2025_rcts"] += 1
     cases.append(("PRISMA counts changed, diagram not redrawn",
-                  run(d=with_data(PRISMA_COUNTS, counts)), "is not the diagram"))
-    c = dict(ctx)
-    c["prisma_svg"] = ctx["prisma_svg"].replace(b"(n = 1009)", b"(n = 1090)", 1)
-    cases.append(("PRISMA SVG edited by hand", run(c=c), "is not the diagram"))
+                  run(d=with_data(PRISMA_COUNTS, counts)), "is not the box counts"))
+    stem = "figure0_prisma_flow"
+    held = data[PRISMA_COUNTS]["grouping_and_extraction"]["held_pending_decision"]
+    edited = [dict(r) for r in twins[stem]]
+    last = next(r for r in edited if r["box"] == "Studies closed without contributing")
+    last["n"] = str(int(last["n"]) - held)
+    cases.append(("PRISMA closed studies summed without the held ones",
+                  run(t=with_twin(stem, edited)), "is not the box counts"))
+
+    # Figure 2 labelling a marker with the wrong favourable direction.
+    stem = "figure2_forest_overall"
+    edited = [dict(r) for r in twins[stem]]
+    edited[0]["favourable"] = "higher" if edited[0]["favourable"] == "lower" else "lower"
+    cases.append(("figure 2 with a favourable direction flipped",
+                  run(t=with_twin(stem, edited)), "favourable"))
 
     # The record of what a figure is drawn from, and a figure with no rule.
     row = next(ln for ln in mapping.splitlines() if "`figure5_nbais`" in ln)
@@ -905,6 +1123,8 @@ def main(argv):
 
     failures = check(index_rows, manifest_names, mapping_text, file_sizes)
     stems = produced_stems(index_rows, file_sizes)
+    format_failures = check_formats(stems, index_rows)
+    failures.extend(format_failures)
     twins = {}
     try:
         twins, data, ctx = load_content(stems)
@@ -917,13 +1137,16 @@ def main(argv):
           % (len(index_rows), len(EXTERNAL), len(file_sizes)))
     for r in index_rows:
         print("  %-34s %s" % (r.get("name", ""), r.get("files", "")))
+    if not format_failures:
+        print("  %d figure(s) as a PDF with no date and no font and a %d dpi PNG at a journal "
+              "width" % (len(stems), DPI))
     print("  plotted values, recomputed from")
     for stem in sorted(twins):
         sources = ", ".join(os.path.basename(s) for s in RULES.get(stem, (None, ()))[1])
         print("  %-34s %4d row(s)  %s" % (stem, len(twins[stem]), sources))
     if not failures:
-        print("  every figure exists, is hashed, is mapped to a submission number, and plots the "
-              "values of its sources")
+        print("  every figure exists, is hashed, is mapped to a submission number, is written in "
+              "figure style 2, and plots the values of its sources")
         return 0
     print("\nFAIL: %d problem(s)" % len(failures))
     for f in failures:

@@ -12,7 +12,7 @@ make install
 
 `make install` installs the reference package set. For an exact reproduction use `renv::restore()` against the committed lockfile instead, which pins versions rather than installing current ones.
 
-R 4.4.1 is the version used in CI. The pipeline needs metafor, netmeta, meta, dmetar, tidyverse, boot, ggplot2, patchwork, knitr, openssl and sessioninfo. `verify.R` needs only dplyr, which is why the CI gate job installs nothing else.
+R 4.4.1 is the version used in CI. The pipeline needs metafor, netmeta, meta, dmetar, tidyverse, boot, ggplot2, patchwork, knitr, openssl and sessioninfo, and for its figures ragg, showtext, sysfonts, systemfonts and scales; the PRISMA diagram needs jsonlite besides. The typeface the figures are set in, Inter 4.1, is vendored in `analysis/fonts` under the SIL Open Font License and verified by its SHA-256 before anything is drawn, so no font needs installing. `verify.R` needs only dplyr, which is why the CI gate job installs nothing else.
 
 ## 2. Gates, before any data
 
@@ -72,9 +72,9 @@ Writes to `analysis/output/`:
 | `table_nma_coherence.csv` | Network inconsistency diagnostics |
 | `table_diagnostics.csv` | Leave one out range, influential trials, Egger where assessable, trim and fill |
 | `sensitivity_*.csv` | Nine pre-specified sensitivity analyses |
-| `figure*_*.pdf`, `figure*_*.png` | The figure set; the PRISMA diagram is written by `src/prisma_diagram.py` instead, and `docs/FIGURES.md` maps every file stem to its submission number |
+| `figure*_*.pdf`, `figure*_*.png` | The figure set in figure style 2 (`analysis/figure_style.R`): a vector PDF and a 600 dpi PNG per figure, drawn at its journal width; the PRISMA diagram is drawn by `make prisma` (`src/prisma_figure.R`) instead, and `docs/FIGURES.md` maps every file stem to its submission number |
 | `figure*_*.csv` | The plotted values of each figure, which the figure gate recomputes from the tables and data the figure is drawn from |
-| `figure_index.csv` | Each figure's files, plotted values, caption and size, as the run saved them |
+| `figure_index.csv` | Each figure's files, plotted values, caption (the figure legend) and size in millimetres, as the run saved them |
 | `session_info.txt` | R version, platform, every loaded package version |
 | `MANIFEST.csv` | Every output file with its SHA-256 hash |
 

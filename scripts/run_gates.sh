@@ -99,7 +99,9 @@ echo "exit $rc" >> "$log"
 # tables and the data each figure is drawn from, by one rule per figure, and fails on a
 # disagreement or on a figure with no rule. Its self test injects into the tracked figures the
 # defects the rules exist for, the per class least squares lines Figure 4 drew until 19 October
-# among them.
+# among them. From 2026-10-24 it also reads each figure's files, which figure style 2 fixes: a
+# vector PDF with no date and no font, and a 600 dpi PNG at a journal width, the size the figure
+# index states.
 #
 # The last three check artefacts that `make analysis` produces rather than this chain: the analysis
 # pipeline is a separate command because it costs ten minutes of permutation and bootstrap work.

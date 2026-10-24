@@ -47,19 +47,21 @@ would have understated every printed quantity by roughly a factor of twenty.
 
 | Submission | File stem | Produced by | Plotted values, recomputed from | Content |
 | --- | --- | --- | --- | --- |
-| Figure 1 | `figure0_prisma_flow` | `src/prisma_diagram.py` | `figure0_prisma_flow.csv`; diagram and values regenerated from `docs/prisma_counts.json` | PRISMA 2020 flow, three screening pools, 1009 records screened to 76 included trials |
-| Figure 2 | `figure2_forest_overall` | pipeline section 10 | `figure2_forest_overall.csv`; `table2_pipeline.csv`, with names and favourable directions from `biomarker_inventory.csv` | Forest plot of the overall pooled percent change per biomarker across all receptor classes, ordered by effect, with k and I2 per row |
+| Figure 1 | `figure0_prisma_flow` | `src/prisma_figure.R` (`make prisma`) | `figure0_prisma_flow.csv`; every box count recomputed by `src/prisma_counts.py` from `docs/prisma_counts.json` | PRISMA 2020 flow, three screening pools, 1009 records screened to 76 included trials |
+| Figure 2 | `figure2_forest_overall` | pipeline section 10 | `figure2_forest_overall.csv`; `table2_pipeline.csv`, with names and favourable directions from `biomarker_inventory.csv` | Forest plot of the overall pooled percent change per biomarker across all receptor classes, ordered by effect, set as a table: name, favourable direction and k, the estimate with its interval, and I² per row |
 | Figure 3 | `figure1_signature_heatmap` | pipeline section 10 | `figure1_signature_heatmap.csv`; `table3_primary_results.csv` times the aging direction in `biomarker_inventory.csv` | Direction adjusted signature heatmap, biomarkers by hallmark domain against the four receptor classes |
 | Figure 4 | `figure4_weight_adjusted_liverfat` | pipeline section 10 | `figure4_weight_adjusted_liverfat.csv`; points matched to `extraction_master_harmonised.csv`, line and band refitted at the variance of `table4a_hepatic_metaregression.csv`, arm count against `table2_pipeline.csv` | Liver fat against mean body weight change, point area inverse variance, point shape receptor class, line and band the random effects meta-regression of Table 4a |
 | Figure 5 | `figure5_nbais` | pipeline section 10 | `figure5_nbais.csv`; the computed rows of `table5_nbais.csv` | Net Biological Age Impact Score by receptor class under three weighting schemes, with the percentile interval of the two level bootstrap |
 | Figure 6 | `figure6_rob_summary` | pipeline section 10 | `figure6_rob_summary.csv`; recounted from `risk_of_bias.csv` | RoB-2 judgements across the five domains and overall, as the share of assessed trials |
 | Figure S1 | `figureS1_rob_traffic_light` | pipeline section 10 | `figureS1_rob_traffic_light.csv`; `risk_of_bias.csv` | Per trial RoB-2 traffic light for every assessed trial |
 
-Each stem exists as a `.pdf` for submission and a 300 dpi `.png` for drafts and for inspection; the
-PRISMA diagram is an `.svg` written directly rather than through ggplot. Each stem also exists as a
-`.csv`, the figure's plotted values, described in the next section.
-`analysis/output/figure_index.csv` is written by the run and records the files, the plotted
-values, captions and sizes as they were saved.
+Each stem exists as a vector `.pdf` for submission, its glyphs drawn as outlines, and a 600 dpi
+`.png` for documents and inspection, both drawn at the figure's journal width in figure style 2
+(described below); the PRISMA diagram is drawn the same way by `src/prisma_figure.R` rather than by
+the pipeline. Each stem also exists as a `.csv`, the figure's plotted values, described in the next
+section. `analysis/output/figure_index.csv` is written by the run and records the files, the
+plotted values, captions and sizes in millimetres as they were saved; the captions there are the
+figure legends, since no figure carries a title or caption inside it.
 
 ## Plotted values
 
@@ -73,11 +75,11 @@ effects meta-regression, and nothing in the repository could have noticed.
 
 | Element | Rule | Where |
 | --- | --- | --- |
-| Twin | The data frame each layer is drawn from, with the columns the figure encodes; a figure with several layers stacks them under a `layer` column; empty cells are values the figure leaves empty, such as a heatmap cell with no pooled estimate | `write_twin` and `save_figure` in the pipeline, `twin_text` in `src/prisma_diagram.py` |
+| Twin | The data frame each layer is drawn from, with the columns the figure encodes; a figure with several layers stacks them under a `layer` column; empty cells are values the figure leaves empty, such as a heatmap cell with no pooled estimate | `write_twin` and `save_figure` in `analysis/figure_style.R`, used by the pipeline and by `src/prisma_figure.R` |
 | Rounding | Doubles to ten significant digits, far finer than anything readable from a figure and far coarser than a platform's last bits, so the twin of an unchanged figure is the same file on every run | `write_twin` |
 | Content check | One rule per figure recomputes its twin from the files named in the table above, without the pipeline, and requires agreement to the ten digits written; a produced figure with no rule fails, so a figure enters the manuscript with the rule that checks it | `src/figure_check.py`, in the gate chain with its self test |
 | Record | Each figure's row above names its twin and every file its rule reads, and the gate fails when it does not | `src/figure_check.py` |
-| Determinism | The PDF device writes no creation or modification time, so the PDF of an unchanged figure is byte identical across runs and the manifest records a change only when a figure changed | `PDF_ARGS` in the pipeline |
+| Determinism | The PDF device writes no creation or modification time and the PNG device none at all, so an unchanged figure is byte identical across runs on one machine and the manifest records a change only when a figure changed | `PDF_ARGS` in `analysis/figure_style.R` |
 
 Two of the rules do more than look values up. Figure 4's points must each be one of their trial's
 liver fat arms in the harmonised master, with that trial's receptor class, and weighted least
@@ -92,8 +94,45 @@ caption.
 The self test injects into the tracked twins and tables the defects the rules exist for, among them
 another dose arm of a trial plotted in Figure 4, its line fitted by unweighted least squares, the
 method of the per class lines drawn until 19 October, the BCa interval drawn in Figure 5, a
-judgement recoded in the risk of bias data, and a PRISMA count changed without the diagram being
-redrawn, and requires each to be caught and the tracked figures to pass.
+favourable direction flipped in Figure 2, a judgement recoded in the risk of bias data, a PRISMA
+count changed without the diagram being redrawn and a PRISMA box summed without one of its terms,
+and requires each to be caught and the tracked figures to pass.
+
+## Figure style 2
+
+Adopted 24 October 2026 at the Director's decision for more resolution and a more modern style, the
+standard the laboratory's governed research template and its other programs draw in. Until then the
+figures were drawn at a size chosen for each in inches, in the device's default face, at 300 dpi,
+with a caption inside the image; a journal reduces such a figure to its column width, so its text
+reached the page at whatever size the reduction left, and the caption appeared twice.
+
+| Element | Standard | Where |
+| --- | --- | --- |
+| Size | Drawn at the final journal width, 89 mm (single column), 120 mm (one and a half) or 183 mm (double), at most 170 mm high, or 247 mm, the full page depth, for a supplementary figure that is a page of its own; nothing is rescaled in production | `save_figure` refuses any other size |
+| Typeface | Inter 4.1 (SIL Open Font License 1.1, `analysis/fonts/OFL-Inter.txt`), Regular, Italic, Medium and SemiBold, vendored in `analysis/fonts` and verified by SHA-256 before anything is drawn; a file that differs from its digest stops the run | `register_figure_fonts` |
+| Text | 7 pt axis titles, 6.5 pt ticks, legends and table columns, 6.3 pt values printed on marks, 5.8 pt in the PRISMA boxes and the 77 rows of Figure S1; numbers carry a true minus sign | `FIG_PT`, `fig_num`, `fig_axis_number` |
+| Devices | PDF through `grDevices::pdf` with showtext, which draws every glyph as an outline, so the file needs no font wherever it is opened; PNG at 600 dpi through `ragg`; neither depends on cairo or X11 | `save_figure` |
+| Colour | The validated categorical blue for every single series; the sequential blue ramp for magnitude; a diverging ramp from the dark orange step through a hueless grey to the sequential blue for the signed heatmap; status colours only for risk of bias, always with a glyph; text in the ink tokens, white on the darkest fills by computed contrast | `analysis/figure_style.R` |
+| Layout | White surface, left and bottom axes only, light gridlines on value axes, legends outside the plotting area, no title or caption inside a figure | `theme_figure` |
+
+The sizes, stem first, because the gate reads the rows that begin with the submission number as the
+figure set table above:
+
+| File stem | Submission | Width, mm | Height, mm |
+| --- | --- | --- | --- |
+| `figure0_prisma_flow` | Figure 1 | 183 | 145, set by its content |
+| `figure2_forest_overall` | Figure 2 | 183 | 20 plus 4.4 per biomarker row, 143.2 for 28 |
+| `figure1_signature_heatmap` | Figure 3 | 120 | 150 |
+| `figure4_weight_adjusted_liverfat` | Figure 4 | 120 | 82 |
+| `figure5_nbais` | Figure 5 | 183 | 60 |
+| `figure6_rob_summary` | Figure 6 | 183 | 52 |
+| `figureS1_rob_traffic_light` | Figure S1 | 120 | 240 |
+
+The figure gate reads the files themselves as well as the records of them: every figure has both
+files; the PNG records 600 dpi and is a journal width wide and within its height; the size in
+`figure_index.csv` is the PNG's; the PDF is the PNG's size, carries no date and declares no font,
+because a font resource in a figure drawn in outlines is text set in a face other than Inter. Its
+self test builds files with each of those defects and requires each to be caught.
 
 ## File names are not submission numbers
 
@@ -113,10 +152,11 @@ which is the next action below, not a rename in the repository.
 | Rule | How it is met |
 | --- | --- |
 | One series takes one hue; hues are never cycled | Figures 2 and 5 are single series in one blue; Figure 5 previously coloured its bars by receptor class with the legend suppressed, which spent the identity channel on what the axis already named |
-| A diverging ramp only for a signed quantity, with a neutral midpoint | Figure 3 uses the ColorBrewer RdBu poles with a near neutral midpoint, a published scheme with balanced arms |
+| A diverging ramp only for a signed quantity, with a neutral midpoint | Figure 3 runs from the dark orange step through a hueless grey to the steps of the validated sequential blue, both arms scaled by the largest magnitude on either side; it replaced the ColorBrewer RdBu poles on 24 October, whose red arm is the colour the risk of bias figures reserve for high risk |
 | Identity never carried by colour alone | Figure 4 carries receptor class by point shape, Figure 2 by row label, Figure 6 and S1 by a glyph in every cell |
 | Colour separation measured, not judged | No four hue set from the reference palette clears the all pairs colour vision deficiency and normal vision floors, measured with the palette validator, so Figure 4 spends no colour on class at all |
-| Status scales are reserved and ship with a glyph and a label | Figures 6 and S1 use the status palette for low, some concerns and high, each cell carrying `+`, `?` or `x` so a monochrome print stays readable |
+| Status scales are reserved and ship with a glyph and a label | Figures 6 and S1 use the status palette for low, some concerns and high, each cell carrying `+`, `?` or `×` so a monochrome print stays readable, and the legend carries the same glyphs |
+| A number printed on a filled mark stays legible | The ink of each printed value is chosen by its contrast with the fill it sits on, computed with the scale's own palette: white on the darkest blues of Figure 3 and on the high risk red of Figure 6 |
 | Absence distinguishable from zero | Figure 3 marks a cell with no pooled estimate `n/e` and fills it with a grey clearly separated from the diverging midpoint; the previous `grey90` was within three per cent of it, so "no estimate" and "no effect" were the same colour |
 | A figure's fitted line is the model the table reports | Figure 4's line is the random effects meta-regression, not the per class ordinary least squares lines `geom_smooth` had been drawing, one of them through a single point |
 

@@ -6,6 +6,7 @@
 #   make validate   prove the statistics recover known truth on simulated data
 #   make gates      run the full twenty five gate provenance chain
 #   make analysis   run the full pipeline (needs analysis/data/extraction_master.csv)
+#   make prisma     redraw the PRISMA flow diagram from docs/prisma_counts.json
 #   make table1     regenerate Table 1 from the biomarker inventory (the chain only checks it)
 #   make manifest   rehash analysis/output into MANIFEST.csv without a full run
 #   make pin        record the exact package versions this run used
@@ -16,7 +17,7 @@
 
 RS := Rscript
 
-.PHONY: install pin gates verify selftest validate extract analysis table1 manifest clean
+.PHONY: install pin gates verify selftest validate extract analysis prisma table1 manifest clean
 
 install:
 	$(RS) requirements.R
@@ -46,6 +47,12 @@ extract:
 
 analysis:
 	$(RS) analysis/M5_AGE_analysis_pipeline.R
+
+# Redraw Figure 1, the PRISMA 2020 flow diagram, from docs/prisma_counts.json in figure style 2. The
+# pipeline does not draw it, because it depends on the declared counts and not on the analysis; run
+# `make manifest` after it, as after `make table1`, so the manifest hashes the redrawn files.
+prisma:
+	$(RS) src/prisma_figure.R
 
 # Regenerate Table 1 from analysis/data/biomarker_inventory.csv joined to the harmonised master.
 # The chain only CHECKS this table (gate seventeen, --check), so regenerating it after an inventory
