@@ -42,8 +42,11 @@ dat <- readr::read_csv("analysis/data/extraction_master_harmonised.csv",
 # a declaration that two programs depend on belongs in data that both read, not in the source of one
 # of them. The file carries the hallmark domain and surrogacy grade of each marker and the reason it
 # is retained, so the rule and its justification travel together.
-INCLUDED <- readr::read_csv("analysis/data/nbais_inclusion_set.csv",
-                            show_col_types = FALSE, progress = FALSE)$biomarker
+INCLUDED_SET <- readr::read_csv("analysis/data/nbais_inclusion_set.csv",
+                                show_col_types = FALSE, progress = FALSE)
+# A row that does not parse to the header stops the run (24 October 2026); see src/verify.R gate 4.
+stopifnot(nrow(readr::problems(INCLUDED_SET)) == 0)
+INCLUDED <- INCLUDED_SET$biomarker
 stopifnot(length(INCLUDED) >= 2, !any(duplicated(INCLUDED)))
 
 DIR <- c(hsCRP=-1, IL6=-1, YKL40=-1, GDF15=-1, ICAM1=-1, GGT=-1,

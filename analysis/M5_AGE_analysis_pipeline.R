@@ -17,9 +17,13 @@
 # analysis/data/extraction_master.csv regenerates every result, table and
 # figure.
 #
-# Environment is pinned with renv. To reproduce exactly:
-#   renv::restore()
+# The package set is installed by `make install` (requirements.R). The exact version of every
+# package a run used, with the R version and platform, is recorded by `make pin` in
+# analysis/output/environment_pinned.csv. To reproduce:
+#   make install
 #   Rscript analysis/M5_AGE_analysis_pipeline.R
+# (Corrected 24 October 2026: this header said the environment was pinned with renv and to run
+# renv::restore(); no renv lockfile has ever existed in this repository, see requirements.R.)
 #
 # Run from the repository root. All stochastic operations use set.seed(20261013).
 ###############################################################################
@@ -29,6 +33,17 @@
 ## ---------------------------------------------------------------------------
 
 set.seed(20261013)
+
+# Every warning the run raises is recorded (added 24 October 2026). The run printed 34 and then 35
+# warnings until 23 October and one until 24 October, and each time the warning that mattered, a
+# figure dropping two arms or a table read short, was one line among the others. The warnings are
+# written to analysis/output/run_warnings.csv before the manifest, and src/verify.R gate 5 requires
+# that table to be empty, so a warning reaches CI as a failure instead of scrolling past. A warning
+# that is understood and accepted is handled where it arises, with the reason beside it.
+RUN_WARNINGS <- character(0)
+globalCallingHandlers(warning = function(w) {
+  RUN_WARNINGS <<- c(RUN_WARNINGS, conditionMessage(w))
+})
 
 required_packages <- c(
   "metafor",      # >= 4.6.0  core meta-analysis and meta-regression
@@ -47,7 +62,8 @@ required_packages <- c(
 
 invisible(lapply(required_packages, function(p) {
   if (!requireNamespace(p, quietly = TRUE)) {
-    stop(sprintf("Package '%s' is required. Run renv::restore().", p))
+    stop(sprintf(paste("Package '%s' is required. Run make install; the versions the reference",
+                       "run used are in analysis/output/environment_pinned.csv."), p))
   }
   library(p, character.only = TRUE)
 }))
@@ -635,6 +651,14 @@ read_included_markers <- function(path = NBAIS_INCLUSION_SET) {
          call. = FALSE)
   }
   tbl <- readr::read_csv(path, show_col_types = FALSE, progress = FALSE)
+  # A row the parser cannot fit to the header is a defect of the declaration, not a warning to read
+  # past: until 24 October 2026 two reasons held unquoted commas and were truncated this way, with a
+  # warning and no stop. src/verify.R gate 4 checks the shape of every tracked table in CI as well.
+  if (nrow(readr::problems(tbl)) > 0) {
+    stop(path, " does not parse to its header (", nrow(readr::problems(tbl)), " problems, the ",
+         "first at row ", readr::problems(tbl)$row[1], "); a field holding a comma is quoted",
+         call. = FALSE)
+  }
   if (!"biomarker" %in% names(tbl)) {
     stop(path, " has no biomarker column; the composite inclusion set must name its markers",
          call. = FALSE)
@@ -983,9 +1007,14 @@ if (RUN_NMA) {
     file.path(OUT_DIR, "table7_network_not_run.csv")
   )
   message("  network block gated off; reason written to table7_network_not_run.csv")
+  # With the block gated off there are no inconsistency diagnostics, and until 24 October 2026 the
+  # call below still wrote table_nma_coherence.csv from the empty list: a file of zero bytes, not
+  # even a header, which the manifest hashed and the runbook described as the diagnostics. The table
+  # is now written only when the network runs, and a file left by an earlier run is removed.
+  unlink(file.path(OUT_DIR, "table_nma_coherence.csv"))
 }
 
-readr::write_csv(
+if (RUN_NMA) readr::write_csv(
   purrr::map_dfr(nma_class, function(x) {
     tibble::tibble(
       biomarker        = x$biomarker,
@@ -1394,10 +1423,23 @@ fig4_line <- if (!is.null(fig4_fit) && nrow(fig4_fit$b) == 2) {
 # both rest on seven. ggplot dropped them with a warning that the run buried among 35 others, which
 # is how a figure comes to show less data than its caption claims. The counts are computed and
 # printed, and the arms are set aside here on purpose rather than by the geom by default.
+# Since 24 October 2026 the caption names the arms set aside as well as counting them: the Results
+# say they are named in the caption, and until then the caption only counted them.
+fig4_set_aside <- fig4_data$trial_id[is.na(fig4_data$pct_weight_change) | is.na(fig4_data$vi)]
 fig4_n_all <- nrow(fig4_data)
-fig4_n_cov <- sum(!is.na(fig4_data$pct_weight_change) & !is.na(fig4_data$vi))
-fig4_coverage <- sprintf("%d of the %d pooled liver fat arms carry the body weight covariate and are plotted; %d are not.",
-                         fig4_n_cov, fig4_n_all, fig4_n_all - fig4_n_cov)
+fig4_n_cov <- fig4_n_all - length(fig4_set_aside)
+fig4_named <- if (length(fig4_set_aside) < 2) fig4_set_aside else
+  paste(paste(fig4_set_aside[-length(fig4_set_aside)], collapse = ", "), "and",
+        fig4_set_aside[length(fig4_set_aside)])
+fig4_coverage <- if (length(fig4_set_aside) == 0) {
+  sprintf("All %d pooled liver fat arms carry the body weight covariate and are plotted.", fig4_n_all)
+} else {
+  sprintf("%d of the %d pooled liver fat arms carry the body weight covariate and are plotted; %s %s.",
+          fig4_n_cov, fig4_n_all,
+          if (length(fig4_set_aside) == 1) "the one that does not is" else
+            sprintf("the %d that do not are", length(fig4_set_aside)),
+          fig4_named)
+}
 fig4_points <- dplyr::filter(fig4_data, !is.na(pct_weight_change), !is.na(vi))
 
 fig4_slope <- if (!is.null(fig4_line)) {
@@ -1828,6 +1870,12 @@ readr::write_csv(dplyr::bind_rows(FIGURE_INDEX),
 # inventory, and a display name change there left the manifest describing a file that no longer
 # existed. That script's header records the whole of it, including why refreshing the manifest does
 # not weaken the gate that checks it.
+
+# The warnings of the run, one row each, written before the manifest so that the manifest hashes it;
+# a run without warnings writes the header alone (section 0).
+readr::write_csv(tibble::tibble(warning = gsub("[\r\n]+", " ", RUN_WARNINGS)),
+                 file.path(OUT_DIR, "run_warnings.csv"))
+message("  warnings raised by this run: ", length(RUN_WARNINGS))
 
 source(file.path("src", "write_manifest.R"))
 manifest <- write_result_manifest(OUT_DIR)

@@ -170,6 +170,56 @@ if (!ok) {
   }
 }
 
+message("Gate 4: every tracked table is rectangular")
+
+# Added 24 October 2026. Two reasons in analysis/data/nbais_inclusion_set.csv held unquoted commas,
+# so two rows had five fields under a four column header; readr kept four and dropped the rest with
+# a parsing warning that the run printed and nothing stopped on. The marker names were unaffected,
+# so no number moved and nothing failed. A table of the wrong shape that happens not to move a
+# number is still the wrong shape, and the next one may move a number, so the shape of every table
+# is checked here, where CI sees it, instead of being left to a warning. count.fields applies the
+# quoting rules read.csv applies: a field holding a comma must be quoted. An empty file is refused:
+# a table without even a header row is a table that nothing wrote (analysis/output held one, the
+# network diagnostics written from an empty list, until the same day).
+table_dirs <- c("analysis/data", "analysis/output", "search")
+tables <- unlist(lapply(table_dirs[dir.exists(table_dirs)], list.files, pattern = "\\.csv$",
+                        recursive = TRUE, full.names = TRUE))
+for (path in tables) {
+  if (file.size(path) == 0) fail(path, " is empty: a table names at least its columns")
+  n <- utils::count.fields(path, sep = ",", quote = "\"", comment.char = "",
+                           blank.lines.skip = FALSE)
+  if (anyNA(n)) {
+    fail(path, ": line ", which(is.na(n))[1], " opens a quoted field that does not close on it; ",
+         "either a quote is unbalanced or a record spans lines, and tables here keep one record ",
+         "per line")
+  }
+  bad <- which(n != n[1])
+  if (length(bad)) {
+    fail(path, ": line ", paste(head(bad, 5), collapse = ", "), " has ",
+         paste(head(n[bad], 5), collapse = ", "), " fields against ", n[1], " in the header")
+  }
+}
+pass("each of ", length(tables), " tables has as many fields on every line as in its header")
+
+message("Gate 5: the reference run raised no warning")
+
+# Added 24 October 2026. The pipeline records every warning it raises in
+# analysis/output/run_warnings.csv (its section 0); see the pipeline header of that section for the
+# runs whose one warning that mattered was buried among the others. Once a reference run exists, its
+# manifest and its warning record exist together, and the record must be empty.
+warn_path <- "analysis/output/run_warnings.csv"
+if (file.exists("analysis/output/MANIFEST.csv") && !file.exists(warn_path)) {
+  fail("the reference run has a manifest and no warning record at ", warn_path)
+}
+if (file.exists(warn_path)) {
+  w <- utils::read.csv(warn_path, stringsAsFactors = FALSE)
+  if (!identical(names(w), "warning")) fail(warn_path, " does not have the single column warning")
+  if (nrow(w) > 0) fail("the reference run raised ", nrow(w), " warnings; the first: ", w$warning[1])
+  pass("the reference run raised no warning")
+} else {
+  pass("no reference run is recorded in this tree; nothing to check")
+}
+
 message("")
 message("All gates passed.")
 message("Note: no pooled estimates exist at this stage. See docs/MANIFEST.md.")

@@ -8,5 +8,5 @@ GGT,hepatocellular_senescence,B3,Hepatocellular representative not restating adi
 liver_fat_pdff,hepatocellular_senescence,B4,Retained with a stated caveat that fibrosis rather than steatosis carries the prognostic weight
 leptin,adipose_senescence,B4,Retained with a stated caveat as the closest of any marker to a restatement of fat mass
 HOMA_IR,nutrient_sensing,B4,Retained as the nutrient sensing representative
-NTproBNP,cardiac_aging,B2,Retained specifically because the drug does not move it, so the composite is not assembled only from markers moving in the desired direction
-lean_mass,musculoskeletal_aging,B3,The unfavourable axis, retained as essential; the composite is reported with and without it
+NTproBNP,cardiac_aging,B2,"Retained specifically because the drug does not move it, so the composite is not assembled only from markers moving in the desired direction"
+lean_mass,musculoskeletal_aging,B3,"The unfavourable axis, retained as essential; the composite is reported with and without it"

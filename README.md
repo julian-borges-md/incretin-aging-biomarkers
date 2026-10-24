@@ -66,7 +66,7 @@ The badge above is green when the pipeline's integrity gates and self test pass,
 | Layer | Choice |
 |---|---|
 | Language | R 4.4+ (metafor, netmeta, meta, dmetar, boot, tidyverse) |
-| Environment | renv lockfile, exact package versions |
+| Environment | Reference package set in `requirements.R`; the exact versions a run used recorded by `make pin` in `analysis/output/environment_pinned.csv` |
 | Determinism | `set.seed(20261013)` on every stochastic operation |
 | Effect size, continuous | Hedges' g; mean difference reported alongside where scales match |
 | Effect size, binary | Log odds ratio, continuity correction applied only to zero cells |
@@ -125,7 +125,8 @@ src/
 ## Reproduction
 
 ```
-make install     # renv::restore(), exact package versions
+make install     # the reference package set (requirements.R)
+make pin         # record the exact package versions the run used
 make verify      # integrity gates on the extraction contract
 make selftest    # proves verify fails on perturbed input
 make validate    # proves the statistics recover known truth

@@ -24,8 +24,10 @@ Repositories in this line normally carry a claim to evidence map, where every as
 | 2d | Meta-regression uses permutation inference at the pre-specified 10,000 iterations | `make verify` |
 | 2e | The composite is normalised by the sum of weights, so it is a weighted mean and not a weighted sum | `make verify` |
 | 2f | Bootstrap requests BCa intervals | `make verify` |
-| 3 | The pipeline's `check_integrity` accepts well formed input and rejects: unknown receptor class, missing standard deviation, non-positive variance, undeclared aging direction, missing weight covariate | `make verify` |
-| 4 | Every gate above can fail. Seven perturbations are applied in a temporary copy and `verify.R` must exit non-zero for each | `make selftest` |
+| 3 | The pipeline's `check_integrity` accepts well formed input and rejects: unknown receptor class, harmonised columns absent, no usable continuous row, non-positive variance, undeclared aging direction, weight covariate absent throughout | `make verify` |
+| 4 | Every table under `analysis/data`, `analysis/output` and `search` has a header and as many fields on each line as its header; an empty file is refused | `make verify` |
+| 5 | The reference run raised no warning: `analysis/output/run_warnings.csv`, written by the pipeline before its manifest, has its header and no row, and it exists whenever the manifest does | `make verify` |
+| 6 | Every gate above can fail. The unperturbed copy must pass, then ten perturbations are applied in temporary copies and `verify.R` must exit non-zero for each | `make selftest` |
 
 Gate 2e exists because the error it guards against is specific and consequential. A weighted sum grows with the number of biomarkers measured, so a receptor class studied with a broader panel would score higher as an artifact of measurement coverage. The triple agonist node is expected to carry roughly seven biomarkers against sixteen for GLP-1 mono, which is precisely the circumstance that would turn a coverage difference into a false biological finding.
 
@@ -40,9 +42,10 @@ On completion of extraction this file is replaced by a claim to evidence map in 
 ## Reproduction
 
 ```
-make install     # reference package set; renv.lock pins exact versions
-make verify      # gates 1 to 3, no data and no network needed
-make selftest    # gate 4, proves the gates can fail
+make install     # reference package set (requirements.R)
+make pin         # record the exact package versions the run used
+make verify      # gates 1 to 5, no data and no network needed
+make selftest    # gate 6, proves the gates can fail
 make analysis    # full pipeline; requires analysis/data/extraction_master.csv
 ```
 

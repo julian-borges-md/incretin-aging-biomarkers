@@ -10,7 +10,7 @@ cd incretin-aging-biomarkers
 make install
 ```
 
-`make install` installs the reference package set. For an exact reproduction use `renv::restore()` against the committed lockfile instead, which pins versions rather than installing current ones.
+`make install` installs the reference package set at the versions current on the day it runs. No renv lockfile exists. The exact version of every package the reference run used, and of every package they depend on, with the R version and platform, is recorded by `make pin` in `analysis/output/environment_pinned.csv`; an exact reproduction installs those versions. (Until 24 October 2026 this paragraph pointed to a committed lockfile, which has never existed.)
 
 R 4.4.1 is the version used in CI. The pipeline needs metafor, netmeta, meta, dmetar, tidyverse, boot, ggplot2, patchwork, knitr, openssl and sessioninfo, and for its figures ragg, showtext, sysfonts, systemfonts and scales; the PRISMA diagram needs jsonlite besides. The typeface the figures are set in, Inter 4.1, is vendored in `analysis/fonts` under the SIL Open Font License and verified by its SHA-256 before anything is drawn, so no font needs installing. `verify.R` needs only dplyr, which is why the CI gate job installs nothing else.
 
@@ -69,13 +69,14 @@ Writes to `analysis/output/`:
 | `table4a_hepatic_metaregression.csv` | The hepatic subset, which is the pre-specified primary target |
 | `table5_nbais.csv` | Composite score per receptor class under three weighting schemes, with BCa intervals |
 | `table5a_nbais_contrasts.csv` | Pairwise class differences, bootstrapped directly, restricted to shared biomarkers |
-| `table_nma_coherence.csv` | Network inconsistency diagnostics |
+| `table_nma_coherence.csv` | Network inconsistency diagnostics, written only when the network block runs; it is gated off (`RUN_NMA <- FALSE`), so the file is absent and `table7_network_not_run.csv` records why |
 | `table_diagnostics.csv` | Leave one out range, influential trials, Egger where assessable, trim and fill |
 | `sensitivity_*.csv` | Nine pre-specified sensitivity analyses |
 | `figure*_*.pdf`, `figure*_*.png` | The figure set in figure style 2 (`analysis/figure_style.R`): a vector PDF and a 600 dpi PNG per figure, drawn at its journal width; the PRISMA diagram is drawn by `make prisma` (`src/prisma_figure.R`) instead, and `docs/FIGURES.md` maps every file stem to its submission number |
 | `figure*_*.csv` | The plotted values of each figure, which the figure gate recomputes from the tables and data the figure is drawn from |
 | `figure_index.csv` | Each figure's files, plotted values, caption (the figure legend) and size in millimetres, as the run saved them |
 | `session_info.txt` | R version, platform, every loaded package version |
+| `run_warnings.csv` | Every warning the run raised, one row each, written before the manifest; a clean run writes the header alone, and `make verify` gate 5 requires it empty |
 | `MANIFEST.csv` | Every output file with its SHA-256 hash |
 
 Runtime is dominated by the bootstraps and permutation tests. Expect tens of minutes rather than seconds; this is the cost of permutation inference at 10,000 iterations across every biomarker, and it is not reducible without weakening the inference.

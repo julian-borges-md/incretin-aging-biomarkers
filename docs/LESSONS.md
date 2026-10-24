@@ -114,6 +114,20 @@ Concretely: any signed quantity needs a counterexample in both senses. Any contr
 
 ---
 
+## Shape, warnings and controls (added 24 October 2026)
+
+**A rejection written for the files of the day misses the file of next week.** The ragged row rejection of 15 October (Engineering, above) was written into the extraction ingest, and it was true there. On 22 October a new declaration table, `analysis/data/nbais_inclusion_set.csv`, was created with two reasons holding unquoted commas and was read by a different reader: readr kept four fields of five in two rows, printed one warning per run, and nothing stopped for two days. The shape of every table the repository holds is now checked in CI (`src/verify.R` gate 4), the reader stops on any parser problem, and the self test perturbs the file the way it failed. A gate covers the class, every table found at run time, not the instances that existed when the lesson was written.
+
+**A warning is a finding.** The run printed 34 and then 35 warnings until 23 October, and one of them was Figure 4 dropping two of its nine arms; once that was fixed, the run's single warning was the table read short. The pipeline now writes every warning it raises to `analysis/output/run_warnings.csv`, and gate 5 requires that record to be empty.
+
+**An empty table passes every existence check.** `table_nma_coherence.csv` was written from an empty list while the network block is gated off: zero bytes, hashed by the manifest and described by the runbook as the diagnostics, from 19 to 24 October. Gate 4 refuses an empty table, and the file is now written only when the network runs.
+
+**A self test proves nothing until the unperturbed copy passes.** `selftest.R` applied its perturbations to a temporary copy without first showing that the copy passed; any unrelated failure there would have counted every perturbation as caught. The control now runs first.
+
+**A rule with no check lasts as long as attention does.** The rule in Verification above, that the numbers in a summary are copied from the record and never typed, was broken on 24 October in a status report. Both lessons of this section that had been written down before, this one and the ragged row rejection, recurred for the same reason: they were sentences, not checks.
+
+---
+
 ## What worked, and why it is worth keeping
 
 **Extracting rather than citing.** Four extractions found three errors in our own prior work. Reading abstracts and trusting them would have found none, and all three would have reached a reviewer.

@@ -220,6 +220,11 @@ PDF_ARGS <- c(list(useDingbats = FALSE),
 
 save_figure <- function(name, plot, width_mm, height_mm, caption, data, out_dir = OUT_DIR,
                         max_height_mm = FIG_MAX_HEIGHT_MM) {
+  # A computed size such as 20 + 4.4 * 28 is 143.20000000000002 in floating point, and until
+  # 24 October 2026 the index recorded it so. Sizes are rounded to a hundredth of a millimetre, far
+  # below one pixel at 600 dpi (0.042 mm), so the size drawn and the size recorded are one number.
+  width_mm <- round(width_mm, 2)
+  height_mm <- round(height_mm, 2)
   if (!any(abs(width_mm - FIG_WIDTHS_MM) < 1e-9)) {
     stop("figure ", name, " is ", width_mm, " mm wide; a figure is drawn at a journal width, ",
          paste(FIG_WIDTHS_MM, collapse = ", "), " mm", call. = FALSE)
