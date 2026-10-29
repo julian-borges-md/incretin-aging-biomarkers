@@ -311,6 +311,83 @@ if (nrow(mislabelled) > 0) {
   stop("a row with an absolute or ratio measure was assigned the percent scale")
 }
 
+# D-X10, the IFCC conversion for HbA1c, closed as a guard rather than as a
+# conversion, because the measurement says there is nothing to convert.
+#
+# All 44 HbA1c rows in this corpus are on the NGSP percent scale. Forty three
+# state a percent unit; the forty fourth, the EUREXA adipokine addendum, stated
+# percentage points in its notes and its unit cell is now filled to say so.
+#
+# WHY A GUARD AND NOT A CONVERSION
+#
+# Percent change is invariant under a PROPORTIONAL change of unit and not under
+# an AFFINE one. Every other unit pair in this inventory is proportional:
+# mg/L against mg/dL for hsCRP, mg/dL against mmol/L for glucose, pmol/L
+# against micro international units per mL for insulin. The conversion factor
+# cancels in 100 * yi / baseline_mean, which is why those rows need no unit
+# string at all. The two HbA1c scales are the one exception in routine clinical
+# use: IFCC = (NGSP - 2.15) * 10.929, an affine map with a non zero intercept,
+# so the factor does not cancel. A fall from 7.5 to 7.0 is minus 6.67 per cent
+# on the NGSP scale and minus 9.35 per cent on the IFCC scale, a factor of 1.4.
+#
+# The conversion path above keys on measure and baseline_mean and never reads
+# the unit string, so an IFCC row arriving later would be rescaled by its own
+# IFCC baseline and enter the percent scale 1.4 times too large with no gate
+# objecting. The decision D-X10 records is therefore answered by refusing the
+# row rather than by converting it: a conversion has to be remembered, a guard
+# does not.
+HBA1C_PERCENT_UNITS <- c("%", "percent", "percent points", "percentage points",
+                         "percentage point", "pct", "ngsp percent")
+
+hba1c_scale_findings <- function(d) {
+  if (!all(c("biomarker", "unit") %in% names(d))) {
+    stop("hba1c_scale_findings needs a biomarker and a unit column")
+  }
+  u <- tolower(trimws(as.character(d$unit)))
+  flag <- !is.na(d$biomarker) & d$biomarker == "HbA1c" &
+    (is.na(u) | u %in% c("na", "") | !u %in% tolower(HBA1C_PERCENT_UNITS))
+  d[which(flag), , drop = FALSE]
+}
+
+# The guard demonstrates that it can report a finding before it reports none.
+local({
+  fx <- tibble::tibble(
+    trial_id  = c("ngsp percent", "ngsp percent points", "ifcc mmol/mol",
+                  "unit cell empty", "not HbA1c"),
+    biomarker = c("HbA1c", "HbA1c", "HbA1c", "HbA1c", "ALT"),
+    unit      = c("%", "percent points", "mmol/mol", NA_character_, "U/L"))
+  got  <- hba1c_scale_findings(fx)$trial_id
+  want <- c("ifcc mmol/mol", "unit cell empty")
+  if (!identical(got, want)) {
+    stop(sprintf("HbA1c scale guard self test: expected %s, got %s",
+                 paste(want, collapse = ", "), paste(got, collapse = ", ")))
+  }
+  pc <- function(f, a, b) 100 * (f(b) - f(a)) / f(a)
+  ngsp <- function(p) p
+  ifcc <- function(p) (p - 2.15) * 10.929
+  if (abs(pc(ngsp, 7.5, 7.0) - (-6.6667)) > 1e-3 ||
+      abs(pc(ifcc, 7.5, 7.0) - (-9.3458)) > 1e-3) {
+    stop("HbA1c scale guard self test: the two scale demonstration changed")
+  }
+  message(sprintf(paste("HBA1C SCALE SELF TEST: the guard reports %d of %d fixture rows,",
+                        "and one fall of 0.5 points is %.2f per cent on NGSP against",
+                        "%.2f per cent on IFCC"),
+                  length(want), nrow(fx), pc(ngsp, 7.5, 7.0), pc(ifcc, 7.5, 7.0)))
+})
+
+hba1c_bad_scale <- hba1c_scale_findings(dat)
+if (nrow(hba1c_bad_scale) > 0) {
+  for (i in seq_len(nrow(hba1c_bad_scale))) {
+    message(sprintf("  FAIL  %s / HbA1c: unit %s is not an NGSP percent unit",
+                    hba1c_bad_scale$trial_id[i],
+                    ifelse(is.na(hba1c_bad_scale$unit[i]), "missing",
+                           hba1c_bad_scale$unit[i])))
+  }
+  stop("an HbA1c row carries a unit that is not an NGSP percent scale; percent change is not invariant between NGSP and IFCC")
+}
+message(sprintf("HBA1C SCALE: %d HbA1c rows, every one on the NGSP percent scale",
+                sum(!is.na(dat$biomarker) & dat$biomarker == "HbA1c")))
+
 unconvertible <- filter(dat, is.na(yi_pct))
 if (nrow(unconvertible) > 0) {
   message("\nUNCONVERTIBLE ROWS, excluded from cross biomarker pooling:")
