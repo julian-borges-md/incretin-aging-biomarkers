@@ -45,11 +45,12 @@ dat <- readr::read_csv("analysis/data/extraction_master_harmonised.csv",
 message(sprintf("Harmonised rows available: %d", nrow(dat)))
 
 # ---- Decision 1: collapse shared control arms -------------------------------
+# The rule is defined once, in src/collapse_rule.R, and sourced by this script, the pipeline and the
+# two other scripts that pool. Until 28 October each of the four held its own identical copy, and
+# each broke a tie at the highest dose by file order.
+source(file.path("src", "collapse_rule.R"))
 before <- nrow(dat)
-dat <- dat |>
-  group_by(trial_id, biomarker) |>
-  slice_max(order_by = dose_mg, n = 1, with_ties = FALSE) |>
-  ungroup()
+dat <- collapse_arms(dat, label = "pool_biomarkers")
 message(sprintf("After keeping the highest dose arm per trial and biomarker: %d (%d dropped)",
                 nrow(dat), before - nrow(dat)))
 

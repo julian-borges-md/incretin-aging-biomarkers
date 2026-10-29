@@ -238,23 +238,23 @@ es_continuous$vi_md <- ifelse(es_continuous$unit_family == "absolute",
 es_continuous$yi <- es_continuous$yi_pct
 es_continuous$vi <- es_continuous$vi_pct
 
-# Collapse to one arm per trial per biomarker, keeping the highest dose. Several trials contribute
-# multiple dose arms against a single shared control, and pooling those as independent studies
-# overstates precision: the first run of this port pooled 18 liver fat rows where the analysis pools
-# 9, 44 HbA1c rows where it pools 38, and every interval came out too narrow. The rule and its
-# justification are defined in src/pool_biomarkers.R, decision 1, which is the operational analysis;
-# this is the same rule applied here so that the two implementations pool the same rows. It is NOT a
-# second definition on purpose, and consolidating the two into one shared step is the remaining work
-# on this port, because a rule stated twice is the defect that has bitten this repository three times.
+# Collapse to one arm per trial per biomarker. Several trials contribute multiple dose arms against
+# a single shared control, and pooling those as independent studies overstates precision: the first
+# run of this port pooled 18 liver fat rows where the analysis pools 9, 44 HbA1c rows where it pools
+# 38, and every interval came out too narrow.
+#
+# The rule now has ONE definition, src/collapse_rule.R, sourced here and by the three gate scripts
+# that pool. It was written out four times identically until 28 October, and the comment that stood
+# here named consolidating it as the remaining work on this port. All four copies also broke a tie at
+# the highest dose by file order, which decided the sole triple agonist liver fat value; that is
+# decision D-X3 and the rule's header carries the arithmetic.
 #
 # This rule is absent from the registered plan, which assumed one contrast per trial. It is a real
 # analytic decision, it is visible in the pooled k of every biomarker, and it needs to be disclosed
 # in the Methods rather than left implicit in a script.
+source(file.path("src", "collapse_rule.R"))
 n_before <- nrow(es_continuous)
-es_continuous <- es_continuous |>
-  dplyr::group_by(trial_id, biomarker) |>
-  dplyr::slice_max(order_by = dose_mg, n = 1, with_ties = FALSE) |>
-  dplyr::ungroup()
+es_continuous <- collapse_arms(es_continuous, label = "pipeline, continuous outcomes")
 message(sprintf(paste0("  shared control collapse: %d rows kept, %d dose arms dropped ",
                        "(one arm per trial per biomarker, highest dose)"),
                 nrow(es_continuous), n_before - nrow(es_continuous)))
@@ -1097,6 +1097,40 @@ sensitivity_subgroup <- function(filter_expr, label) {
   })
 }
 
+# Comparator sensitivities, added 2026-10-28 for decisions B3 and B4 of the Director register.
+#
+# B3, D-X7. The register's recommendation was to admit the trials whose only comparator is a DPP-4
+# inhibitor and "report them within the existing comparator sensitivity analysis". No such analysis
+# existed: of the nine sensitivities above, none isolates comparator type, so the recommendation
+# rested on machinery that was not there. The trials are declared in
+# analysis/data/comparator_dpp4_trials.csv rather than matched by a pattern on the comparator text,
+# because a pattern on that text misclassifies the Light On trial, whose comparator is insulin
+# glargine and whose string mentions sitagliptin only to record that its third arm was NOT entered.
+# A regex would have removed twelve rows that are not DPP-4 contrasts at all.
+#
+# B4. The register recommended excluding the Fan 2013 rows because "a corpus that keeps both counts
+# the same patients twice". The corpus does not keep both: the 2018 report whose post treatment ALT
+# means duplicate Fan 2013's was excluded at extraction and never entered the master, which
+# docs/DUPLICATE_TRIAGE.md records. The duplication is evidence against the later report, which is
+# already out, and not against the earlier paper whose values it reused. Fan 2013 is therefore
+# retained and reported as a sensitivity, so that the choice is visible rather than assumed. It
+# contributes three pooled rows after the collapse and the removal moves ALT by 0.20 and hsCRP by
+# 1.02 percentage points, both negligible, and GGT from minus 15.14 to minus 10.65 on k of 6 to 5,
+# which is where the decision actually bites.
+DPP4_TRIALS <- readr::read_csv("analysis/data/comparator_dpp4_trials.csv",
+                               show_col_types = FALSE, progress = FALSE)$trial_id
+stopifnot(length(DPP4_TRIALS) >= 1)
+missing_dpp4 <- setdiff(DPP4_TRIALS, unique(es_continuous$trial_id))
+if (length(missing_dpp4) > 0) {
+  stop("comparator_dpp4_trials.csv names trials absent from the pooled set: ",
+       paste(missing_dpp4, collapse = ", "),
+       "; a declaration that names nothing silently removes nothing", call. = FALSE)
+}
+es_continuous$comparator_is_dpp4 <- es_continuous$trial_id %in% DPP4_TRIALS
+message(sprintf("  comparator sensitivities: %d DPP-4 row(s) over %d trial(s); %d Fan 2013 row(s)",
+                sum(es_continuous$comparator_is_dpp4), length(DPP4_TRIALS),
+                sum(grepl("^Fan 2013", es_continuous$trial_id))))
+
 sens <- list(
   estimator      = sensitivity_estimator(),
   t2d_only       = sensitivity_subgroup("population == 'T2D'", "T2D only"),
@@ -1107,7 +1141,15 @@ sens <- list(
                      "duration_weeks >= 26 & duration_weeks <= 52", "26 to 52 weeks"),
   duration_long  = sensitivity_subgroup("duration_weeks > 52", "over 52 weeks"),
   low_rob_only   = sensitivity_subgroup("rob_overall == 'low'", "low RoB only"),
-  non_industry   = sensitivity_subgroup("industry_funded == FALSE", "non-industry")
+  non_industry   = sensitivity_subgroup("industry_funded == FALSE", "non-industry"),
+  placebo_only   = sensitivity_subgroup("comparator_type == 'placebo'",
+                                        "placebo controlled only"),
+  active_only    = sensitivity_subgroup("comparator_type == 'active'",
+                                        "active controlled only"),
+  without_dpp4   = sensitivity_subgroup("!comparator_is_dpp4",
+                                        "excluding DPP-4 comparator trials (D-X7)"),
+  without_fan2013 = sensitivity_subgroup("!grepl('^Fan 2013', trial_id)",
+                                         "excluding Fan 2013 (B4)")
 )
 
 purrr::iwalk(sens, ~ readr::write_csv(

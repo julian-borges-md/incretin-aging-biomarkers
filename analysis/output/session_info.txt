@@ -8,7 +8,7 @@
  collate  C.UTF-8
  ctype    C.UTF-8
  tz       America/New_York
- date     2026-10-24
+ date     2026-10-28
  pandoc   3.9.0.2 @ /opt/homebrew/bin/pandoc
  quarto   NA
 

@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Twenty five gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
+# Twenty six gate chain in order; log work/gates_<sha>.log (same format as gates_424477c.log).
 #
 # This file is the tracked copy and the one to edit. The chain lived at work/run_gates.sh until
 # 16 October, where the gitignore keeps it out of version control: the script that validates the
@@ -19,6 +19,22 @@ for g in verify selftest validate_pipeline build_master harmonise_units pool_bio
   echo "exit $rc" >> "$log"
   [ $rc -ne 0 ] && { echo "GATE FAILED: $g (see work/gate_$g.log)" >> "$log"; exit $rc; }
 done
+# Gate twenty six, added 2026-10-28 with decision D-X3. src/collapse_rule.R is the one declaration
+# of the shared control collapse, sourced by the pipeline and by the three gate scripts above; run
+# directly it is the gate on its own property. The rule was written out four times identically
+# until today, and all four broke a tie at the highest dose with with_ties = FALSE, which means the
+# row kept was the first in file order. One group in the corpus ties: the retatrutide hepatic trial,
+# whose two series are distinguishable only by duration because its timepoint column is NA, so the
+# sole triple agonist liver fat value was decided by a row's position in a CSV.
+#
+# The gate's decisive check is order invariance: four permutations of the harmonised corpus must
+# keep the same rows. That is the property the four copies lacked, and it is checkable without
+# reading any of them. It also asserts that the rule moves exactly the one group the measurement
+# found, so a future change that moves others fails here rather than in a pooled estimate.
+echo "== collapse_rule $(date +%H:%M:%S)" >> "$log"
+Rscript src/collapse_rule.R > "work/gate_collapse_rule.log" 2>&1; rc=$?
+echo "exit $rc" >> "$log"
+[ $rc -ne 0 ] && { echo "GATE FAILED: collapse_rule (see work/gate_collapse_rule.log)" >> "$log"; exit $rc; }
 # Extended 2026-10-22 from manuscript/RESULTS_*.md to every manuscript file, and from prose to
 # table rows. A pooled quantity written into a table cell was invisible to this gate, because it
 # read prose only: the Discussion's summary table of the unfavourable axis cited five markers with

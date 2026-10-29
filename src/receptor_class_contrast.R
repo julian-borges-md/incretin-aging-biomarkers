@@ -17,12 +17,11 @@
 suppressPackageStartupMessages({ library(dplyr); library(readr); library(tidyr) })
 set.seed(20261013)
 
+source(file.path("src", "collapse_rule.R"))
 dat <- readr::read_csv("analysis/data/extraction_master_harmonised.csv",
                        show_col_types = FALSE, progress = FALSE) |>
   filter(!is.na(yi_pct), !is.na(vi_pct), vi_pct > 0) |>
-  group_by(trial_id, biomarker) |>
-  slice_max(order_by = dose_mg, n = 1, with_ties = FALSE) |>
-  ungroup()
+  collapse_arms(label = "receptor_class_contrast")
 
 ## ---------------------------------------------------------------------------
 ## 0. Comparator restriction, protocol amendment of 2026-10-15

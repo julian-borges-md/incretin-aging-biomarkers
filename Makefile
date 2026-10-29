@@ -4,7 +4,7 @@
 #   make verify     run the integrity gates on the extraction contract
 #   make selftest   prove that verify fails on perturbed input
 #   make validate   prove the statistics recover known truth on simulated data
-#   make gates      run the full twenty five gate provenance chain
+#   make gates      run the full twenty six gate provenance chain
 #   make analysis   run the full pipeline (needs analysis/data/extraction_master.csv)
 #   make prisma     redraw the PRISMA flow diagram from docs/prisma_counts.json
 #   make table1     regenerate Table 1 from the biomarker inventory (the chain only checks it)
@@ -28,7 +28,7 @@ install:
 pin:
 	$(RS) src/pin_environment.R
 
-# The full provenance chain, twenty five gates. It was reachable only as scripts/run_gates.sh, so the
+# The full provenance chain, twenty six gates. It was reachable only as scripts/run_gates.sh, so the
 # one command that validates the whole pipeline was the one command the Makefile did not offer.
 gates:
 	bash scripts/run_gates.sh

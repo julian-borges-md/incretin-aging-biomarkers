@@ -1,0 +1,3 @@
+trial_id,comparator,rows_in_master,evidence
+LYDIA,sitagliptin 100 mg,3,"The comparator column names sitagliptin 100 mg as the comparator and marks it a DPP-4 inhibitor. Decision D-X7."
+Suzuki 2014 Dokkyo,sitagliptin 50 mg daily,7,"The comparator column names sitagliptin 50 mg daily as the comparator and marks it a DPP-4 inhibitor. Decision D-X7."

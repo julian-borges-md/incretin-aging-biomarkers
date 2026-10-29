@@ -49,11 +49,26 @@ def main(stamp):
     w("")
 
     # ---- Table 2
+    #
+    # Decision C1 of the Director register: Table 2 is the pooled table and holds only pooled
+    # quantities. Binary outcomes were appearing in it, and one of them put an interval of minus
+    # 807.5 to plus 807.1 per cent on an estimate of minus 0.22 from two trials, which carries no
+    # information and invites a reviewer to question everything near it. The other was a single
+    # trial reported as a pooled estimate.
+    #
+    # They are excluded by OUTCOME TYPE, read from the master, rather than by naming the two
+    # markers, so a binary outcome added by a later extraction is excluded the day it arrives
+    # instead of reappearing here for want of being listed. They are then reported below the table
+    # as what they are, event counts per arm, generated from the master like every other cell.
+    binary_markers = {(r.get("biomarker") or "").strip() for r in master
+                      if (r.get("outcome_type") or "").strip().lower() == "binary"}
+
     w("## Table 2. Pooled placebo corrected percentage change from baseline, by biomarker")
     w("")
     w("| Biomarker | Hallmark domain | Trials | Change (%) | 95% CI | Prediction interval | I2 (%) | Direction |")
     w("|---|---|---:|---:|---|---|---:|---|")
-    for r in sorted(t2, key=lambda x: (x["hallmark_domain"], x["biomarker"])):
+    for r in sorted((x for x in t2 if x["biomarker"] not in binary_markers),
+                    key=lambda x: (x["hallmark_domain"], x["biomarker"])):
         pi = "-" if r["pi_lo"] in ("", "NA") else f"{num(r['pi_lo'])} to {num(r['pi_hi'])}"
         ci = f"{num(r['lo'])} to {num(r['hi'])}"
         direction = "favourable" if (r.get("favourable") or "").strip().upper() == "TRUE" \
@@ -66,6 +81,30 @@ def main(stamp):
     w("records whether the observed sign is the favourable one for that marker. Prediction intervals")
     w("are given where the between trial variance is estimable (three or more trials).")
     w("")
+
+    # The binary outcomes, reported as counts because that is what they are.
+    if binary_markers:
+        w("### Binary hepatic histology outcomes, reported as counts and not pooled")
+        w("")
+        w("| Outcome | Trial | Duration (weeks) | Drug arm | Comparator arm |")
+        w("|---|---|---:|---|---|")
+        rows = [r for r in master if (r.get("biomarker") or "").strip() in binary_markers]
+        for r in sorted(rows, key=lambda x: (x["biomarker"], x["trial_id"])):
+            def frac(ev, n):
+                try:
+                    return f"{int(float(ev))} of {int(float(n))} ({100 * float(ev) / float(n):.1f}%)"
+                except (TypeError, ValueError, ZeroDivisionError):
+                    return "not reported"
+            w(f"| {r['biomarker']} | {r['trial_id']} | {num(r.get('duration_weeks'), 0)} | "
+              f"{frac(r.get('events_tx'), r.get('n_tx'))} | "
+              f"{frac(r.get('events_ctrl'), r.get('n_ctrl'))} |")
+        w("")
+        w("These are not in Table 2, which holds pooled percentage changes only. One trial reports")
+        w("MASH resolution and two report fibrosis improvement, and the two fibrosis trials point in")
+        w("opposite directions at very different sizes, so a pooled fibrosis estimate is near zero")
+        w("with an interval too wide to interpret. The counts show why, which the pooled row did")
+        w("not.")
+        w("")
 
     # ---- Table 3
     w("## Table 3. Receptor class coverage within placebo controlled trials (trials per class)")
